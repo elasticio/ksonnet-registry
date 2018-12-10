@@ -1,0 +1,6 @@
+apiVersion: 0.1.0
+kind: ksonnet.io/registry
+libraries:
+  platform:
+    path: platform
+    version: master
