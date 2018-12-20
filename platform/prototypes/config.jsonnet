@@ -2,6 +2,7 @@
 // @name elastic.io.config
 // @param name string name
 // @param accounts_password string accounts_password
+// @optionalParam allow_empty_contract_after_the_last_user_removing string false allow_empty_contract_after_the_last_user_removing
 // @param amqp_uri string amqp_uri
 // @param api_uri string api_uri
 // @param api_service string api_service
@@ -74,6 +75,7 @@ local k = import 'k.libsonnet';
 
 
 local accounts_password = import 'param://accounts_password';
+local allow_empty_contract_after_the_last_user_removing = import 'param://allow_empty_contract_after_the_last_user_removing';
 local amqp_uri = import 'param://amqp_uri';
 local api_uri = import 'param://api_uri';
 local api_service = import 'param://api_service';
@@ -149,6 +151,7 @@ local log_level = import 'param://log_level';
     apiVersion: 'v1',
     stringData: {
       ACCOUNTS_PASSWORD: std.toString(accounts_password),
+      ALLOW_EMPTY_CONTRACT_AFTER_THE_LAST_USER_REMOVING: std.toString(if allow_empty_contract_after_the_last_user_removing == "true" then "true" else ""),
       AMQP_URI: std.toString(amqp_uri),
       API_URI: std.toString(api_uri),
       API_SERVICE: std.toString(api_service),

@@ -1437,7 +1437,7 @@ local version = import 'elasticio/platform/version.json';
         },
       },
     ],
-    ingress(name, loadBalancerIP, appDomain, apiDomain, webhooksDomain, sshPort, certName):: [
+    ingress(ingressNameDefault, ingressNameApiDocs, loadBalancerIP, appDomain, apiDomain, webhooksDomain, sshPort, certName):: [
       {
         apiVersion: 'v1',
         kind: 'Service',
@@ -1481,7 +1481,7 @@ local version = import 'elasticio/platform/version.json';
         apiVersion: 'extensions/v1beta1',
         kind: 'Ingress',
         metadata: {
-          name: name,
+          name: ingressNameDefault,
           namespace: 'platform',
           annotations: {
             'kubernetes.io/ingress.class': 'nginx',
@@ -1548,7 +1548,7 @@ local version = import 'elasticio/platform/version.json';
         apiVersion: 'extensions/v1beta1',
         kind: 'Ingress',
         metadata: {
-          name: 'docs-popeye-ngress',
+          name: ingressNameApiDocs,
           namespace: 'platform',
           annotations: {
             'kubernetes.io/ingress.class': 'nginx',
@@ -1562,7 +1562,7 @@ local version = import 'elasticio/platform/version.json';
         spec: {
           rules: [
             {
-              host: 'api-popeye.elastic.io',
+              host: apiDomain,
               http: {
                 paths: [
                   {
@@ -1579,7 +1579,7 @@ local version = import 'elasticio/platform/version.json';
         },
       },
     ],
-    lookout():: {
+    lookout(replicas):: {
       apiVersion: 'apps/v1',
       kind: 'Deployment',
       metadata: {
@@ -1590,7 +1590,7 @@ local version = import 'elasticio/platform/version.json';
         },
       },
       spec: {
-        replicas: 1,
+        replicas: replicas,
         selector: {
           matchLabels: {
             app: 'lookout',
@@ -1675,7 +1675,7 @@ local version = import 'elasticio/platform/version.json';
         },
       },
     },
-    raven():: [
+    raven(replicas):: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
@@ -1687,7 +1687,7 @@ local version = import 'elasticio/platform/version.json';
           },
         },
         spec: {
-          replicas: 1,
+          replicas: replicas,
           selector: {
             matchLabels: {
               app: 'raven',
@@ -1871,11 +1871,11 @@ local version = import 'elasticio/platform/version.json';
                 resources: {
                   limits: {
                     memory: '512Mi',
-                    cpu: 0.5,
+                    cpu: 1,
                   },
                   requests: {
                     memory: '256Mi',
-                    cpu: 0.1,
+                    cpu: 0.5,
                   },
                 },
                 terminationMessagePath: '/dev/termination-log',
@@ -1907,7 +1907,7 @@ local version = import 'elasticio/platform/version.json';
         },
       },
     },
-    steward():: [
+    steward(replicas):: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
@@ -1919,7 +1919,7 @@ local version = import 'elasticio/platform/version.json';
           },
         },
         spec: {
-          replicas: 1,
+          replicas: replicas,
           selector: {
             matchLabels: {
               app: 'steward',
@@ -2609,11 +2609,11 @@ local version = import 'elasticio/platform/version.json';
                   resources: {
                     limits: {
                       memory: '512Mi',
-                      cpu: 0.5,
+                      cpu: 1,
                     },
                     requests: {
                       memory: '256Mi',
-                      cpu: 0.1,
+                      cpu: 0.5,
                     },
                   },
                   volumeMounts: [

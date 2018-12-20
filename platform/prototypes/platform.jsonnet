@@ -6,7 +6,8 @@
 // @optionalParam frontend_replicas number 1 frontend replicas count
 // @optionalParam gold_dragon_coin_replicas number 1 gold dragon coin replicas count
 // @optionalParam webhooks_replicas number 1 webhooks replicas count
-// @optionalParam ingress_name string default-tenant-ingress ingress name
+// @optionalParam ingress_name_default string default-tenant-ingress ingress name
+// @optionalParam ingress_name_api_docs string default-tenant-ingress-api-docs ingress name
 // @param load_balancer_ip string ingress load balancer ip
 // @param app_domain string app domain
 // @param api_domain string api domain
@@ -29,6 +30,9 @@
 // @optionalParam storage_slugs_sub_path_slugs string slugs sub path for slugs
 // @optionalParam storage_slugs_sub_path_steward string steward sub path for steward
 // @optionalParam storage_slugs_pv_gid number 1502 pv gid
+// @optionalParam raven_replicas number 1 raven replicas count
+// @optionalParam lookout_replicas number 1 lookout replicas count
+// @optionalParam steward_replicas number 1 steward replicas count
 
 local k = import 'k.libsonnet';
 
@@ -39,7 +43,8 @@ local apiReplicas = import 'param://api_replicas';
 local frontendReplicas = import 'param://frontend_replicas';
 local webhooksReplicas = import 'param://webhooks_replicas';
 local goldDragonCoinReplicas = import 'param://gold_dragon_coin_replicas';
-local ingressName = import 'param://ingress_name';
+local ingressNameDefault = import 'param://ingress_name_default';
+local ingressNameApiDocs = import 'param://ingress_name_api_docs';
 local loadBalancerIP = import 'param://load_balancer_ip';
 local appDomain = import 'param://app_domain';
 local apiDomain = import 'param://api_domain';
@@ -62,12 +67,15 @@ local pssStorage = import 'param://storage_slugs_size';
 local slugsSubPath = import 'param://storage_slugs_sub_path_slugs';
 local stewardSubPath = import 'param://storage_slugs_sub_path_steward';
 local pvGid = import 'param://storage_slugs_pv_gid';
+local ravenReplicas = import 'param://raven_replicas';
+local lookoutReplicas = import 'param://lookout_replicas';
+local stewardReplicas = import 'param://steward_replicas';
 
 [
   platform.parts.pullSecret(dockerUsername, dockerPassword, dockerEmail, dockerRegistry),
   platform.parts.tlsSecret(certName, tlsCert, tlsKey),
   platform.parts.gitreceiverKey(gitReceiverKey),
-  platform.parts.lookout(),
+  platform.parts.lookout(lookoutReplicas),
   platform.parts.scheduler(),
 ] + platform.parts.admiral() +
   platform.parts.apiDocs(apiDocsImage) +
@@ -77,9 +85,9 @@ local pvGid = import 'param://storage_slugs_pv_gid';
   platform.parts.gitreceiver() +
   platform.parts.goldDagonCoin(goldDragonCoinReplicas) +
   platform.parts.ingressController() +
-  platform.parts.ingress(ingressName, loadBalancerIP, appDomain, apiDomain, wehbooksDomain, sshPort, certName) +
-  platform.parts.raven() +
-  platform.parts.steward() +
+  platform.parts.ingress(ingressNameDefault, ingressNameApiDocs, loadBalancerIP, appDomain, apiDomain, wehbooksDomain, sshPort, certName) +
+  platform.parts.raven(ravenReplicas) +
+  platform.parts.steward(stewardReplicas) +
   platform.parts.webhooks(webhooksReplicas) +
   platform.parts.wiper() +
   platform.parts.storageSlugs(pssReplicas, pvName, nfsServer, nfsShare, pssLbIp, pssStorage, slugsSubPath, stewardSubPath, pvGid)
