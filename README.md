@@ -195,18 +195,18 @@ ks apply elasticio --gc-tag elasticio0 --context <kubectl_context>
 
 Updating to the new version.
 
-### Remove old packages
+### Install new version of packages
+
+```bash
+ks pkg install elasticio/platform@<new_elasticio_version>
+```
+
+### Remove old components
 
 ```bash
 ks component rm config
 ks component rm gendry
 ks component rm platform
-```
-
-### Install new version of packages
-
-```bash
-ks pkg install elasticio/platform@<new_elasticio_version>
 ```
 
 ### Generate new version of ksonnet components
