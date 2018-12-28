@@ -33,6 +33,7 @@
 // @optionalParam raven_replicas number 1 raven replicas count
 // @optionalParam lookout_replicas number 1 lookout replicas count
 // @optionalParam steward_replicas number 1 steward replicas count
+// @optionalParam ingress_limit_connections number 0 parallel connections limit for ingress
 
 local k = import 'k.libsonnet';
 
@@ -70,6 +71,7 @@ local pvGid = import 'param://storage_slugs_pv_gid';
 local ravenReplicas = import 'param://raven_replicas';
 local lookoutReplicas = import 'param://lookout_replicas';
 local stewardReplicas = import 'param://steward_replicas';
+local limitConnections = import 'param://ingress_limit_connections';
 
 [
   platform.parts.pullSecret(dockerUsername, dockerPassword, dockerEmail, dockerRegistry),
@@ -85,7 +87,7 @@ local stewardReplicas = import 'param://steward_replicas';
   platform.parts.gitreceiver() +
   platform.parts.goldDagonCoin(goldDragonCoinReplicas) +
   platform.parts.ingressController() +
-  platform.parts.ingress(ingressNameDefault, ingressNameApiDocs, loadBalancerIP, appDomain, apiDomain, wehbooksDomain, sshPort, certName) +
+  platform.parts.ingress(ingressNameDefault, ingressNameApiDocs, loadBalancerIP, appDomain, apiDomain, wehbooksDomain, sshPort, certName, limitConnections) +
   platform.parts.raven(ravenReplicas) +
   platform.parts.steward(stewardReplicas) +
   platform.parts.webhooks(webhooksReplicas) +

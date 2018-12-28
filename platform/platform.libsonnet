@@ -1437,7 +1437,7 @@ local version = import 'elasticio/platform/version.json';
         },
       },
     ],
-    ingress(ingressNameDefault, ingressNameApiDocs, loadBalancerIP, appDomain, apiDomain, webhooksDomain, sshPort, certName):: [
+    ingress(ingressNameDefault, ingressNameApiDocs, loadBalancerIP, appDomain, apiDomain, webhooksDomain, sshPort, certName, limitConnections):: [
       {
         apiVersion: 'v1',
         kind: 'Service',
@@ -1486,9 +1486,8 @@ local version = import 'elasticio/platform/version.json';
           annotations: {
             'kubernetes.io/ingress.class': 'nginx',
             'nginx.ingress.kubernetes.io/affinity': 'cookie',
-            'nginx.ingress.kubernetes.io/limit-connections': '200',
-            'nginx.ingress.kubernetes.io/proxy-body-size': '10m',
-          },
+            'nginx.ingress.kubernetes.io/proxy-body-size': '10m'
+          } + if limitConnections > 0 then { 'nginx.ingress.kubernetes.io/limit-connections': std.toString(limitConnections) } else {},
         },
         spec: {
           tls: [
