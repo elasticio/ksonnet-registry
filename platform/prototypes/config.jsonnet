@@ -70,6 +70,8 @@
 // @param tenant_admin_email string tenant_admin_email
 // @param tenant_admin_password string tenant_admin_password
 // @param log_level string log_level
+// @param wiper_login string wiper_login
+// @param wiper_password string wiper_password
 
 local k = import 'k.libsonnet';
 
@@ -143,6 +145,8 @@ local webhooks_service = import 'param://webhooks_service';
 local tenant_admin_email = import 'param://tenant_admin_email';
 local tenant_admin_password = import 'param://tenant_admin_password';
 local log_level = import 'param://log_level';
+local wiper_login = import 'param://wiper_login';
+local wiper_password = import 'param://wiper_password';
 
 [
   k.core.v1.namespace.new('platform'),
@@ -219,6 +223,8 @@ local log_level = import 'param://log_level';
       USER_API_CRYPTO_PASSWORD: std.toString(user_api_crypto_password),
       WEBHOOKS_BASE_URI: std.toString(webhooks_base_uri),
       WEBHOOKS_SERVICE: std.toString(webhooks_service),
+      WIPER_SERVICE_ACCOUNT_USERNAME: std.toString(wiper_login),
+      WIPER_SERVICE_ACCOUNT_PASSWORD: std.toString(wiper_password),
       TENANT_ADMIN_EMAIL: std.toString(tenant_admin_email),
       TENANT_ADMIN_PASSWORD: std.toString(tenant_admin_password),
       LOG_LEVEL: std.toString(log_level),

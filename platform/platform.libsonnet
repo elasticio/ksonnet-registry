@@ -2550,6 +2550,90 @@ local version = import 'elasticio/platform/version.json';
         },
         status: {},
       },
+      {
+        apiVersion: 'batch/v1beta1',
+        kind: 'CronJob',
+        metadata: {
+          name: 'suspend-contracts',
+          namespace: 'platform',
+          labels: {
+            app: 'wiper',
+            subapp: 'suspend-contracts',
+          },
+        },
+        spec: {
+          schedule: '* * * * *',
+          concurrencyPolicy: 'Forbid',
+          failedJobsHistoryLimit: 1,
+          jobTemplate: {
+            metadata: {
+              creationTimestamp: null,
+              labels: {
+                app: 'wiper',
+                subapp: 'suspend-contracts',
+              },
+            },
+            spec: {
+              template: {
+                metadata: {
+                  labels: {
+                    app: 'wiper',
+                    subapp: 'suspend-contracts',
+                  },
+                },
+                spec: {
+                  containers: [
+                    {
+                      name: 'suspend-contracts',
+                      image: 'elasticio/wiper:' + version,
+                      imagePullPolicy: 'IfNotPresent',
+                      args: [
+                        'node',
+                        '/app/index.js',
+                        'suspend-contracts',
+                      ],
+                      env: [
+                        {
+                          name: 'APP_NAME',
+                          value: 'wiper:suspend-contracts',
+                        },
+                        {
+                          name: 'ELASTICIO_API_URI',
+                          valueFrom: {
+                            secretKeyRef: {
+                              key: 'API_URI',
+                              name: 'elasticio',
+                            },
+                          },
+                        },
+                      ],
+                      envFrom: [
+                        {
+                          secretRef: {
+                            name: 'elasticio',
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                  imagePullSecrets: [
+                    {
+                      name: 'elasticiodevops',
+                    },
+                  ],
+                  restartPolicy: 'OnFailure',
+                  nodeSelector: {
+                    'elasticio-role': 'platform',
+                  },
+                },
+              },
+            },
+          },
+          successfulJobsHistoryLimit: 3,
+          suspend: false,
+        },
+        status: {},
+      },
     ],
     storageSlugs(replicas, pvName, server, path, lbIp, storage = '1Ti', slugsSubPath = 'slugs', stewardSubPath = 'steward', pvGid = 1502):: [
       {
