@@ -18,13 +18,17 @@
 // @param ingress_cert_key string ingress base64 encoded tls cert key
 // @param gitreceiver_key string base64 encoded gitreceiver key
 // @optionalParam docker_registry string https://index.docker.io/v1/ docker registry
-// @param docker_username string docker regitry username
-// @param docker_password string docker regitry password
-// @param docker_email string docker regitry email
+// @param docker_username string docker registry username
+// @param docker_password string docker registry password
+// @param docker_email string docker registry email
 // @optionalParam storage_slugs_replicas number 1 platfrom storage slugs replicas
-// @param storage_slugs_pv_name string platform storage slugs pv name
-// @param nfs_server_address string platform storage slugs nfs server address
-// @param nfs_share string platform storage slugs nfs share
+// @optionalParam storage_slugs_pv_name string platform-storage-slugs-volume string platform storage slugs pv name
+// @optionalParam storage_slugs_storage_type string nfs platform storage slugs storage type, nfs or azure
+// @optionalParam nfs_server_address string 127.0.0.1 platform storage slugs nfs server address
+// @optionalParam nfs_share string /pss platform storage slugs nfs share
+// @optionalParam azure_storage_account_name string azure_account platform storage slugs azure storage account name
+// @optionalParam azure_storage_account_key string azure_key storage slugs azure storage account keys
+// @optionalParam azure_storage_share string azure_share storage slugs azure storage share
 // @param storage_slugs_lb_ip string platform storage slugs loadbalancer internal ip address
 // @optionalParam storage_slugs_size string 1Ti platform storage slugs size
 // @optionalParam storage_slugs_sub_path_slugs string slugs sub path for slugs
@@ -72,6 +76,14 @@ local ravenReplicas = import 'param://raven_replicas';
 local lookoutReplicas = import 'param://lookout_replicas';
 local stewardReplicas = import 'param://steward_replicas';
 local limitConnections = import 'param://ingress_limit_connections';
+local storageSlugsStorageType = import 'param://storage_slugs_storage_type';
+local azAccName = import 'param://azure_storage_account_name';
+local azAccKey = import 'param://azure_storage_account_key';
+local azShareName = import 'param://azure_storage_share';
+
+local pssPv = if storageSlugsStorageType == 'nfs' then platform.parts.storageSlugsPVNfs(pvName, nfsServer, nfsShare, pssStorage, pvGid) else if storageSlugsStorageType == 'azure' then platform.parts.storageSlugsPVAzure(pvName, azAccName, azAccKey, azShareName, pssStorage, pvGid) else null;
+
+assert std.isArray(pssPv);
 
 [
   platform.parts.pullSecret(dockerUsername, dockerPassword, dockerEmail, dockerRegistry),
@@ -92,4 +104,5 @@ local limitConnections = import 'param://ingress_limit_connections';
   platform.parts.steward(stewardReplicas) +
   platform.parts.webhooks(webhooksReplicas) +
   platform.parts.wiper() +
-  platform.parts.storageSlugs(pssReplicas, pvName, nfsServer, nfsShare, pssLbIp, pssStorage, slugsSubPath, stewardSubPath, pvGid)
+  pssPv +
+  platform.parts.storageSlugs(pssReplicas, pssLbIp, pssStorage, slugsSubPath, stewardSubPath)
