@@ -147,6 +147,10 @@ local tenant_admin_password = import 'param://tenant_admin_password';
 local log_level = import 'param://log_level';
 local wiper_login = import 'param://wiper_login';
 local wiper_password = import 'param://wiper_password';
+local appdirect_login = import 'param://appdirect_login';
+local appdirect_password = import 'param://appdirect_password';
+local tenant_operator_login = import 'param://tenant_operator_login';
+local tenant_operator_password = import 'param://tenant_operator_password';
 
 [
   k.core.v1.namespace.new('platform'),
@@ -162,6 +166,8 @@ local wiper_password = import 'param://wiper_password';
       APPDIRECT_MARKETPLACE_URL: std.toString(appdirect_marketplace_url),
       APPDIRECT_SUBSCRIPTION_EVENTS_URI: std.toString(appdirect_subscription_events_uri),
       APIDOCS_SERVICE: std.toString(apidocs_service),
+      APPDIRECT_SERVICE_ACCOUNT_USERNAME: std.toString(appdirect_login),
+      APPDIRECT_SERVICE_ACCOUNT_PASSWORD: std.toString(appdirect_password),
       APPRUNNER_IMAGE: std.toString(apprunner_image),
       COMPANY_NAME: std.toString(company_name),
       COMPONENT_MEM_DEFAULT: std.toString(component_mem_default),
@@ -219,6 +225,8 @@ local wiper_password = import 'param://wiper_password';
       TENANT_CODE: std.toString(tenant_code),
       TENANT_DOMAIN: std.toString(tenant_domain),
       TENANT_NAME: std.toString(tenant_name),
+      TENANT_OPERATOR_SERVICE_ACCOUNT_USERNAME: std.toString(tenant_operator_login),
+      TENANT_OPERATOR_SERVICE_ACCOUNT_PASSWORD: std.toString(tenant_operator_password),
       USER_AMQP_CRYPTO_PASSWORD: std.toString(user_amqp_crypto_password),
       USER_API_CRYPTO_PASSWORD: std.toString(user_api_crypto_password),
       WEBHOOKS_BASE_URI: std.toString(webhooks_base_uri),
