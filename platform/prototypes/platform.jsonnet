@@ -103,6 +103,7 @@ assert std.isArray(pssPv);
   platform.parts.raven(ravenReplicas) +
   platform.parts.steward(stewardReplicas) +
   platform.parts.webhooks(webhooksReplicas) +
+  platform.parts.handmaiden(certName) +
   platform.parts.wiper() +
   pssPv +
   platform.parts.storageSlugs(pssReplicas, pssLbIp, pssStorage, slugsSubPath, stewardSubPath)

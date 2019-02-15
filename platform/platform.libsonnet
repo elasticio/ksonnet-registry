@@ -1,5 +1,7 @@
 local k = import 'k.libsonnet';
 local version = import 'elasticio/platform/version.json';
+local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
+
 {
   parts:: {
     pullSecret(username, password, email, registry='https://index.docker.io/v1/'):: k.core.v1.secret.new(
@@ -453,7 +455,6 @@ local version = import 'elasticio/platform/version.json';
           },
         },
       },
-
       {
         apiVersion: 'v1',
         kind: 'Service',
@@ -2214,6 +2215,7 @@ local version = import 'elasticio/platform/version.json';
         },
       },
     ],
+    handmaiden(secretName)::handmaiden.handmaiden(secretName, version),
     wiper():: [
       {
         apiVersion: 'batch/v1beta1',

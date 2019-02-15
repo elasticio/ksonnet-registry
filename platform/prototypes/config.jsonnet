@@ -10,6 +10,7 @@
 // @param appdirect_subscription_events_uri string appdirect_subscription_events_uri
 // @param apidocs_service string apidocs_service
 // @param apprunner_image string apprunner_image
+// @param certificate_store_encryption_password string certificate_store_encryption_password
 // @param company_name string company_name
 // @param component_mem_default string component_mem_default
 // @param cookie_max_age string cookie_max_age
@@ -85,6 +86,7 @@ local appdirect_marketplace_url = import 'param://appdirect_marketplace_url';
 local appdirect_subscription_events_uri = import 'param://appdirect_subscription_events_uri';
 local apidocs_service = import 'param://apidocs_service';
 local apprunner_image = import 'param://apprunner_image';
+local certificate_store_encryption_password = import 'param://certificate_store_encryption_password';
 local company_name = import 'param://company_name';
 local component_mem_default = import 'param://component_mem_default';
 local cookie_max_age = import 'param://cookie_max_age';
@@ -169,6 +171,7 @@ local tenant_operator_password = import 'param://tenant_operator_password';
       APPDIRECT_SERVICE_ACCOUNT_USERNAME: std.toString(appdirect_login),
       APPDIRECT_SERVICE_ACCOUNT_PASSWORD: std.toString(appdirect_password),
       APPRUNNER_IMAGE: std.toString(apprunner_image),
+      CERTIFICATE_STORE_ENCRYPTION_PASSWORD: std.toString(certificate_store_encryption_password),
       COMPANY_NAME: std.toString(company_name),
       COMPONENT_MEM_DEFAULT: std.toString(component_mem_default),
       COOKIE_MAX_AGE: std.toString(cookie_max_age),
