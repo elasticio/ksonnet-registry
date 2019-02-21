@@ -483,7 +483,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
         },
       },
     ],
-    fluentd():: [
+    fluentd(execGelfProto, execGelfHost, execGelfPort):: [
       {
         apiVersion: 'v1',
         kind: 'ServiceAccount',
@@ -516,7 +516,21 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
             },
             spec: {
               containers: [
-                {
+                std.prune({
+                  env: [
+                    if execGelfProto then {
+                      name: "GELF_PROTOCOL_EIO_EXEC",
+                      value: execGelfProto
+                    },
+                    if execGelfHost then {
+                      name: "GELF_HOST_EIO_EXEC",
+                      value: execGelfHost
+                    },
+                    if execGelfPort then {
+                      name: "GELF_PORT_EIO_EXEC",
+                      value: execGelfPort
+                    }
+                  ],
                   envFrom: [
                     {
                       secretRef: {
@@ -549,7 +563,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
                       readOnly: true,
                     },
                   ],
-                },
+                }),
               ],
               serviceAccountName: 'eio-fluentd-account',
               dnsPolicy: 'ClusterFirst',

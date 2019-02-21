@@ -38,6 +38,9 @@
 // @optionalParam lookout_replicas number 1 lookout replicas count
 // @optionalParam steward_replicas number 1 steward replicas count
 // @optionalParam ingress_limit_connections number 0 parallel connections limit for ingress
+// @optionalParam eio_exec_gelf_protocol string null gelf address for elasticio exec logs
+// @optionalParam eio_exec_gelf_host string null gelf host for elasticio exec logs
+// @optionalParam eio_exec_gelf_port string null gelf port for elasticio exec logs
 
 local k = import 'k.libsonnet';
 
@@ -80,8 +83,15 @@ local storageSlugsStorageType = import 'param://storage_slugs_storage_type';
 local azAccName = import 'param://azure_storage_account_name';
 local azAccKey = import 'param://azure_storage_account_key';
 local azShareName = import 'param://azure_storage_share';
+local eioExecGelfProto = import 'param://eio_exec_gelf_protocol';
+local eioExecGelfHost = import 'param://eio_exec_gelf_host';
+local eioExecGelfPort = import 'param://eio_exec_gelf_port';
 
 local pssPv = if storageSlugsStorageType == 'nfs' then platform.parts.storageSlugsPVNfs(pvName, nfsServer, nfsShare, pssStorage, pvGid) else if storageSlugsStorageType == 'azure' then platform.parts.storageSlugsPVAzure(pvName, azAccName, azAccKey, azShareName, pssStorage, pvGid) else null;
+
+local execGelfProto = if eioExecGelfProto == 'null' then false else eioExecGelfProto;
+local execGelfHost = if eioExecGelfHost == 'null' then false else eioExecGelfHost;
+local execGelfPort = if eioExecGelfPort == 'null' then false else eioExecGelfPort;
 
 assert std.isArray(pssPv);
 
@@ -94,7 +104,7 @@ assert std.isArray(pssPv);
 ] + platform.parts.admiral() +
   platform.parts.apiDocs(apiDocsImage) +
   platform.parts.api(apiReplicas) +
-  platform.parts.fluentd() +
+  platform.parts.fluentd(execGelfProto, execGelfHost, execGelfPort) +
   platform.parts.frontend(frontendReplicas) +
   platform.parts.gitreceiver() +
   platform.parts.goldDagonCoin(goldDragonCoinReplicas) +
