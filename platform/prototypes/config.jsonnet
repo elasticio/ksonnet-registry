@@ -63,6 +63,8 @@
 // @param team_name string team_name
 // @param tenant_code string tenant_code
 // @param tenant_domain string tenant_domain
+// @param tenant_api_domain string tenant_api_domain
+// @param tenant_webhooks_domain string tenant_webhooks_domain
 // @param tenant_name string tenant_name
 // @param user_amqp_crypto_password string user_amqp_crypto_password
 // @param user_api_crypto_password string user_api_crypto_password
@@ -139,6 +141,8 @@ local suspend_watch_kubernetes_max_events = import 'param://suspend_watch_kubern
 local team_name = import 'param://team_name';
 local tenant_code = import 'param://tenant_code';
 local tenant_domain = import 'param://tenant_domain';
+local tenant_api_domain = import 'param://tenant_api_domain';
+local tenant_webhooks_domain = import 'param://tenant_webhooks_domain';
 local tenant_name = import 'param://tenant_name';
 local user_amqp_crypto_password = import 'param://user_amqp_crypto_password';
 local user_api_crypto_password = import 'param://user_api_crypto_password';
@@ -227,6 +231,8 @@ local tenant_operator_password = import 'param://tenant_operator_password';
       TEAM_NAME: std.toString(team_name),
       TENANT_CODE: std.toString(tenant_code),
       TENANT_DOMAIN: std.toString(tenant_domain),
+      TENANT_API_DOMAIN: std.toString(tenant_api_domain),
+      TENANT_WEBHOOKS_DOMAIN: std.toString(tenant_webhooks_domain),
       TENANT_NAME: std.toString(tenant_name),
       TENANT_OPERATOR_SERVICE_ACCOUNT_USERNAME: std.toString(tenant_operator_login),
       TENANT_OPERATOR_SERVICE_ACCOUNT_PASSWORD: std.toString(tenant_operator_password),
