@@ -518,15 +518,15 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
               containers: [
                 std.prune({
                   env: [
-                    if std.isString(execGelfProto) then {
+                    if execGelfProto then {
                       name: "GELF_PROTOCOL_EIO_EXEC",
                       value: execGelfProto
                     },
-                    if std.isString(execGelfHost) then {
+                    if execGelfHost then {
                       name: "GELF_HOST_EIO_EXEC",
                       value: execGelfHost
                     },
-                    if std.isString(execGelfPort) then {
+                    if execGelfPort then {
                       name: "GELF_PORT_EIO_EXEC",
                       value: execGelfPort
                     }
@@ -538,7 +538,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
                       },
                     },
                   ],
-                  image: 'elasticio/fluentd-kubernetes-gelf:715361b6efb0286df4b102c1564b135601cb64ca',
+                  image: 'elasticio/fluentd-kubernetes-gelf',
                   imagePullPolicy: 'Always',
                   name: 'eio-fluentd',
                   resources: {
@@ -2245,7 +2245,6 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
         spec: {
           schedule: '* * * * *',
           concurrencyPolicy: 'Forbid',
-          startingDeadlineSeconds: 200,
           failedJobsHistoryLimit: 1,
           jobTemplate: {
             metadata: {
@@ -2330,7 +2329,6 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
         spec: {
           schedule: '* * * * *',
           concurrencyPolicy: 'Forbid',
-          startingDeadlineSeconds: 200,
           failedJobsHistoryLimit: 1,
           jobTemplate: {
             metadata: {
@@ -2417,7 +2415,6 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
           schedule: '*/3 * * * *',
           concurrencyPolicy: 'Forbid',
           failedJobsHistoryLimit: 1,
-          startingDeadlineSeconds: 200,
           jobTemplate: {
             metadata: {
               creationTimestamp: null,
@@ -2502,7 +2499,6 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
           schedule: '* * * * *',
           concurrencyPolicy: 'Forbid',
           failedJobsHistoryLimit: 1,
-          startingDeadlineSeconds: 200,
           jobTemplate: {
             metadata: {
               creationTimestamp: null,
@@ -2587,7 +2583,6 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
           schedule: '* * * * *',
           concurrencyPolicy: 'Forbid',
           failedJobsHistoryLimit: 1,
-          startingDeadlineSeconds: 200,
           jobTemplate: {
             metadata: {
               creationTimestamp: null,
@@ -2806,7 +2801,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
                   lifecycle: {
                       preStop: {
                           exec: {
-                              command: ['/bin/sh', '-c', 'sleep 30; /usr/sbin/nginx -s quit']
+                              command: ['/bin/sh', '-c', 'sleep 10; /usr/sbin/nginx -s quit']
                           }
                       }
                   },

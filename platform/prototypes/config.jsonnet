@@ -25,8 +25,6 @@
 // @param external_gateway_uri string external_gateway_uri
 // @param external_steward_uri string external_steward_uri
 // @param frontend_service string frontend_service
-// @param frontend_service_account_username string frontend_service_account_username
-// @param frontend_service_account_password string frontend_service_account_password
 // @param gelf_address string gelf_address
 // @param gelf_host string gelf_host
 // @param gelf_port string gelf_port
@@ -105,8 +103,6 @@ local external_app_uri = import 'param://external_app_uri';
 local external_gateway_uri = import 'param://external_gateway_uri';
 local external_steward_uri = import 'param://external_steward_uri';
 local frontend_service = import 'param://frontend_service';
-local frontend_service_account_username = import 'param://frontend_service_account_username';
-local frontend_service_account_password = import 'param://frontend_service_account_password';
 local gelf_address = import 'param://gelf_address';
 local gelf_host = import 'param://gelf_host';
 local gelf_port = import 'param://gelf_port';
@@ -195,8 +191,6 @@ local tenant_operator_password = import 'param://tenant_operator_password';
       EXTERNAL_GATEWAY_URI: std.toString(external_gateway_uri),
       EXTERNAL_STEWARD_URI: std.toString(external_steward_uri),
       FRONTEND_SERVICE: std.toString(frontend_service),
-      FRONTEND_SERVICE_ACCOUNT_USERNAME: std.toString(frontend_service_account_username),
-      FRONTEND_SERVICE_ACCOUNT_PASSWORD: std.toString(frontend_service_account_password),
       GELF_ADDRESS: std.toString(gelf_address),
       GELF_HOST: std.toString(gelf_host),
       GELF_PORT: std.toString(gelf_port),
