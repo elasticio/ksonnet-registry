@@ -518,15 +518,15 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
               containers: [
                 std.prune({
                   env: [
-                    if execGelfProto then {
+                    if std.isString(execGelfProto) then {
                       name: "GELF_PROTOCOL_EIO_EXEC",
                       value: execGelfProto
                     },
-                    if execGelfHost then {
+                    if std.isString(execGelfHost) then {
                       name: "GELF_HOST_EIO_EXEC",
                       value: execGelfHost
                     },
-                    if execGelfPort then {
+                    if std.isString(execGelfPort) then {
                       name: "GELF_PORT_EIO_EXEC",
                       value: execGelfPort
                     }
@@ -538,7 +538,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
                       },
                     },
                   ],
-                  image: 'elasticio/fluentd-kubernetes-gelf',
+                  image: 'elasticio/fluentd-kubernetes-gelf:715361b6efb0286df4b102c1564b135601cb64ca',
                   imagePullPolicy: 'Always',
                   name: 'eio-fluentd',
                   resources: {
@@ -2245,6 +2245,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
         spec: {
           schedule: '* * * * *',
           concurrencyPolicy: 'Forbid',
+          startingDeadlineSeconds: 200,
           failedJobsHistoryLimit: 1,
           jobTemplate: {
             metadata: {
@@ -2329,6 +2330,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
         spec: {
           schedule: '* * * * *',
           concurrencyPolicy: 'Forbid',
+          startingDeadlineSeconds: 200,
           failedJobsHistoryLimit: 1,
           jobTemplate: {
             metadata: {
@@ -2415,6 +2417,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
           schedule: '*/3 * * * *',
           concurrencyPolicy: 'Forbid',
           failedJobsHistoryLimit: 1,
+          startingDeadlineSeconds: 200,
           jobTemplate: {
             metadata: {
               creationTimestamp: null,
@@ -2499,6 +2502,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
           schedule: '* * * * *',
           concurrencyPolicy: 'Forbid',
           failedJobsHistoryLimit: 1,
+          startingDeadlineSeconds: 200,
           jobTemplate: {
             metadata: {
               creationTimestamp: null,
@@ -2583,6 +2587,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
           schedule: '* * * * *',
           concurrencyPolicy: 'Forbid',
           failedJobsHistoryLimit: 1,
+          startingDeadlineSeconds: 200,
           jobTemplate: {
             metadata: {
               creationTimestamp: null,
@@ -2614,6 +2619,91 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
                         {
                           name: 'APP_NAME',
                           value: 'wiper:suspend-contracts',
+                        },
+                        {
+                          name: 'ELASTICIO_API_URI',
+                          valueFrom: {
+                            secretKeyRef: {
+                              key: 'API_URI',
+                              name: 'elasticio',
+                            },
+                          },
+                        },
+                      ],
+                      envFrom: [
+                        {
+                          secretRef: {
+                            name: 'elasticio',
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                  imagePullSecrets: [
+                    {
+                      name: 'elasticiodevops',
+                    },
+                  ],
+                  restartPolicy: 'OnFailure',
+                  nodeSelector: {
+                    'elasticio-role': 'platform',
+                  },
+                },
+              },
+            },
+          },
+          successfulJobsHistoryLimit: 3,
+          suspend: false,
+        },
+        status: {},
+      },
+      {
+        apiVersion: 'batch/v1beta1',
+        kind: 'CronJob',
+        metadata: {
+          name: 'stop-limited-flows',
+          namespace: 'platform',
+          labels: {
+            app: 'wiper',
+            subapp: 'stop-limited-flows',
+          },
+        },
+        spec: {
+          schedule: '*/10 * * * *',
+          concurrencyPolicy: 'Forbid',
+          failedJobsHistoryLimit: 1,
+          startingDeadlineSeconds: 200,
+          jobTemplate: {
+            metadata: {
+              creationTimestamp: null,
+              labels: {
+                app: 'wiper',
+                subapp: 'stop-limited-flows',
+              },
+            },
+            spec: {
+              template: {
+                metadata: {
+                  labels: {
+                    app: 'wiper',
+                    subapp: 'stop-limited-flows',
+                  },
+                },
+                spec: {
+                  containers: [
+                    {
+                      name: 'stop-limited-flows',
+                      image: 'elasticio/wiper:' + version,
+                      imagePullPolicy: 'IfNotPresent',
+                      args: [
+                        'node',
+                        '/app/index.js',
+                        'stop-limited-flows',
+                      ],
+                      env: [
+                        {
+                          name: 'APP_NAME',
+                          value: 'wiper:stop-limited-flows',
                         },
                         {
                           name: 'ELASTICIO_API_URI',
@@ -2801,7 +2891,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
                   lifecycle: {
                       preStop: {
                           exec: {
-                              command: ['/bin/sh', '-c', 'sleep 10; /usr/sbin/nginx -s quit']
+                              command: ['/bin/sh', '-c', 'sleep 30; /usr/sbin/nginx -s quit']
                           }
                       }
                   },
