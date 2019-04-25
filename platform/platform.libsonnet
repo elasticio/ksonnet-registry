@@ -2,6 +2,32 @@ local k = import 'k.libsonnet';
 local version = import 'elasticio/platform/version.json';
 local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
 
+local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
+  affinity: {
+		podAntiAffinity: {
+			preferredDuringSchedulingIgnoredDuringExecution: [
+				{
+					weight: 100,
+					podAffinityTerm: {
+						labelSelector: {
+							matchExpressions: [
+								{
+									key: appLabelKey,
+									operator: 'In',
+									values: [
+										appLabelValue
+									]
+								}
+							]
+						},
+						topologyKey: 'kubernetes.io/hostname'
+					}
+				}
+			]
+		}
+	}
+};
+
 {
   parts:: {
     pullSecret(username, password, email, registry='https://index.docker.io/v1/'):: k.core.v1.secret.new(
@@ -139,9 +165,41 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
               ],
               restartPolicy: 'Always',
               terminationGracePeriodSeconds: 30,
-              nodeSelector: {
-                'elasticio-role': 'platform',
-              },
+              affinity: {
+                nodeAffinity: {
+                  requiredDuringSchedulingIgnoredDuringExecution: {
+                    nodeSelectorTerms: [
+                      {
+                        matchExpressions: [
+                          {
+                            key: 'elasticio-role',
+                            operator: 'NotIn',
+                            values: [
+                              'tasks'
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  preferredDuringSchedulingIgnoredDuringExecution: [
+                    {
+                      weight: 1,
+                      preference: {
+                        matchExpressions: [
+                          {
+                            key: 'eio-app',
+                            operator: 'In',
+                            'values': [
+                              'admiral'
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
             },
           },
           strategy: {
@@ -318,22 +376,24 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
           },
         },
         spec: {
+          type: 'ClusterIP',
+          sessionAffinity: 'None',
           ports: [
             {
               name: '8000',
               port: 8000,
               protocol: 'TCP',
               targetPort: 8000,
+              nodePort: null
             },
           ],
           selector: {
             app: 'api-docs',
-          },
-          type: 'NodePort',
+          }
         },
       },
     ],
-    api(replicas):: [
+    api(replicas, cpuRequest = 0.1, cpuLimit = 1):: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
@@ -358,7 +418,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
                 app: 'api',
               },
             },
-            spec: {
+            spec: podAffinitySpreadNodes('api') + {
               containers: [
                 {
                   name: 'api',
@@ -419,11 +479,11 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
                   resources: {
                     limits: {
                       memory: '2048Mi',
-                      cpu: 2,
+                      cpu: cpuLimit,
                     },
                     requests: {
                       memory: '512Mi',
-                      cpu: 0.1,
+                      cpu: cpuRequest,
                     },
                   },
                   terminationMessagePath: '/dev/termination-log',
@@ -466,20 +526,20 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
           namespace: 'platform',
         },
         spec: {
-          externalTrafficPolicy: 'Cluster',
+          type: 'ClusterIP',
           ports: [
             {
               name: '9000',
               port: 9000,
               protocol: 'TCP',
               targetPort: 9000,
+              nodePort: null
             },
           ],
           selector: {
             app: 'api',
           },
-          sessionAffinity: 'None',
-          type: 'NodePort',
+          sessionAffinity: 'None'
         },
       },
     ],
@@ -676,7 +736,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
                 app: 'frontend',
               },
             },
-            spec: {
+            spec: podAffinitySpreadNodes('frontend') + {
               containers: [
                 {
                   name: 'frontend',
@@ -798,18 +858,18 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
           namespace: 'platform',
         },
         spec: {
-          externalTrafficPolicy: 'Cluster',
+          type: 'ClusterIP',
           ports: [
             {
               port: 8000,
               protocol: 'TCP',
               targetPort: 8000,
+              nodePort: null
             },
           ],
           selector: {
             app: 'frontend',
-          },
-          type: 'NodePort',
+          }
         },
       },
     ],
@@ -977,7 +1037,8 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
           namespace: 'platform',
         },
         spec: {
-          type: 'NodePort',
+          type: 'ClusterIP',
+          sessionAffinity: 'None',
           selector: {
             app: 'gitreceiver',
           },
@@ -987,6 +1048,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
               port: 4022,
               protocol: 'TCP',
               targetPort: 4022,
+              nodePort: null
             },
           ],
         },
@@ -1017,7 +1079,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
                 app: 'gold-dragon-coin',
               },
             },
-            spec: {
+            spec: podAffinitySpreadNodes('gold-dragon-coin') + {
               containers: [
                 {
                   name: 'gold-dragon-coin',
@@ -1110,18 +1172,20 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
           namespace: 'platform',
         },
         spec: {
+          type: 'ClusterIP',
+          sessionAffinity: 'None',
           ports: [
             {
               name: '9000',
               port: 9000,
               protocol: 'TCP',
               targetPort: 9000,
+              nodePort: null
             },
           ],
           selector: {
             app: 'gold-dragon-coin',
-          },
-          type: 'ClusterIP',
+          }
         },
       },
     ],
@@ -1285,7 +1349,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
                 app: 'ingress-nginx',
               },
             },
-            spec: {
+            spec: podAffinitySpreadNodes('ingress-nginx') + {
               containers: [
                 {
                   args: [
@@ -1619,7 +1683,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
               app: 'lookout',
             },
           },
-          spec: {
+          spec: podAffinitySpreadNodes('lookout') + {
             containers: [
               {
                 name: 'lookout',
@@ -1716,7 +1780,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
                 app: 'raven',
               },
             },
-            spec: {
+            spec: podAffinitySpreadNodes('raven') + {
               containers: [
                 {
                   name: 'raven',
@@ -1806,20 +1870,20 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
           namespace: 'platform',
         },
         spec: {
-          externalTrafficPolicy: 'Cluster',
+          type: 'ClusterIP',
+          sessionAffinity: 'None',
           ports: [
             {
               name: '8070',
               port: 8070,
               protocol: 'TCP',
               targetPort: 3000,
+              nodePort: null
             },
           ],
           selector: {
             app: 'raven',
-          },
-          sessionAffinity: 'None',
-          type: 'NodePort',
+          }
         },
       },
     ],
@@ -1948,7 +2012,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
                 app: 'steward',
               },
             },
-            spec: {
+            spec: podAffinitySpreadNodes('steward') + {
               containers: [
                 {
                   name: 'steward',
@@ -2060,20 +2124,20 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
           namespace: 'platform',
         },
         spec: {
-          externalTrafficPolicy: 'Cluster',
+          type: 'ClusterIP',
+          sessionAffinity: 'None',
           ports: [
             {
               name: '8200',
               port: 8200,
               protocol: 'TCP',
               targetPort: 3000,
+              nodePort: null
             },
           ],
           selector: {
             app: 'steward',
-          },
-          sessionAffinity: 'None',
-          type: 'NodePort',
+          }
         },
         status: {
           loadBalancer: {},
@@ -2105,7 +2169,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
                 app: 'webhooks',
               },
             },
-            spec: {
+            spec: podAffinitySpreadNodes('webhooks') + {
               containers: [
                 {
                   name: 'webhooks',
@@ -2209,20 +2273,20 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
           namespace: 'platform',
         },
         spec: {
-          externalTrafficPolicy: 'Cluster',
+          type: 'ClusterIP',
+          sessionAffinity: 'None',
           ports: [
             {
               name: '5000',
               port: 5000,
               protocol: 'TCP',
               targetPort: 5000,
+              nodePort: null
             },
           ],
           selector: {
             app: 'webhooks',
-          },
-          sessionAffinity: 'None',
-          type: 'NodePort',
+          }
         },
         status: {
           loadBalancer: {},
@@ -2837,7 +2901,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
                 app: 'platform-storage-slugs',
               },
             },
-            spec: {
+            spec: podAffinitySpreadNodes('platform-storage-slugs') + {
               containers: [
                 {
                   name: 'platform-storage-slugs',
@@ -2943,7 +3007,8 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
           namespace: 'platform',
         },
         spec: {
-          type: 'NodePort',
+          type: 'ClusterIP',
+          sessionAffinity: 'None',
           selector: {
             app: 'platform-storage-slugs',
           },
@@ -2953,6 +3018,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
               port: 9999,
               protocol: 'TCP',
               targetPort: 8000,
+              nodePort: null
             },
           ],
         },
@@ -2973,6 +3039,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
         spec: {
           type: 'LoadBalancer',
           loadBalancerIP: lbIp,
+          externalTrafficPolicy: 'Local',
           selector: {
             app: 'platform-storage-slugs',
           },

@@ -12,7 +12,12 @@
 // @param apprunner_image string apprunner_image
 // @param certificate_store_encryption_password string certificate_store_encryption_password
 // @param company_name string company_name
+// @param component_cpu string component_cpu
+// @param component_cpu_limit string component_cpu_limit
 // @param component_mem_default string component_mem_default
+// @param component_mem_default_limit string component_mem_default_limit
+// @param component_mem_java string component_mem_java
+// @param component_mem_java_limit string component_mem_java_limit
 // @param cookie_max_age string cookie_max_age
 // @param debug_data_size_limit_mb string debug_data_size_limit_mb
 // @param default_per_contract_quota string default_per_contract_quota
@@ -92,7 +97,12 @@ local apidocs_service = import 'param://apidocs_service';
 local apprunner_image = import 'param://apprunner_image';
 local certificate_store_encryption_password = import 'param://certificate_store_encryption_password';
 local company_name = import 'param://company_name';
+local component_cpu = import 'param://component_cpu';
+local component_cpu_limit = import 'param://component_cpu_limit';
 local component_mem_default = import 'param://component_mem_default';
+local component_mem_default_limit = import 'param://component_mem_default_limit';
+local component_mem_java = import 'param://component_mem_java';
+local component_mem_java_limit = import 'param://component_mem_java_limit';
 local cookie_max_age = import 'param://cookie_max_age';
 local debug_data_size_limit_mb = import 'param://debug_data_size_limit_mb';
 local default_per_contract_quota = import 'param://default_per_contract_quota';
@@ -181,7 +191,12 @@ local tenant_operator_password = import 'param://tenant_operator_password';
       APPRUNNER_IMAGE: std.toString(apprunner_image),
       CERTIFICATE_STORE_ENCRYPTION_PASSWORD: std.toString(certificate_store_encryption_password),
       COMPANY_NAME: std.toString(company_name),
+      COMPONENT_CPU: std.toString(component_cpu),
+      COMPONENT_CPU_LIMIT: std.toString(component_cpu_limit),
       COMPONENT_MEM_DEFAULT: std.toString(component_mem_default),
+      COMPONENT_MEM_DEFAULT_LIMIT: std.toString(component_mem_default_limit),
+      COMPONENT_MEM_JAVA: std.toString(component_mem_java),
+      COMPONENT_MEM_JAVA_LIMIT: std.toString(component_mem_java_limit),
       COOKIE_MAX_AGE: std.toString(cookie_max_age),
       DEBUG_DATA_SIZE_LIMIT_MB: std.toString(debug_data_size_limit_mb),
       DEFAULT_DRIVER_BACKEND: 'kubernetes',
