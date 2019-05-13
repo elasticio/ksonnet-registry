@@ -58,6 +58,7 @@
 // @param rabbitmq_virtual_host string rabbitmq_virtual_host
 // @param rabbitmq_max_messages_per_queue string rabbitmq_max_messages_per_queue
 // @param rabbitmq_max_messages_mbytes_per_queue string rabbitmq_max_messages_mbytes_per_queue
+// @optionalParam rabbitmq_extend_all_queues_policy string {} rabbitmq_extend_all_queues_policy
 // @param raven_uri string raven_uri
 // @param service_account_username string service_account_username
 // @param service_account_password string service_account_password
@@ -143,6 +144,7 @@ local rabbitmq_uri_sailor = import 'param://rabbitmq_uri_sailor';
 local rabbitmq_virtual_host = import 'param://rabbitmq_virtual_host';
 local rabbitmq_max_messages_per_queue = import 'param://rabbitmq_max_messages_per_queue';
 local rabbitmq_max_messages_mbytes_per_queue = import 'param://rabbitmq_max_messages_mbytes_per_queue';
+local rabbitmq_extend_all_queues_policy = import 'param://rabbitmq_extend_all_queues_policy';
 local raven_uri = import 'param://raven_uri';
 local service_account_username = import 'param://service_account_username';
 local service_account_password = import 'param://service_account_password';
@@ -240,6 +242,7 @@ local tenant_operator_password = import 'param://tenant_operator_password';
       RABBITMQ_VIRTUAL_HOST: std.toString(rabbitmq_virtual_host),
       RABBITMQ_MAX_MESSAGES_PER_QUEUE: std.toString(rabbitmq_max_messages_per_queue),
       RABBITMQ_MAX_MESSAGES_MBYTES_PER_QUEUE: std.toString(rabbitmq_max_messages_mbytes_per_queue),
+      RABBITMQ_EXTEND_ALL_QUEUES_POLICY: std.toString(rabbitmq_extend_all_queues_policy),
       RAVEN_URI: std.toString(raven_uri),
       SERVICE_ACCOUNT_USERNAME: std.toString(service_account_username),
       SERVICE_ACCOUNT_PASSWORD: std.toString(service_account_password),
