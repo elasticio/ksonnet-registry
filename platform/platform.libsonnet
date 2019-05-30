@@ -1,32 +1,33 @@
-local k = import 'k.libsonnet';
-local version = import 'elasticio/platform/version.json';
 local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
+local maester = import 'elasticio/platform/apps/maester.libsonnet';
 local quotaservice = import 'elasticio/platform/apps/quotaservice.libsonnet';
+local version = import 'elasticio/platform/version.json';
+local k = import 'k.libsonnet';
 
-local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
+local podAffinitySpreadNodes(appLabelValue, appLabelKey='app') = {
   affinity: {
-		podAntiAffinity: {
-			preferredDuringSchedulingIgnoredDuringExecution: [
-				{
-					weight: 100,
-					podAffinityTerm: {
-						labelSelector: {
-							matchExpressions: [
-								{
-									key: appLabelKey,
-									operator: 'In',
-									values: [
-										appLabelValue
-									]
-								}
-							]
-						},
-						topologyKey: 'kubernetes.io/hostname'
-					}
-				}
-			]
-		}
-	}
+    podAntiAffinity: {
+      preferredDuringSchedulingIgnoredDuringExecution: [
+        {
+          weight: 100,
+          podAffinityTerm: {
+            labelSelector: {
+              matchExpressions: [
+                {
+                  key: appLabelKey,
+                  operator: 'In',
+                  values: [
+                    appLabelValue,
+                  ],
+                },
+              ],
+            },
+            topologyKey: 'kubernetes.io/hostname',
+          },
+        },
+      ],
+    },
+  },
 };
 
 {
@@ -42,7 +43,7 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
               email: email,
               auth: std.base64(std.toString(username + ':' + password)),
             },
-          }
+          },
         })),
       },
       type='kubernetes.io/dockerconfigjson'
@@ -176,12 +177,12 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
                             key: 'elasticio-role',
                             operator: 'NotIn',
                             values: [
-                              'tasks'
-                            ]
-                          }
-                        ]
-                      }
-                    ]
+                              'tasks',
+                            ],
+                          },
+                        ],
+                      },
+                    ],
                   },
                   preferredDuringSchedulingIgnoredDuringExecution: [
                     {
@@ -191,16 +192,16 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
                           {
                             key: 'eio-app',
                             operator: 'In',
-                            'values': [
-                              'admiral'
-                            ]
-                          }
-                        ]
-                      }
-                    }
-                  ]
-                }
-              }
+                            values: [
+                              'admiral',
+                            ],
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+              },
             },
           },
           strategy: {
@@ -235,7 +236,7 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
             ],
             resources: [
               'jobs',
-              'pods'
+              'pods',
             ],
             verbs: [
               'create',
@@ -385,16 +386,16 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
               port: 8000,
               protocol: 'TCP',
               targetPort: 8000,
-              nodePort: null
+              nodePort: null,
             },
           ],
           selector: {
             app: 'api-docs',
-          }
+          },
         },
       },
     ],
-    api(replicas, cpuRequest = 0.1, cpuLimit = 1):: [
+    api(replicas, cpuRequest=0.1, cpuLimit=1):: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
@@ -534,13 +535,13 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
               port: 9000,
               protocol: 'TCP',
               targetPort: 9000,
-              nodePort: null
+              nodePort: null,
             },
           ],
           selector: {
             app: 'api',
           },
-          sessionAffinity: 'None'
+          sessionAffinity: 'None',
         },
       },
     ],
@@ -580,17 +581,17 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
                 std.prune({
                   env: [
                     if std.isString(execGelfProto) then {
-                      name: "GELF_PROTOCOL_EIO_EXEC",
-                      value: execGelfProto
+                      name: 'GELF_PROTOCOL_EIO_EXEC',
+                      value: execGelfProto,
                     },
                     if std.isString(execGelfHost) then {
-                      name: "GELF_HOST_EIO_EXEC",
-                      value: execGelfHost
+                      name: 'GELF_HOST_EIO_EXEC',
+                      value: execGelfHost,
                     },
                     if std.isString(execGelfPort) then {
-                      name: "GELF_PORT_EIO_EXEC",
-                      value: execGelfPort
-                    }
+                      name: 'GELF_PORT_EIO_EXEC',
+                      value: execGelfPort,
+                    },
                   ],
                   envFrom: [
                     {
@@ -865,12 +866,12 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
               port: 8000,
               protocol: 'TCP',
               targetPort: 8000,
-              nodePort: null
+              nodePort: null,
             },
           ],
           selector: {
             app: 'frontend',
-          }
+          },
         },
       },
     ],
@@ -1049,7 +1050,7 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
               port: 4022,
               protocol: 'TCP',
               targetPort: 4022,
-              nodePort: null
+              nodePort: null,
             },
           ],
         },
@@ -1181,12 +1182,12 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
               port: 9000,
               protocol: 'TCP',
               targetPort: 9000,
-              nodePort: null
+              nodePort: null,
             },
           ],
           selector: {
             app: 'gold-dragon-coin',
-          }
+          },
         },
       },
     ],
@@ -1568,7 +1569,7 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
           annotations: {
             'kubernetes.io/ingress.class': 'nginx',
             'nginx.ingress.kubernetes.io/affinity': 'cookie',
-            'nginx.ingress.kubernetes.io/proxy-body-size': '10m'
+            'nginx.ingress.kubernetes.io/proxy-body-size': '10m',
           } + if limitConnections > 0 then { 'nginx.ingress.kubernetes.io/limit-connections': std.toString(limitConnections) } else {},
         },
         spec: {
@@ -1888,12 +1889,12 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
               port: 8070,
               protocol: 'TCP',
               targetPort: 3000,
-              nodePort: null
+              nodePort: null,
             },
           ],
           selector: {
             app: 'raven',
-          }
+          },
         },
       },
     ],
@@ -2142,12 +2143,12 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
               port: 8200,
               protocol: 'TCP',
               targetPort: 3000,
-              nodePort: null
+              nodePort: null,
             },
           ],
           selector: {
             app: 'steward',
-          }
+          },
         },
         status: {
           loadBalancer: {},
@@ -2291,20 +2292,20 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
               port: 5000,
               protocol: 'TCP',
               targetPort: 5000,
-              nodePort: null
+              nodePort: null,
             },
           ],
           selector: {
             app: 'webhooks',
-          }
+          },
         },
         status: {
           loadBalancer: {},
         },
       },
     ],
-    handmaiden(secretName)::handmaiden.handmaiden(secretName, version),
-    quotaservice(secretName)::quotaservice.quotaservice(secretName, version),
+    handmaiden(secretName):: handmaiden.handmaiden(secretName, version),
+    quotaservice(secretName):: quotaservice.quotaservice(secretName, version),
     wiper(quotaServiceDisabled):: [
       {
         apiVersion: 'batch/v1beta1',
@@ -2903,7 +2904,7 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
         status: {},
       },
     ],
-    storageSlugsPVNfs(pvName, server, path, storage = '1Ti', pvGid = 1502):: [{
+    storageSlugsPVNfs(pvName, server, path, storage='1Ti', pvGid=1502):: [{
       kind: 'PersistentVolume',
       apiVersion: 'v1',
       metadata: {
@@ -2927,19 +2928,19 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
         },
       },
     }],
-    storageSlugsPVAzure(pvName, accountName, accountKey, shareName, storage = '1Ti', pvGid = 1502):: [
+    storageSlugsPVAzure(pvName, accountName, accountKey, shareName, storage='1Ti', pvGid=1502):: [
       {
         apiVersion: 'v1',
         data: {
-            azurestorageaccountkey: std.base64(accountKey),
-            azurestorageaccountname: std.base64(accountName)
+          azurestorageaccountkey: std.base64(accountKey),
+          azurestorageaccountname: std.base64(accountName),
         },
         kind: 'Secret',
         metadata: {
-            name: 'azure-storage-secret',
-            namespace: 'platform',
+          name: 'azure-storage-secret',
+          namespace: 'platform',
         },
-        type: 'Opaque'
+        type: 'Opaque',
       },
       {
         kind: 'PersistentVolume',
@@ -2960,19 +2961,19 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
             'ReadWriteMany',
           ],
           azureFile: {
-              secretName: 'azure-storage-secret',
-              secretNamespace: null,
-              shareName: shareName
+            secretName: 'azure-storage-secret',
+            secretNamespace: null,
+            shareName: shareName,
           },
           mountOptions: [
-              'dir_mode=0775',
-              'file_mode=0775',
-              'gid=' + pvGid
-          ]
-        }
-      }
+            'dir_mode=0775',
+            'file_mode=0775',
+            'gid=' + pvGid,
+          ],
+        },
+      },
     ],
-    storageSlugs(replicas, lbIp, storage = '1Ti', slugsSubPath = 'slugs', stewardSubPath = 'steward'):: [
+    storageSlugs(replicas, lbIp, storage='1Ti', slugsSubPath='slugs', stewardSubPath='steward'):: [
       {
         apiVersion: 'apps/v1',
         kind: 'Deployment',
@@ -3049,11 +3050,11 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
                     },
                   ],
                   lifecycle: {
-                      preStop: {
-                          exec: {
-                              command: ['/bin/sh', '-c', 'sleep 30; /usr/sbin/nginx -s quit']
-                          }
-                      }
+                    preStop: {
+                      exec: {
+                        command: ['/bin/sh', '-c', 'sleep 30; /usr/sbin/nginx -s quit'],
+                      },
+                    },
                   },
                   terminationMessagePath: '/dev/termination-log',
                   terminationMessagePolicy: 'File',
@@ -3114,7 +3115,7 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
               port: 9999,
               protocol: 'TCP',
               targetPort: 8000,
-              nodePort: null
+              nodePort: null,
             },
           ],
         },
@@ -3147,7 +3148,7 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
               targetPort: 8000,
             },
           ],
-        }
+        },
       },
       {
         kind: 'PersistentVolumeClaim',
@@ -3168,81 +3169,120 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey = 'app') = {
           },
         },
       },
-    ]
+    ],
+    gendry():: {
+      apiVersion: 'batch/v1',
+      kind: 'Job',
+      metadata: {
+        name: 'gendry',
+        namespace: 'platform',
+        labels: {
+          app: 'gendry',
+        },
+      },
+      spec: {
+        backoffLimit: 0,
+        template: {
+          metadata: {
+            name: 'gendry',
+            labels: {
+              app: 'gendry',
+            },
+          },
+          spec: {
+            restartPolicy: 'Never',
+            containers: [
+              {
+                name: 'gendry',
+                image: 'elasticio/gendry:' + version,
+                envFrom: [
+                  {
+                    secretRef: {
+                      name: 'elasticio',
+                    },
+                  },
+                ],
+                env: [
+                  {
+                    name: 'APP_NAME',
+                    value: 'gendry',
+                  },
+                  {
+                    name: 'LOG_LEVEL',
+                    value: 'trace',
+                  },
+                  {
+                    name: 'EMAIL',
+                    valueFrom: {
+                      secretKeyRef: {
+                        name: 'elasticio',
+                        key: 'TENANT_ADMIN_EMAIL',
+                      },
+                    },
+                  },
+                  {
+                    name: 'PASSWORD',
+                    valueFrom: {
+                      secretKeyRef: {
+                        name: 'elasticio',
+                        key: 'TENANT_ADMIN_PASSWORD',
+                      },
+                    },
+                  },
+                ],
+                imagePullPolicy: 'Always',
+              },
+            ],
+            imagePullSecrets: [
+              {
+                name: 'elasticiodevops',
+              },
+            ],
+            nodeSelector: {
+              'elasticio-role': 'platform',
+            },
+          },
+        },
+      },
+    },
+    maester(
+      port = 3002,
+      redisConfig={
+        name: 'maester',
+        sentinels: [{
+          host: 'maester-redis-ha',
+          port: 26379,
+        }],
+      },
+      maesterReplicas = 3,
+      terminationGracePeriodSeconds = 30,
+      appName = 'maester',
+    ):: maester.app(
+      version,
+      port,
+      redisConfig,
+      maesterReplicas,
+      terminationGracePeriodSeconds,
+      appName
+    ),
+    maesterRedis(
+      redisClusterName='maester-cluster',
+      redisAppName='maester-redis-ha',
+      redisReplicas=3,
+      maxMemGB=1,
+      storageSize='1Ti',
+      redisDataDir='/data',
+      redisConfigDir='/readonly-config',
+      redisConfigMapName=redisAppName + '-configmap',
+    ):: maester.redis(
+      redisClusterName,
+      redisAppName,
+      redisReplicas,
+      maxMemGB,
+      storageSize,
+      redisDataDir,
+      redisConfigDir,
+      redisConfigMapName,
+    ),
   },
-  gendry():: {
-    apiVersion: 'batch/v1',
-    kind: 'Job',
-    metadata: {
-      name: 'gendry',
-      namespace: 'platform',
-      labels: {
-        app: 'gendry',
-      },
-    },
-    spec: {
-      backoffLimit: 0,
-      template: {
-        metadata: {
-          name: 'gendry',
-          labels: {
-            app: 'gendry',
-          },
-        },
-        spec: {
-          restartPolicy: 'Never',
-          containers: [
-            {
-              name: 'gendry',
-              image: 'elasticio/gendry:' + version,
-              envFrom: [
-                {
-                  secretRef: {
-                    name: 'elasticio',
-                  },
-                },
-              ],
-              env: [
-                {
-                  name: 'APP_NAME',
-                  value: 'gendry',
-                },
-                {
-                  name: 'LOG_LEVEL',
-                  value: 'trace',
-                },
-                {
-                  name: 'EMAIL',
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: 'elasticio',
-                      key: 'TENANT_ADMIN_EMAIL',
-                    },
-                  },
-                },
-                {
-                  name: 'PASSWORD',
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: 'elasticio',
-                      key: 'TENANT_ADMIN_PASSWORD',
-                    },
-                  },
-                },
-              ],
-              imagePullPolicy: 'Always',
-            },
-          ],
-          imagePullSecrets: [
-            {
-              name: 'elasticiodevops',
-            },
-          ],
-          nodeSelector: {
-            'elasticio-role': 'platform',
-          },
-        },
-      },
-    },
-  }
 }
