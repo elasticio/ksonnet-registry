@@ -12,6 +12,7 @@
 // @param app_domain string app domain
 // @param api_domain string api domain
 // @param webhooks_domain string webhooks domain
+// @optionalParam quota_service_uri string  quota_service_uri
 // @optionalParam gitreceiver_ssh_port number 22 gitreceiver ssh port
 // @param ingress_cert_name string ingress tls cert secret name
 // @param ingress_cert_crt string ingress base64 encoded tls cert certificate
@@ -90,13 +91,14 @@ local eioExecGelfHost = import 'param://eio_exec_gelf_host';
 local eioExecGelfPort = import 'param://eio_exec_gelf_port';
 local apiCpuRequest = import 'param://api_cpu_request';
 local apiCpuLimit = import 'param://api_cpu_limit';
-
+local quota_service_uri = import 'param://quota_service_uri';
 
 local pssPv = if storageSlugsStorageType == 'nfs' then platform.parts.storageSlugsPVNfs(pvName, nfsServer, nfsShare, pssStorage, pvGid) else if storageSlugsStorageType == 'azure' then platform.parts.storageSlugsPVAzure(pvName, azAccName, azAccKey, azShareName, pssStorage, pvGid) else null;
 
 local execGelfProto = if eioExecGelfProto == 'null' then false else eioExecGelfProto;
 local execGelfHost = if eioExecGelfHost == 'null' then false else eioExecGelfHost;
 local execGelfPort = if eioExecGelfPort == 'null' then false else eioExecGelfPort;
+local quotaServiceDisabled = quota_service_uri == '';
 
 assert std.isArray(pssPv);
 
@@ -119,6 +121,7 @@ assert std.isArray(pssPv);
   platform.parts.steward(stewardReplicas) +
   platform.parts.webhooks(webhooksReplicas) +
   platform.parts.handmaiden(certName) +
-  platform.parts.wiper() +
+  if quotaServiceDisabled then [] else platform.parts.quotaservice(certName) +
+  platform.parts.wiper(quotaServiceDisabled) +
   pssPv +
   platform.parts.storageSlugs(pssReplicas, pssLbIp, pssStorage, slugsSubPath, stewardSubPath)

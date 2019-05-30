@@ -43,12 +43,15 @@
 // @param intercom_secret_key string intercom_secret_key
 // @param kubernetes_rabbitmq_uri_sailor string kubernetes_rabbitmq_uri_sailor
 // @param kubernetes_slugs_base_url string kubernetes_slugs_base_url
+// @optionalParam lookout_prefetch_count string 10 lookout_prefetch_count
 // @param mandrill_api_key string mandrill_api_key
 // @param message_crypto_iv string message_crypto_iv
 // @param message_crypto_password string message_crypto_password
 // @param mongo_uri string mongo_uri
 // @param petstore_api_host string petstore_api_host
 // @param predefined_users string predefined_users
+// @optionalParam quota_service_uri string  quota_service_uri
+// @param quota_service_mongo_uri string quota_service_mongo_uri
 // @param quotas_uri string quotas_uri
 // @param rabbitmq_stats_login string rabbitmq_stats_login
 // @param rabbitmq_stats_pass string rabbitmq_stats_pass
@@ -129,12 +132,15 @@ local intercom_app_id = import 'param://intercom_app_id';
 local intercom_secret_key = import 'param://intercom_secret_key';
 local kubernetes_rabbitmq_uri_sailor = import 'param://kubernetes_rabbitmq_uri_sailor';
 local kubernetes_slugs_base_url = import 'param://kubernetes_slugs_base_url';
+local lookout_prefetch_count = import 'param://lookout_prefetch_count';
 local mandrill_api_key = import 'param://mandrill_api_key';
 local message_crypto_iv = import 'param://message_crypto_iv';
 local message_crypto_password = import 'param://message_crypto_password';
 local mongo_uri = import 'param://mongo_uri';
 local petstore_api_host = import 'param://petstore_api_host';
 local predefined_users = import 'param://predefined_users';
+local quota_service_uri = import 'param://quota_service_uri';
+local quota_service_mongo_uri = import 'param://quota_service_mongo_uri';
 local quotas_uri = import 'param://quotas_uri';
 local rabbitmq_stats_login = import 'param://rabbitmq_stats_login';
 local rabbitmq_stats_pass = import 'param://rabbitmq_stats_pass';
@@ -225,6 +231,7 @@ local tenant_operator_password = import 'param://tenant_operator_password';
       INTERCOM_SECRET_KEY: std.toString(intercom_secret_key),
       KUBERNETES_RABBITMQ_URI_SAILOR: std.toString(kubernetes_rabbitmq_uri_sailor),
       KUBERNETES_SLUGS_BASE_URL: std.toString(kubernetes_slugs_base_url),
+      LOOKOUT_PREFETCH_COUNT: std.toString(lookout_prefetch_count),
       MANDRILL_API_KEY: std.toString(mandrill_api_key),
       MARATHON_URI: 'deprecated',
       MESSAGE_CRYPTO_IV: std.toString(message_crypto_iv),
@@ -233,6 +240,8 @@ local tenant_operator_password = import 'param://tenant_operator_password';
       NODE_ENV: 'production',
       PETSTORE_API_HOST: std.toString(petstore_api_host),
       PREDEFINED_USERS: std.toString(predefined_users),
+      [if quota_service_uri != '' then 'QUOTA_SERVICE_URI']: std.toString(quota_service_uri),
+      QUOTA_SERVICE_MONGO_URI: std.toString(quota_service_mongo_uri),
       QUOTAS_URI: std.toString(quotas_uri),
       RABBITMQ_STATS_LOGIN: std.toString(rabbitmq_stats_login),
       RABBITMQ_STATS_PASS: std.toString(rabbitmq_stats_pass),
