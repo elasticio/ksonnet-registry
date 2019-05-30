@@ -51,7 +51,7 @@
 // @param petstore_api_host string petstore_api_host
 // @param predefined_users string predefined_users
 // @optionalParam quota_service_uri string  quota_service_uri
-// @param quota_service_mongo_uri string quota_service_mongo_uri
+// @optionalParam quota_service_mongo_uri string  quota_service_mongo_uri
 // @param quotas_uri string quotas_uri
 // @param rabbitmq_stats_login string rabbitmq_stats_login
 // @param rabbitmq_stats_pass string rabbitmq_stats_pass
@@ -244,7 +244,7 @@ local maester_jwt_secret = import 'param://maester_jwt_secret';
       PETSTORE_API_HOST: std.toString(petstore_api_host),
       PREDEFINED_USERS: std.toString(predefined_users),
       [if quota_service_uri != '' then 'QUOTA_SERVICE_URI']: std.toString(quota_service_uri),
-      QUOTA_SERVICE_MONGO_URI: std.toString(quota_service_mongo_uri),
+      [if quota_service_mongo_uri != '' then 'QUOTA_SERVICE_MONGO_URI']: std.toString(quota_service_mongo_uri),
       QUOTAS_URI: std.toString(quotas_uri),
       RABBITMQ_STATS_LOGIN: std.toString(rabbitmq_stats_login),
       RABBITMQ_STATS_PASS: std.toString(rabbitmq_stats_pass),

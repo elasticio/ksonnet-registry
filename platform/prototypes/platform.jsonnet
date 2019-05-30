@@ -133,7 +133,7 @@ local maesterRedis = if deployRedis != 'null' then
                        'maester-redis-ha'
                      ) else [];
 
-[
+local apps = [
   platform.parts.pullSecret(dockerUsername, dockerPassword, dockerEmail, dockerRegistry),
   platform.parts.tlsSecret(certName, tlsCert, tlsKey),
   platform.parts.gitreceiverKey(gitReceiverKey),
@@ -168,4 +168,6 @@ platform.parts.storageSlugs(pssReplicas, pssLbIp, pssStorage, slugsSubPath, stew
   },
   maesterReplicas
 )
-+ maesterRedis
++ maesterRedis;
+
+std.filter(function (v) v != null, apps)
