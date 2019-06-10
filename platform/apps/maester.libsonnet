@@ -140,7 +140,7 @@ local k = import 'k.libsonnet';
                     },
                     {
                       name: 'PORT',
-                      value: std.toString(port),
+                      value: std.toString(port)
                     },
                   ],
                   livenessProbe: {

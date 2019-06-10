@@ -87,6 +87,7 @@
 // @param wiper_login string wiper_login
 // @param wiper_password string wiper_password
 // @param maester_jwt_secret string maester_jwt_secret
+// @optionalParam maester_uri string  maester_uri
 
 local k = import 'k.libsonnet';
 
@@ -182,6 +183,8 @@ local tenant_operator_login = import 'param://tenant_operator_login';
 local tenant_operator_password = import 'param://tenant_operator_password';
 local maester_jwt_secret = import 'param://maester_jwt_secret';
 
+local maesterUri = 'http://maester-service.platform.svc.cluster.local:3002';
+
 [
   k.core.v1.namespace.new('platform'),
   k.core.v1.namespace.new('tasks'),
@@ -235,6 +238,7 @@ local maester_jwt_secret = import 'param://maester_jwt_secret';
       KUBERNETES_SLUGS_BASE_URL: std.toString(kubernetes_slugs_base_url),
       LOOKOUT_PREFETCH_COUNT: std.toString(lookout_prefetch_count),
       MAESTER_JWT_SECRET: std.toString(maester_jwt_secret),
+      MAESTER_URI: std.toString(maesterUri),
       MANDRILL_API_KEY: std.toString(mandrill_api_key),
       MARATHON_URI: 'deprecated',
       MESSAGE_CRYPTO_IV: std.toString(message_crypto_iv),

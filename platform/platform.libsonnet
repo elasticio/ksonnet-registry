@@ -4,6 +4,8 @@ local quotaservice = import 'elasticio/platform/apps/quotaservice.libsonnet';
 local version = import 'elasticio/platform/version.json';
 local k = import 'k.libsonnet';
 
+local maesterPort = 3002;
+
 local podAffinitySpreadNodes(appLabelValue, appLabelKey='app') = {
   affinity: {
     podAntiAffinity: {
@@ -128,7 +130,7 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey='app') = {
                     {
                       name: 'KUBERNETES_TASKS_NODE_LABEL_VALUE',
                       value: 'tasks',
-                    },
+                    }
                   ],
                   livenessProbe: {
                     httpGet: {
@@ -3246,7 +3248,6 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey='app') = {
       },
     },
     maester(
-      port = 3002,
       redisConfig={
         name: 'maester',
         sentinels: [{
@@ -3256,14 +3257,12 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey='app') = {
       },
       maesterReplicas = 3,
       terminationGracePeriodSeconds = 30,
-      appName = 'maester',
     ):: maester.app(
       version,
-      port,
+      maesterPort,
       redisConfig,
       maesterReplicas,
-      terminationGracePeriodSeconds,
-      appName
+      terminationGracePeriodSeconds
     ),
     maesterRedis(
       redisClusterName='maester-cluster',

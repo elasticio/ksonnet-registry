@@ -157,7 +157,6 @@ platform.parts.wiper(quotaServiceDisabled) +
 pssPv +
 platform.parts.storageSlugs(pssReplicas, pssLbIp, pssStorage, slugsSubPath, stewardSubPath)
 + platform.parts.maester(
-  3002,
   {
     name: maesterRedisClusterName,
     sentinels: std.map(function(sentinel) {
