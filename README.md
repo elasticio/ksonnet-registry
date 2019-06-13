@@ -3,6 +3,24 @@
 This repository cointains [ksonnet registry](https://ksonnet.io/docs/concepts#registry) of elastic.io platform components.
 To use this repo you need [ksonnet](https://github.com/ksonnet/ksonnet/releases) CLI.
 
+## Prerequisites
+Some of apps/systems needed for the platform currently not described in registry and need to be set up manually. Redis cluster is inside this registry, but storage should be provisioned manually or by your Kubernetes provider.
+
+### External systems (out of k8s)
+
+MongoDB, RabbitMQ, Elastic Search, See https://github.com/elasticio/k8s-deployment
+
+### Redis cluster
+You can use own redis cluster outside of platform installation or provided in by platform. Controlled by `deploy_redis` param in `platform.json`.
+
+#### Provided redis
+
+For platform provided redis storage is needed, to provide it create k8s storage class with name `maester-redis-ha`. It is recommended to use SSD and at least 1TB storage per each redis cluster instance (3 instances by default). Details for storage class provisioning: https://kubernetes.io/docs/concepts/storage/storage-classes/
+
+#### External redis
+
+To use external redis disable provided redis by removing `deploy_redis` param from `platform.json` and set `maester_redis_sentinels` accordingly: `sentinel-host1:sentinel-host1,sentinel-host2:sentinel-host2,...`
+
 ## Installation
 
 Platform fresh installation.
@@ -136,7 +154,7 @@ Description for params can be found here: https://github.com/elasticio/k8s-deplo
 * `nfs_server_address` and `nfs_share` - configuration of NFS insyance for slugs component slugs storage
 * `storage_slugs_lb_ip` - internal ip of platform-storage-slugs which is used for Agents
 * `storage_slugs_size` - size of slugs storage (refer to Kubernetes PersistentVolume `size` field for format)
-* `api_replicas`, `gold_dragon_coin_replicas`, `webhooks_replicas`, `storage_slugs_replicas`, `raven_replicas`, `steward_replicas`, `lookout_replicas` - number of instances for apps
+* `api_replicas`, `gold_dragon_coin_replicas`, `webhooks_replicas`, `storage_slugs_replicas`, `raven_replicas`, `steward_replicas`, `lookout_replicas`, `maester_replicas` - number of instances for apps
 
 
 ### Init ksonnet project
