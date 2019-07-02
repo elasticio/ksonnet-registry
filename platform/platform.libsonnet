@@ -397,7 +397,7 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey='app') = {
         },
       },
     ],
-    api(replicas, cpuRequest=0.1, cpuLimit=1):: [
+    api(replicas, cpuRequest=0.1, cpuLimit=1, terminationGracePeriodSeconds=30):: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
@@ -450,6 +450,10 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey='app') = {
                     {
                       name: 'MARATHON_URI',
                       value: 'http://mazafaka.io/this-env-var-is-deprecated-but-still-required-by-v1',
+                    },
+                    {
+                      name: 'TERMINATION_DELAY',
+                      value: std.toString(terminationGracePeriodSeconds / 2)
                     },
                   ],
                   livenessProbe: {
@@ -504,7 +508,7 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey='app') = {
                 },
               ],
               restartPolicy: 'Always',
-              terminationGracePeriodSeconds: 30,
+              terminationGracePeriodSeconds: terminationGracePeriodSeconds,
               nodeSelector: {
                 'elasticio-role': 'platform',
               },
@@ -715,7 +719,7 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey='app') = {
         ],
       },
     ],
-    frontend(replicas):: [
+    frontend(replicas, terminationGracePeriodSeconds=30):: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
@@ -783,6 +787,10 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey='app') = {
                         },
                       },
                     },
+                    {
+                      name: 'TERMINATION_DELAY',
+                      value: std.toString(terminationGracePeriodSeconds / 2)
+                    },
                   ],
                   livenessProbe: {
                     httpGet: {
@@ -836,7 +844,7 @@ local podAffinitySpreadNodes(appLabelValue, appLabelKey='app') = {
                 },
               ],
               restartPolicy: 'Always',
-              terminationGracePeriodSeconds: 30,
+              terminationGracePeriodSeconds: terminationGracePeriodSeconds,
               nodeSelector: {
                 'elasticio-role': 'platform',
               },

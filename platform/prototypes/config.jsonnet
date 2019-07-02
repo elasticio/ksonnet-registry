@@ -8,6 +8,8 @@
 // @param api_service string api_service
 // @param appdirect_marketplace_url string appdirect_marketplace_url
 // @param appdirect_subscription_events_uri string appdirect_subscription_events_uri
+// @optionalParam appdirect_login string  appdirect_login
+// @optionalParam appdirect_password string  appdirect_password
 // @param apidocs_service string apidocs_service
 // @param apprunner_image string apprunner_image
 // @param certificate_store_encryption_password string certificate_store_encryption_password
