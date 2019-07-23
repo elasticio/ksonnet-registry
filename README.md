@@ -1,6 +1,6 @@
 # Elastic.io platform ksonnet registry
 
-This repository cointains [ksonnet registry](https://ksonnet.io/docs/concepts#registry) of elastic.io platform components.
+This repository contains [ksonnet registry](https://ksonnet.io/docs/concepts#registry) of elastic.io platform components.
 To use this repo you need [ksonnet](https://github.com/ksonnet/ksonnet/releases) CLI.
 
 ## Installation
@@ -161,9 +161,28 @@ ks pkg install elasticio/platform@<current_elasticio_version>
 ### Generate ksonnet components
 
 ```bash
+ks generate elastic.io.admiral admiral --values-file=platform.json
+ks generate elastic.io.api-docs api-docs --values-file=platform.json
+ks generate elastic.io.api api --values-file=platform.json
 ks generate elastic.io.config config --values-file=config.json
-ks generate elastic.io.gendry gendry
-ks generate elastic.io.platform platform --values-file=platform.json
+ks generate elastic.io.fluentd fluentd --values-file=platform.json
+ks generate elastic.io.frontend frontend --values-file=platform.json
+ks generate elastic.io.gendry gendry --values-file=platform.json
+ks generate elastic.io.gitreceiver gitreceiver --values-file=platform.json
+ks generate elastic.io.gold-dragon-coin gold-dragon-coin --values-file=platform.json
+ks generate elastic.io.handmaiden handmaiden --values-file=platform.json
+ks generate elastic.io.ingress ingress --values-file=platform.json
+ks generate elastic.io.lookout lookout --values-file=platform.json
+ks generate elastic.io.maester maester --values-file=platform.json
+ks generate elastic.io.quota-service quota-service --values-file=platform.json
+ks generate elastic.io.raven raven --values-file=platform.json
+ks generate elastic.io.scheduler scheduler --values-file=platform.json
+ks generate elastic.io.secrets secrets --values-file=platform.json
+ks generate elastic.io.steward steward --values-file=platform.json
+ks generate elastic.io.storage-slugs-pv storage-slugs-pv --values-file=platform.json
+ks generate elastic.io.storage-slugs storage-slugs --values-file=platform.json
+ks generate elastic.io.webhooks webhooks --values-file=platform.json
+ks generate elastic.io.wiper wiper --values-file=platform.json
 ```
 
 ### Apply config
@@ -204,17 +223,55 @@ ks pkg install elasticio/platform@<new_elasticio_version>
 ### Remove old components
 
 ```bash
+ks component rm admiral
+ks component rm api-docs
+ks component rm api
 ks component rm config
+ks component rm fluentd
+ks component rm frontend
 ks component rm gendry
-ks component rm platform
+ks component rm gitreceiver
+ks component rm gold-dragon-coin
+ks component rm handmaiden
+ks component rm ingress
+ks component rm lookout
+ks component rm maester
+ks component rm quota-service
+ks component rm raven
+ks component rm scheduler
+ks component rm secrets
+ks component rm steward
+ks component rm storage-slugs-pv
+ks component rm storage-slugs
+ks component rm webhooks
+ks component rm wiper
 ```
 
 ### Generate new version of ksonnet components
 
 ```bash
+ks generate elastic.io.admiral admiral --values-file=platform.json
+ks generate elastic.io.api-docs api-docs --values-file=platform.json
+ks generate elastic.io.api api --values-file=platform.json
 ks generate elastic.io.config config --values-file=config.json
-ks generate elastic.io.gendry gendry
-ks generate elastic.io.platform platform --values-file=platform.json
+ks generate elastic.io.fluentd fluentd --values-file=platform.json
+ks generate elastic.io.frontend frontend --values-file=platform.json
+ks generate elastic.io.gendry gendry --values-file=platform.json
+ks generate elastic.io.gitreceiver gitreceiver --values-file=platform.json
+ks generate elastic.io.gold-dragon-coin gold-dragon-coin --values-file=platform.json
+ks generate elastic.io.handmaiden handmaiden --values-file=platform.json
+ks generate elastic.io.ingress ingress --values-file=platform.json
+ks generate elastic.io.lookout lookout --values-file=platform.json
+ks generate elastic.io.maester maester --values-file=platform.json
+ks generate elastic.io.quota-service quota-service --values-file=platform.json
+ks generate elastic.io.raven raven --values-file=platform.json
+ks generate elastic.io.scheduler scheduler --values-file=platform.json
+ks generate elastic.io.secrets secrets --values-file=platform.json
+ks generate elastic.io.steward steward --values-file=platform.json
+ks generate elastic.io.storage-slugs-pv storage-slugs-pv --values-file=platform.json
+ks generate elastic.io.storage-slugs storage-slugs --values-file=platform.json
+ks generate elastic.io.webhooks webhooks --values-file=platform.json
+ks generate elastic.io.wiper wiper --values-file=platform.json
 ```
 
 ### Update config
@@ -257,4 +314,4 @@ Solution:
 
 ### ERROR Registry with name already exists
 
-Solution: Remove ksonnet project dir and rerun installtation steps
+Solution: Remove ksonnet project dir and rerun installation steps
