@@ -93,7 +93,6 @@
 
 local k = import 'k.libsonnet';
 
-
 local accounts_password = import 'param://accounts_password';
 local allow_empty_contract_after_the_last_user_removing = import 'param://allow_empty_contract_after_the_last_user_removing';
 local amqp_uri = import 'param://amqp_uri';

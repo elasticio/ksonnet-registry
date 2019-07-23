@@ -1,4 +1,6 @@
 local k = import 'k.libsonnet';
+local version = import 'elasticio/platform/version.json';
+
 {
   app(
     version,

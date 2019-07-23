@@ -1,36 +1,36 @@
 local version = import 'elasticio/platform/version.json';
 
 {
-  app(secretName, version)::[
+  app():: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
         metadata: {
-          name: 'handmaiden',
+          name: 'admiral',
           namespace: 'platform',
           labels: {
-            app: 'handmaiden',
+            app: 'admiral',
           },
         },
         spec: {
           replicas: 1,
           selector: {
             matchLabels: {
-              app: 'handmaiden',
+              app: 'admiral',
             },
           },
           template: {
             metadata: {
-              name: 'handmaiden',
+              name: 'admiral',
               labels: {
-                app: 'handmaiden',
+                app: 'admiral',
               },
             },
             spec: {
               containers: [
                 {
-                  name: 'handmaiden',
-                  image: 'elasticio/handmaiden:' + version,
+                  name: 'admiral',
+                  image: 'elasticio/admiral:' + version,
                   envFrom: [
                     {
                       secretRef: {
@@ -41,36 +41,33 @@ local version = import 'elasticio/platform/version.json';
                   env: [
                     {
                       name: 'APP_NAME',
-                      value: 'handmaiden',
+                      value: 'admiral',
                     },
                     {
-                      name: 'PORT',
+                      name: 'PORT_ADMIRAL',
                       value: '12000',
                     },
                     {
                       name: 'LOG_LEVEL',
-                      value: 'trace',
+                      value: 'debug',
                     },
                     {
-                      name: 'API_SERVICE',
-                      value: 'api-service/9000'
+                      name: 'RABBITMQ_URI',
+                      valueFrom: {
+                        secretKeyRef: {
+                          name: 'elasticio',
+                          key: 'AMQP_URI',
+                        },
+                      },
                     },
                     {
-                      name: 'FRONTEND_SERVICE',
-                      value: 'frontend-service/8000'
+                      name: 'KUBERNETES_TASKS_NODE_LABEL_KEY',
+                      value: 'elasticio-role',
                     },
                     {
-                      name: 'WEBHOOKS_SERVICE',
-                      value: 'webhooks-service/5000'
-                    },
-                    {
-                      name: 'APIDOCS_SERVICE',
-                      value: 'api-docs-service/8000'
-                    },
-                    {
-                      name: 'DEFAULT_CERT_SECRET_NAME',
-                      value: secretName
-                    },
+                      name: 'KUBERNETES_TASKS_NODE_LABEL_VALUE',
+                      value: 'tasks',
+                    }
                   ],
                   livenessProbe: {
                     httpGet: {
@@ -85,12 +82,12 @@ local version = import 'elasticio/platform/version.json';
                   },
                   resources: {
                     limits: {
-                      memory: '512Mi',
-                      cpu: 1,
+                      memory: '2048Mi',
+                      cpu: 2,
                     },
                     requests: {
-                      memory: '256Mi',
-                      cpu: 0.5,
+                      memory: '512Mi',
+                      cpu: 1,
                     },
                   },
                   terminationMessagePath: '/dev/termination-log',
@@ -101,7 +98,7 @@ local version = import 'elasticio/platform/version.json';
                   },
                 },
               ],
-              serviceAccountName: 'handmaiden-account',
+              serviceAccountName: 'admiral-account',
               imagePullSecrets: [
                 {
                   name: 'elasticiodevops',
@@ -109,8 +106,40 @@ local version = import 'elasticio/platform/version.json';
               ],
               restartPolicy: 'Always',
               terminationGracePeriodSeconds: 30,
-              nodeSelector: {
-                'elasticio-role': 'platform',
+              affinity: {
+                nodeAffinity: {
+                  requiredDuringSchedulingIgnoredDuringExecution: {
+                    nodeSelectorTerms: [
+                      {
+                        matchExpressions: [
+                          {
+                            key: 'elasticio-role',
+                            operator: 'NotIn',
+                            values: [
+                              'tasks',
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  preferredDuringSchedulingIgnoredDuringExecution: [
+                    {
+                      weight: 1,
+                      preference: {
+                        matchExpressions: [
+                          {
+                            key: 'eio-app',
+                            operator: 'In',
+                            values: [
+                              'admiral',
+                            ],
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
               },
             },
           },
@@ -127,38 +156,36 @@ local version = import 'elasticio/platform/version.json';
         apiVersion: 'v1',
         kind: 'ServiceAccount',
         metadata: {
-          name: 'handmaiden-account',
+          name: 'admiral-account',
           namespace: 'platform',
-          labels: {
-            app: 'handmaiden',
-          }
         },
       },
       {
         apiVersion: 'rbac.authorization.k8s.io/v1',
         kind: 'Role',
         metadata: {
-          name: 'handmaiden-role',
-          namespace: 'platform',
-          labels: {
-            app: 'handmaiden',
-          }
+          name: 'admiral-role',
+          namespace: 'tasks',
         },
         rules: [
           {
             apiGroups: [
-              'extensions'
+              '',
+              'batch',
             ],
             resources: [
-              'ingresses'
+              'jobs',
+              'pods',
             ],
             verbs: [
               'create',
               'delete',
+              'deletecollection',
               'get',
               'list',
               'patch',
-              'update'
+              'update',
+              'watch',
             ],
           },
           {
@@ -166,15 +193,11 @@ local version = import 'elasticio/platform/version.json';
               '',
             ],
             resources: [
-              'secrets',
+              'configmaps',
             ],
             verbs: [
-              'create',
-              'delete',
               'get',
               'list',
-              'patch',
-              'update'
             ],
           },
         ],
@@ -183,21 +206,18 @@ local version = import 'elasticio/platform/version.json';
         apiVersion: 'rbac.authorization.k8s.io/v1',
         kind: 'RoleBinding',
         metadata: {
-          name: 'handmaiden-rolebinding',
-          namespace: 'platform',
-          labels: {
-            app: 'handmaiden',
-          }
+          name: 'admiral-rolebinding',
+          namespace: 'tasks',
         },
         roleRef: {
           apiGroup: 'rbac.authorization.k8s.io',
           kind: 'Role',
-          name: 'handmaiden-role',
+          name: 'admiral-role',
         },
         subjects: [
           {
             kind: 'ServiceAccount',
-            name: 'handmaiden-account',
+            name: 'admiral-account',
             namespace: 'platform',
           },
         ],
