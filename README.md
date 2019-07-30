@@ -223,6 +223,7 @@ ks pkg install elasticio/platform@<new_elasticio_version>
 ### Remove old components
 
 ```bash
+ks component rm platform
 ks component rm admiral
 ks component rm api-docs
 ks component rm api
@@ -250,6 +251,7 @@ ks component rm wiper
 ### Generate new version of ksonnet components
 
 ```bash
+ks generate elastic.io.platform platform --values-file=platform.json
 ks generate elastic.io.admiral admiral --values-file=platform.json
 ks generate elastic.io.api-docs api-docs --values-file=platform.json
 ks generate elastic.io.api api --values-file=platform.json
@@ -283,7 +285,7 @@ ks apply -c config elasticio --skip-gc --gc-tag elasticio0 --context <kubectl_co
 ### Run gendry app to init elasticio platform
 
 ```bash
-ks delete -c gendry elasticio --skip-gc --gc-tag elasticio0 --context <kubectl_context>
+ks delete -c gendry elasticio elasticio0 --context <kubectl_context>
 ks apply -c gendry elasticio --skip-gc --gc-tag elasticio0 --context <kubectl_context>
 ```
 
