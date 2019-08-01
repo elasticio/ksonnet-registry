@@ -285,7 +285,7 @@ ks apply -c config elasticio --skip-gc --gc-tag elasticio0 --context <kubectl_co
 ### Run gendry app to init elasticio platform
 
 ```bash
-ks delete -c gendry elasticio elasticio0 --context <kubectl_context>
+ks delete -c gendry elasticio --context <kubectl_context>
 ks apply -c gendry elasticio --skip-gc --gc-tag elasticio0 --context <kubectl_context>
 ```
 

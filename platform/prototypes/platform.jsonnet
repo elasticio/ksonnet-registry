@@ -117,7 +117,7 @@ local webhooksReplicas = import 'param://webhooks_replicas';
 local maesterReplicas = import 'param://maester_replicas';
 
 
-local pssPv = if storageSlugsStorageType == 'nfs' then platform.parts.storageSlugsPVNfs(pvName, nfsServer, nfsShare, pssStorage, pvGid) else if storageSlugsStorageType == 'azure' then platform.parts.storageSlugsPVAzure(pvName, azAccName, azAccKey, azShareName, pssStorage, pvGid) else null;
+local pssPv = if storageSlugsStorageType == 'nfs' then platform.parts.storageSlugsPVNFS(pvName, nfsServer, nfsShare, pssStorage, pvGid) else if storageSlugsStorageType == 'azure' then platform.parts.storageSlugsPVAzure(pvName, azAccName, azAccKey, azShareName, pssStorage, pvGid) else null;
 
 local execGelfProto = if eioExecGelfProto == 'null' then false else eioExecGelfProto;
 local execGelfHost = if eioExecGelfHost == 'null' then false else eioExecGelfHost;
@@ -145,7 +145,7 @@ platform.parts.api(apiReplicas, apiCpuRequest, apiCpuLimit) +
 platform.parts.fluentd(execGelfProto, execGelfHost, execGelfPort) +
 platform.parts.frontend(frontendReplicas) +
 platform.parts.gitreceiver() +
-platform.parts.goldDagonCoin(goldDragonCoinReplicas) +
+platform.parts.goldDragonCoin(goldDragonCoinReplicas) +
 platform.parts.ingressController() +
 platform.parts.ingress(ingressNameDefault, ingressNameApiDocs, loadBalancerIP, appDomain, apiDomain, wehbooksDomain, sshPort, certName, limitConnections) +
 platform.parts.raven(ravenReplicas) +
