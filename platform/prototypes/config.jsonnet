@@ -90,6 +90,9 @@
 // @param wiper_password string wiper_password
 // @param maester_jwt_secret string maester_jwt_secret
 // @optionalParam maester_uri string  maester_uri
+// @optionalParam push_gateway_uri string  push_gateway_uri
+// @optionalParam iron_bank_clickhouse_uri string  iron_bank_clickhouse_uri
+// @optionalParam docker_registry_secret string  docker_registry_secret
 
 local k = import 'k.libsonnet';
 
@@ -142,6 +145,7 @@ local message_crypto_password = import 'param://message_crypto_password';
 local mongo_uri = import 'param://mongo_uri';
 local petstore_api_host = import 'param://petstore_api_host';
 local predefined_users = import 'param://predefined_users';
+local push_gateway_uri = import 'param://push_gateway_uri';
 local quota_service_uri = import 'param://quota_service_uri';
 local quota_service_mongo_uri = import 'param://quota_service_mongo_uri';
 local quotas_uri = import 'param://quotas_uri';
@@ -183,6 +187,8 @@ local appdirect_password = import 'param://appdirect_password';
 local tenant_operator_login = import 'param://tenant_operator_login';
 local tenant_operator_password = import 'param://tenant_operator_password';
 local maester_jwt_secret = import 'param://maester_jwt_secret';
+local iron_bank_clickhouse_uri = import 'param://iron_bank_clickhouse_uri';
+local docker_registry_secret = import 'param://docker_registry_secret';
 
 local maesterUri = 'http://maester-service.platform.svc.cluster.local:3002';
 
@@ -203,6 +209,7 @@ local maesterUri = 'http://maester-service.platform.svc.cluster.local:3002';
       APPDIRECT_SERVICE_ACCOUNT_USERNAME: std.toString(appdirect_login),
       APPDIRECT_SERVICE_ACCOUNT_PASSWORD: std.toString(appdirect_password),
       APPRUNNER_IMAGE: std.toString(apprunner_image),
+      IRON_BANK_CLICKHOUSE_URI: std.toString(iron_bank_clickhouse_uri),
       CERTIFICATE_STORE_ENCRYPTION_PASSWORD: std.toString(certificate_store_encryption_password),
       COMPANY_NAME: std.toString(company_name),
       COMPONENT_CPU: std.toString(component_cpu),
@@ -231,6 +238,7 @@ local maesterUri = 'http://maester-service.platform.svc.cluster.local:3002';
       GELF_PORT: std.toString(gelf_port),
       GELF_PROTOCOL: std.toString(gelf_protocol),
       GIT_RECEIVER_HOST: std.toString(git_receiver_host),
+      [if docker_registry_secret != '' then 'DOCKER_REGISTRY_SECRET']: std.toString(docker_registry_secret),
       HOOKS_DATA_PASSWORD: std.toString(hooks_data_password),
       INTERCOM_ACCESS_TOKEN: std.toString(intercom_access_token),
       INTERCOM_APP_ID: std.toString(intercom_app_id),
@@ -248,6 +256,7 @@ local maesterUri = 'http://maester-service.platform.svc.cluster.local:3002';
       NODE_ENV: 'production',
       PETSTORE_API_HOST: std.toString(petstore_api_host),
       PREDEFINED_USERS: std.toString(predefined_users),
+      PUSH_GATEWAY_URI: std.toString(push_gateway_uri),
       [if quota_service_uri != '' then 'QUOTA_SERVICE_URI']: std.toString(quota_service_uri),
       [if quota_service_mongo_uri != '' then 'QUOTA_SERVICE_MONGO_URI']: std.toString(quota_service_mongo_uri),
       QUOTAS_URI: std.toString(quotas_uri),

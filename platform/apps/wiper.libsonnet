@@ -144,6 +144,14 @@ local version = import 'elasticio/platform/version.json';
                               name: 'elasticio',
                             },
                           },
+                        },{
+                          name: 'WIPER_PUSH_GATEWAY_URI',
+                          valueFrom: {
+                            secretKeyRef: {
+                              key: 'PUSH_GATEWAY_URI',
+                              name: 'elasticio',
+                            },
+                          },
                         },
                       ],
                       envFrom: [

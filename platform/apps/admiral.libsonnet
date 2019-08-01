@@ -25,6 +25,10 @@ local version = import 'elasticio/platform/version.json';
               labels: {
                 app: 'admiral',
               },
+              annotations: {
+                "prometheus.io/scrape": "true",
+                "prometheus.io/port": "12000"
+              }
             },
             spec: {
               containers: [
@@ -69,6 +73,9 @@ local version = import 'elasticio/platform/version.json';
                       value: 'tasks',
                     }
                   ],
+                  ports: [{
+                    containerPort: 12000
+                  }],
                   livenessProbe: {
                     httpGet: {
                       port: 12000,
@@ -117,6 +124,7 @@ local version = import 'elasticio/platform/version.json';
                             operator: 'NotIn',
                             values: [
                               'tasks',
+                              'monitoring',
                             ],
                           },
                         ],

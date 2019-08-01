@@ -11,6 +11,7 @@ local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
 local lookout = import 'elasticio/platform/apps/lookout.libsonnet';
 local maester = import 'elasticio/platform/apps/maester.libsonnet';
 local quotaService = import 'elasticio/platform/apps/quota-service.libsonnet';
+local ironBank = import 'elasticio/platform/apps/iron-bank.libsonnet';
 local raven = import 'elasticio/platform/apps/raven.libsonnet';
 local scheduler = import 'elasticio/platform/apps/scheduler.libsonnet';
 local steward = import 'elasticio/platform/apps/steward.libsonnet';
@@ -19,6 +20,7 @@ local webhooks = import 'elasticio/platform/apps/webhooks.libsonnet';
 local wiper = import 'elasticio/platform/apps/wiper.libsonnet';
 local gitreceiverKey = import 'elasticio/platform/keys/gitreceiver-key.libsonnet';
 local pullSecret = import 'elasticio/platform/keys/pull-secret.libsonnet';
+local componentsDockerSecret = import 'elasticio/platform/keys/components-docker-secret.libsonnet';
 local tlsSecret = import 'elasticio/platform/keys/tls-secret.libsonnet';
 local ingressController = import 'elasticio/platform/network/ingress-controller.libsonnet';
 local ingress = import 'elasticio/platform/network/ingress.libsonnet';
@@ -33,6 +35,7 @@ local version = import 'elasticio/platform/version.json';
     // --- Platform Secrets && Keys --- //
     // -------------------------------- //
     pullSecret(username, password, email, registry):: pullSecret.conf(username, password, email, registry),
+    componentsDockerSecret(username, password, email, registry):: componentsDockerSecret.conf(username, password, email, registry),
     tlsSecret(name, crt, key):: tlsSecret.conf(name, crt, key),
     gitreceiverKey(key):: gitreceiverKey.conf(key),
 
@@ -109,6 +112,7 @@ local version = import 'elasticio/platform/version.json';
     handmaiden(secretName):: handmaiden.app(secretName, version),
     lookout(replicas):: lookout.app(replicas),
     quotaService(secretName):: quotaService.app(secretName, version),
+    ironBank():: ironBank.app(),
     raven(replicas):: raven.app(replicas),
     scheduler():: scheduler.app(),
     steward(replicas):: steward.app(replicas),

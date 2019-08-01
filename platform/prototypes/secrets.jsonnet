@@ -24,5 +24,6 @@ local gitReceiverKey = import 'param://gitreceiver_key';
 [
   platform.parts.pullSecret(dockerUsername, dockerPassword, dockerEmail, dockerRegistry),
   platform.parts.tlsSecret(certName, tlsCert, tlsKey),
-  platform.parts.gitreceiverKey(gitReceiverKey)
+  platform.parts.gitreceiverKey(gitReceiverKey),
+  platform.parts.componentsDockerSecret(dockerUsername, dockerPassword, dockerEmail, dockerRegistry)
 ]
