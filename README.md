@@ -173,7 +173,6 @@ ks generate elastic.io.gold-dragon-coin gold-dragon-coin --values-file=platform.
 ks generate elastic.io.handmaiden handmaiden --values-file=platform.json
 ks generate elastic.io.ingress ingress --values-file=platform.json
 ks generate elastic.io.lookout lookout --values-file=platform.json
-ks generate elastic.io.maester maester --values-file=platform.json
 ks generate elastic.io.quota-service quota-service --values-file=platform.json
 ks generate elastic.io.raven raven --values-file=platform.json
 ks generate elastic.io.scheduler scheduler --values-file=platform.json
@@ -236,7 +235,6 @@ ks component rm gold-dragon-coin
 ks component rm handmaiden
 ks component rm ingress
 ks component rm lookout
-ks component rm maester
 ks component rm quota-service
 ks component rm raven
 ks component rm scheduler
@@ -264,7 +262,6 @@ ks generate elastic.io.gold-dragon-coin gold-dragon-coin --values-file=platform.
 ks generate elastic.io.handmaiden handmaiden --values-file=platform.json
 ks generate elastic.io.ingress ingress --values-file=platform.json
 ks generate elastic.io.lookout lookout --values-file=platform.json
-ks generate elastic.io.maester maester --values-file=platform.json
 ks generate elastic.io.quota-service quota-service --values-file=platform.json
 ks generate elastic.io.raven raven --values-file=platform.json
 ks generate elastic.io.scheduler scheduler --values-file=platform.json
