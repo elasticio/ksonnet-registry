@@ -1,7 +1,7 @@
 local version = import 'elasticio/platform/version.json';
 
 {
-  app():: [
+  app(dockerRegistryUri):: [
       {
         apiVersion: 'apps/v1',
         kind: 'Deployment',
@@ -82,6 +82,10 @@ local version = import 'elasticio/platform/version.json';
                       name: 'PRIVATE_KEY_PATH',
                       value: '/etc/gitreceiver/private-key/key',
                     },
+                    {
+                      name: 'DOCKER_REGISTRY_URI',
+                      value: dockerRegistryUri
+                    }
                   ],
                   livenessProbe: {
                     initialDelaySeconds: 10,

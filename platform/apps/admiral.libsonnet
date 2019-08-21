@@ -1,7 +1,7 @@
 local version = import 'elasticio/platform/version.json';
 
 {
-  app():: [
+  app(dockerRegistryUri, dockerRegistrySecret):: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
@@ -71,6 +71,14 @@ local version = import 'elasticio/platform/version.json';
                     {
                       name: 'KUBERNETES_TASKS_NODE_LABEL_VALUE',
                       value: 'tasks',
+                    },
+                    {
+                      name: 'DOCKER_REGISTRY_SECRET',
+                      value: dockerRegistrySecret
+                    },
+                    {
+                      name: 'DOCKER_REGISTRY_URI',
+                      value: dockerRegistryUri
                     }
                   ],
                   ports: [{

@@ -33,9 +33,10 @@ local version = import 'elasticio/platform/version.json';
             containers: [
               {
                 args: [
+                  '--allow_dynamic_housekeeping=false',
                   '--housekeeping_interval=2s',
-                  '--storage_duration=10s',
-                  '--application_metrics_count_limit=2',
+                  // how much time will each measurement be stored in memory
+                  '--storage_duration=20s',
                   '--disable_metrics=tcp,udp,disk,network,process,sched',
                   '--docker_only',
                 ],
@@ -186,6 +187,10 @@ local version = import 'elasticio/platform/version.json';
         template: {
           metadata: {
             name: 'iron-bank',
+            annotations: {
+              "prometheus.io/scrape": "true",
+              "prometheus.io/port": "3000"
+            },
             labels: {
               app: 'iron-bank',
             },
@@ -195,13 +200,6 @@ local version = import 'elasticio/platform/version.json';
               {
                 name: 'iron-bank',
                 image: 'elasticio/iron-bank:' + version,
-                envFrom: [
-                  {
-                    secretRef: {
-                      name: 'elasticio',
-                    },
-                  },
-                ],
                 env: [
                   {
                     name: 'APP_NAME',
@@ -224,7 +222,19 @@ local version = import 'elasticio/platform/version.json';
                       },
                     },
                   },
+                  {
+                    name: 'CLICKHOUSE_NO_REPLICA',
+                    valueFrom: {
+                      secretKeyRef: {
+                        name: 'elasticio',
+                        key: 'IRON_BANK_CLICKHOUSE_NO_REPLICA',
+                      },
+                    },
+                  },
                 ],
+                ports: [{
+                  containerPort: 3000
+                }],
                 livenessProbe: {
                   httpGet: {
                     port: 3000,

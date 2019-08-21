@@ -12,6 +12,8 @@
 // @optionalParam appdirect_password string  appdirect_password
 // @param apidocs_service string apidocs_service
 // @param apprunner_image string apprunner_image
+// @param bran_clickhouse_uri string  bran_clickhouse_uri
+// @optionalParam bran_prefetch_count string 10 bran_prefetch_count
 // @param certificate_store_encryption_password string certificate_store_encryption_password
 // @param company_name string company_name
 // @param component_cpu string component_cpu
@@ -88,11 +90,14 @@
 // @param log_level string log_level
 // @param wiper_login string wiper_login
 // @param wiper_password string wiper_password
-// @param maester_jwt_secret string maester_jwt_secret
-// @optionalParam maester_uri string  maester_uri
 // @optionalParam push_gateway_uri string  push_gateway_uri
 // @optionalParam iron_bank_clickhouse_uri string  iron_bank_clickhouse_uri
+// @optionalParam iron_bank_clickhouse_no_replica string  iron_bank_clickhouse_no_replica
+// @optionalParam iron_bank_uri string  iron_bank_uri
 // @optionalParam docker_registry_secret string  docker_registry_secret
+// @optionalParam kubernetes_ordinary_label_value string  kubernetes_ordinary_label_value
+// @optionalParam kubernetes_long_running_label_value string  kubernetes_long_running_label_value
+// @optionalParam frontend_no_external_resources string  frontend_no_external_resources
 
 local k = import 'k.libsonnet';
 
@@ -105,6 +110,8 @@ local appdirect_marketplace_url = import 'param://appdirect_marketplace_url';
 local appdirect_subscription_events_uri = import 'param://appdirect_subscription_events_uri';
 local apidocs_service = import 'param://apidocs_service';
 local apprunner_image = import 'param://apprunner_image';
+local bran_clickhouse_uri = import 'param://bran_clickhouse_uri';
+local bran_prefetch_count = import 'param://bran_prefetch_count';
 local certificate_store_encryption_password = import 'param://certificate_store_encryption_password';
 local company_name = import 'param://company_name';
 local component_cpu = import 'param://component_cpu';
@@ -123,6 +130,7 @@ local env_password = import 'param://env_password';
 local external_api_uri = import 'param://external_api_uri';
 local external_app_uri = import 'param://external_app_uri';
 local external_gateway_uri = import 'param://external_gateway_uri';
+local frontend_no_external_resources = import 'param://frontend_no_external_resources';
 local external_steward_uri = import 'param://external_steward_uri';
 local frontend_service = import 'param://frontend_service';
 local frontend_service_account_username = import 'param://frontend_service_account_username';
@@ -186,11 +194,12 @@ local appdirect_login = import 'param://appdirect_login';
 local appdirect_password = import 'param://appdirect_password';
 local tenant_operator_login = import 'param://tenant_operator_login';
 local tenant_operator_password = import 'param://tenant_operator_password';
-local maester_jwt_secret = import 'param://maester_jwt_secret';
 local iron_bank_clickhouse_uri = import 'param://iron_bank_clickhouse_uri';
+local iron_bank_clickhouse_no_replica = import 'param://iron_bank_clickhouse_no_replica';
+local iron_bank_uri = import 'param://iron_bank_uri';
 local docker_registry_secret = import 'param://docker_registry_secret';
-
-local maesterUri = 'http://maester-service.platform.svc.cluster.local:3002';
+local kubernetes_ordinary_label_value = import 'param://kubernetes_ordinary_label_value';
+local kubernetes_long_running_label_value = import 'param://kubernetes_long_running_label_value';
 
 [
   k.core.v1.namespace.new('platform'),
@@ -209,7 +218,11 @@ local maesterUri = 'http://maester-service.platform.svc.cluster.local:3002';
       APPDIRECT_SERVICE_ACCOUNT_USERNAME: std.toString(appdirect_login),
       APPDIRECT_SERVICE_ACCOUNT_PASSWORD: std.toString(appdirect_password),
       APPRUNNER_IMAGE: std.toString(apprunner_image),
+      BRAN_CLICKHOUSE_URI: std.toString(bran_clickhouse_uri),
+      BRAN_PREFETCH_COUNT: std.toString(bran_prefetch_count),
       IRON_BANK_CLICKHOUSE_URI: std.toString(iron_bank_clickhouse_uri),
+      IRON_BANK_CLICKHOUSE_NO_REPLICA: std.toString(iron_bank_clickhouse_no_replica),
+      [if iron_bank_uri != '' then 'IRON_BANK_URI']: std.toString(iron_bank_uri),
       CERTIFICATE_STORE_ENCRYPTION_PASSWORD: std.toString(certificate_store_encryption_password),
       COMPANY_NAME: std.toString(company_name),
       COMPONENT_CPU: std.toString(component_cpu),
@@ -233,21 +246,21 @@ local maesterUri = 'http://maester-service.platform.svc.cluster.local:3002';
       FRONTEND_SERVICE: std.toString(frontend_service),
       FRONTEND_SERVICE_ACCOUNT_USERNAME: std.toString(frontend_service_account_username),
       FRONTEND_SERVICE_ACCOUNT_PASSWORD: std.toString(frontend_service_account_password),
+      [if frontend_no_external_resources != '' then 'FRONTEND_NO_EXTERNAL_RESOURCES']: std.toString(frontend_no_external_resources),
       GELF_ADDRESS: std.toString(gelf_address),
       GELF_HOST: std.toString(gelf_host),
       GELF_PORT: std.toString(gelf_port),
       GELF_PROTOCOL: std.toString(gelf_protocol),
       GIT_RECEIVER_HOST: std.toString(git_receiver_host),
-      [if docker_registry_secret != '' then 'DOCKER_REGISTRY_SECRET']: std.toString(docker_registry_secret),
       HOOKS_DATA_PASSWORD: std.toString(hooks_data_password),
       INTERCOM_ACCESS_TOKEN: std.toString(intercom_access_token),
       INTERCOM_APP_ID: std.toString(intercom_app_id),
       INTERCOM_SECRET_KEY: std.toString(intercom_secret_key),
       KUBERNETES_RABBITMQ_URI_SAILOR: std.toString(kubernetes_rabbitmq_uri_sailor),
       KUBERNETES_SLUGS_BASE_URL: std.toString(kubernetes_slugs_base_url),
+      [if kubernetes_ordinary_label_value != '' then 'KUBERNETES_ORDINARY_LABEL_VALUE']: std.toString(kubernetes_ordinary_label_value),
+      [if kubernetes_long_running_label_value != '' then 'KUBERNETES_LONG_RUNNING_LABEL_VALUE']: std.toString(kubernetes_long_running_label_value),
       LOOKOUT_PREFETCH_COUNT: std.toString(lookout_prefetch_count),
-      MAESTER_JWT_SECRET: std.toString(maester_jwt_secret),
-      MAESTER_URI: std.toString(maesterUri),
       MANDRILL_API_KEY: std.toString(mandrill_api_key),
       MARATHON_URI: 'deprecated',
       MESSAGE_CRYPTO_IV: std.toString(message_crypto_iv),
