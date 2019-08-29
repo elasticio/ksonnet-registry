@@ -182,6 +182,7 @@ ks generate elastic.io.storage-slugs-pv storage-slugs-pv --values-file=platform.
 ks generate elastic.io.storage-slugs storage-slugs --values-file=platform.json
 ks generate elastic.io.webhooks webhooks --values-file=platform.json
 ks generate elastic.io.wiper wiper --values-file=platform.json
+ks generate elastic.io.docker docker --values-file=platform.json
 ```
 
 ### Apply config
@@ -244,6 +245,7 @@ ks component rm storage-slugs-pv
 ks component rm storage-slugs
 ks component rm webhooks
 ks component rm wiper
+ks component rm docker
 ```
 
 ### Generate new version of ksonnet components
@@ -271,6 +273,7 @@ ks generate elastic.io.storage-slugs-pv storage-slugs-pv --values-file=platform.
 ks generate elastic.io.storage-slugs storage-slugs --values-file=platform.json
 ks generate elastic.io.webhooks webhooks --values-file=platform.json
 ks generate elastic.io.wiper wiper --values-file=platform.json
+ks generate elastic.io.docker docker --values-file=platform.json
 ```
 
 ### Update config
