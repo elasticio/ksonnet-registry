@@ -18,7 +18,6 @@ local quotaTxnResolver = {
    startingDeadlineSeconds: 200,
    jobTemplate: {
      metadata: {
-       creationTimestamp: null,
        labels: {
          app: 'wiper',
          subapp: 'quota-txn-resolver',
@@ -37,7 +36,6 @@ local quotaTxnResolver = {
              {
                name: 'quota-txn-resolver',
                image: 'elasticio/wiper:' + version,
-               imagePullPolicy: 'IfNotPresent',
                args: [
                  'node',
                  '/app/index.js',
@@ -81,9 +79,89 @@ local quotaTxnResolver = {
      },
    },
    successfulJobsHistoryLimit: 3,
-   suspend: false,
  },
- status: {},
+};
+
+local notifyQuotaUsage = {
+  apiVersion: 'batch/v1beta1',
+  kind: 'CronJob',
+  metadata: {
+    name: 'notify-quota-usage',
+    namespace: 'platform',
+    labels: {
+      app: 'wiper',
+      subapp: 'notify-quota-usage',
+    },
+  },
+  spec: {
+    schedule: '0 12 * * *',
+    concurrencyPolicy: 'Replace',
+    failedJobsHistoryLimit: 1,
+    startingDeadlineSeconds: 200,
+    jobTemplate: {
+      metadata: {
+        labels: {
+          app: 'wiper',
+          subapp: 'notify-quota-usage',
+        },
+      },
+      spec: {
+        template: {
+          metadata: {
+            labels: {
+              app: 'wiper',
+              subapp: 'notify-quota-usage',
+            },
+          },
+          spec: {
+            containers: [
+              {
+                name: 'notify-quota-usage',
+                image: 'elasticio/wiper:' + version,
+                args: [
+                  'node',
+                  '/app/index.js',
+                  'notify-quota-usage',
+                ],
+                env: [
+                  {
+                    name: 'APP_NAME',
+                    value: 'wiper:notify-quota-usage',
+                  },
+                  {
+                    name: 'ELASTICIO_API_URI',
+                    valueFrom: {
+                      secretKeyRef: {
+                        key: 'API_URI',
+                        name: 'elasticio',
+                      },
+                    },
+                  },
+                ],
+                envFrom: [
+                  {
+                    secretRef: {
+                      name: 'elasticio',
+                    },
+                  },
+                ],
+              },
+            ],
+            imagePullSecrets: [
+              {
+                name: 'elasticiodevops',
+              },
+            ],
+            restartPolicy: 'OnFailure',
+            nodeSelector: {
+              'elasticio-role': 'platform',
+            },
+          },
+        },
+      },
+    },
+    successfulJobsHistoryLimit: 3,
+  },
 };
 
 local jobs = [
@@ -105,7 +183,6 @@ local jobs = [
        failedJobsHistoryLimit: 1,
        jobTemplate: {
          metadata: {
-           creationTimestamp: null,
            labels: {
              app: 'wiper',
              subapp: 'clear-old-debug-tasks',
@@ -124,7 +201,6 @@ local jobs = [
                  {
                    name: 'clear-old-debug-tasks',
                    image: 'elasticio/wiper:' + version,
-                   imagePullPolicy: 'IfNotPresent',
                    args: [
                      'node',
                      '/app/index.js',
@@ -168,9 +244,7 @@ local jobs = [
          },
        },
        successfulJobsHistoryLimit: 3,
-       suspend: false,
      },
-     status: {},
     },
     {
      apiVersion: 'batch/v1beta1',
@@ -190,7 +264,6 @@ local jobs = [
        failedJobsHistoryLimit: 1,
        jobTemplate: {
          metadata: {
-           creationTimestamp: null,
            labels: {
              app: 'wiper',
              subapp: 'suspend-tasks-with-failing-containers',
@@ -210,7 +283,6 @@ local jobs = [
                  {
                    name: 'suspend-tasks-with-failing-containers',
                    image: 'elasticio/wiper:' + version,
-                   imagePullPolicy: 'IfNotPresent',
                    args: [
                      'node',
                      '/app/index.js',
@@ -262,9 +334,7 @@ local jobs = [
          },
        },
        successfulJobsHistoryLimit: 3,
-       suspend: false,
      },
-     status: {},
     },
     {
      apiVersion: 'batch/v1beta1',
@@ -284,7 +354,6 @@ local jobs = [
        startingDeadlineSeconds: 200,
        jobTemplate: {
          metadata: {
-           creationTimestamp: null,
            labels: {
              app: 'wiper',
              subapp: 'watch-and-finish-contract-delete',
@@ -303,7 +372,6 @@ local jobs = [
                  {
                    name: 'watch-and-finish-contract-delete',
                    image: 'elasticio/wiper:' + version,
-                   imagePullPolicy: 'IfNotPresent',
                    args: [
                      'node',
                      '/app/index.js',
@@ -347,9 +415,7 @@ local jobs = [
          },
        },
        successfulJobsHistoryLimit: 3,
-       suspend: false,
      },
-     status: {},
     },
     {
      apiVersion: 'batch/v1beta1',
@@ -369,7 +435,6 @@ local jobs = [
        startingDeadlineSeconds: 200,
        jobTemplate: {
          metadata: {
-           creationTimestamp: null,
            labels: {
              app: 'wiper',
              subapp: 'watch-queues-overflow',
@@ -388,7 +453,6 @@ local jobs = [
                  {
                    name: 'watch-queues-overflow',
                    image: 'elasticio/wiper:' + version,
-                   imagePullPolicy: 'IfNotPresent',
                    args: [
                      'node',
                      '/app/index.js',
@@ -432,9 +496,7 @@ local jobs = [
          },
        },
        successfulJobsHistoryLimit: 3,
-       suspend: false,
      },
-     status: {},
     },
     {
      apiVersion: 'batch/v1beta1',
@@ -454,7 +516,6 @@ local jobs = [
        startingDeadlineSeconds: 200,
        jobTemplate: {
          metadata: {
-           creationTimestamp: null,
            labels: {
              app: 'wiper',
              subapp: 'suspend-contracts',
@@ -473,7 +534,6 @@ local jobs = [
                  {
                    name: 'suspend-contracts',
                    image: 'elasticio/wiper:' + version,
-                   imagePullPolicy: 'IfNotPresent',
                    args: [
                      'node',
                      '/app/index.js',
@@ -517,9 +577,7 @@ local jobs = [
          },
        },
        successfulJobsHistoryLimit: 3,
-       suspend: false,
      },
-     status: {},
     },
     {
      apiVersion: 'batch/v1beta1',
@@ -539,7 +597,6 @@ local jobs = [
        startingDeadlineSeconds: 200,
        jobTemplate: {
          metadata: {
-           creationTimestamp: null,
            labels: {
              app: 'wiper',
              subapp: 'stop-limited-flows',
@@ -558,7 +615,6 @@ local jobs = [
                  {
                    name: 'stop-limited-flows',
                    image: 'elasticio/wiper:' + version,
-                   imagePullPolicy: 'IfNotPresent',
                    args: [
                      'node',
                      '/app/index.js',
@@ -602,12 +658,13 @@ local jobs = [
          },
        },
        successfulJobsHistoryLimit: 3,
-       suspend: false,
      },
-     status: {},
     }
 ];
 
 {
-  app(quotaServiceDisabled):: if !quotaServiceDisabled then jobs + [quotaTxnResolver] else jobs
+  app(params)::
+    jobs +
+    (if !params.quotaServiceDisabled then [quotaTxnResolver] else []) +
+    (if !params.quotaServiceDisabled && !params.ironBankDisabled then [notifyQuotaUsage] else [])
 }

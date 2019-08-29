@@ -118,7 +118,7 @@ local version = import 'elasticio/platform/version.json';
     scheduler():: scheduler.app(),
     steward(replicas):: steward.app(replicas),
     webhooks(replicas):: webhooks.app(replicas),
-    wiper(quotaServiceDisabled):: wiper.app(quotaServiceDisabled),
+    wiper(params):: wiper.app(params),
 
     storageSlugs(
       replicas,
