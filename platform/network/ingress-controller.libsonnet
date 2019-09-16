@@ -21,6 +21,9 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
           'client-header-timeout': '8',
           'keep-alive': '5',
           'limit-conn-zone-variable': 'binary_remote_addr',
+          // Give some time to finish git push into gitreceiver
+          // https://github.com/elasticio/platform/issues/912
+          'worker-shutdown-timeout': '5m',
         },
       },
       {

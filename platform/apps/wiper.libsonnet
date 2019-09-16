@@ -82,15 +82,15 @@ local quotaTxnResolver = {
  },
 };
 
-local notifyQuotaUsage = {
+local monitorContractQuotaUsage = {
   apiVersion: 'batch/v1beta1',
   kind: 'CronJob',
   metadata: {
-    name: 'notify-quota-usage',
+    name: 'monitor-contract-quota-usage',
     namespace: 'platform',
     labels: {
       app: 'wiper',
-      subapp: 'notify-quota-usage',
+      subapp: 'monitor-contract-quota-usage',
     },
   },
   spec: {
@@ -102,7 +102,7 @@ local notifyQuotaUsage = {
       metadata: {
         labels: {
           app: 'wiper',
-          subapp: 'notify-quota-usage',
+          subapp: 'monitor-contract-quota-usage',
         },
       },
       spec: {
@@ -110,23 +110,105 @@ local notifyQuotaUsage = {
           metadata: {
             labels: {
               app: 'wiper',
-              subapp: 'notify-quota-usage',
+              subapp: 'monitor-contract-quota-usage',
             },
           },
           spec: {
             containers: [
               {
-                name: 'notify-quota-usage',
+                name: 'monitor-contract-quota-usage',
                 image: 'elasticio/wiper:' + version,
                 args: [
                   'node',
                   '/app/index.js',
-                  'notify-quota-usage',
+                  'monitor-contract-quota-usage',
                 ],
                 env: [
                   {
                     name: 'APP_NAME',
-                    value: 'wiper:notify-quota-usage',
+                    value: 'wiper:monitor-contract-quota-usage',
+                  },
+                  {
+                    name: 'ELASTICIO_API_URI',
+                    valueFrom: {
+                      secretKeyRef: {
+                        key: 'API_URI',
+                        name: 'elasticio',
+                      },
+                    },
+                  },
+                ],
+                envFrom: [
+                  {
+                    secretRef: {
+                      name: 'elasticio',
+                    },
+                  },
+                ],
+              },
+            ],
+            imagePullSecrets: [
+              {
+                name: 'elasticiodevops',
+              },
+            ],
+            restartPolicy: 'OnFailure',
+            nodeSelector: {
+              'elasticio-role': 'platform',
+            },
+          },
+        },
+      },
+    },
+    successfulJobsHistoryLimit: 3,
+  },
+};
+
+local monitorWorkspaceQuotaUsage = {
+  apiVersion: 'batch/v1beta1',
+  kind: 'CronJob',
+  metadata: {
+    name: 'monitor-workspace-quota-usage',
+    namespace: 'platform',
+    labels: {
+      app: 'wiper',
+      subapp: 'monitor-workspace-quota-usage',
+    },
+  },
+  spec: {
+    schedule: '0 12 * * *',
+    concurrencyPolicy: 'Replace',
+    failedJobsHistoryLimit: 1,
+    startingDeadlineSeconds: 200,
+    jobTemplate: {
+      metadata: {
+        labels: {
+          app: 'wiper',
+          subapp: 'monitor-workspace-quota-usage',
+        },
+      },
+      spec: {
+        template: {
+          metadata: {
+            labels: {
+              app: 'wiper',
+              subapp: 'monitor-workspace-quota-usage',
+            },
+          },
+          spec: {
+            containers: [
+              {
+                name: 'monitor-workspace-quota-usage',
+                image: 'elasticio/wiper:' + version,
+                args: [
+                  'node',
+                  '/app/index.js',
+                  'monitor-workspace-quota-usage',
+                ],
+                env: [
+                  {
+                    name: 'APP_NAME',
+                    value: 'wiper:monitor-workspace-quota-usage',
                   },
                   {
                     name: 'ELASTICIO_API_URI',
@@ -666,5 +748,5 @@ local jobs = [
   app(params)::
     jobs +
     (if !params.quotaServiceDisabled then [quotaTxnResolver] else []) +
-    (if !params.quotaServiceDisabled && !params.ironBankDisabled then [notifyQuotaUsage] else [])
+    (if !params.quotaServiceDisabled && !params.ironBankDisabled then [monitorContractQuotaUsage, monitorWorkspaceQuotaUsage] else [])
 }
