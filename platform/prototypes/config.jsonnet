@@ -71,6 +71,7 @@
 // @param service_account_password string service_account_password
 // @param session_mongo_uri string session_mongo_uri
 // @param slug_base_url string slug_base_url
+// @optionalParam status_page_id string  status_page_id
 // @param steward_storage_uri string steward_storage_uri
 // @param steward_uri string steward_uri
 // @param suspended_task_max_messages_count string suspended_task_max_messages_count
@@ -171,6 +172,7 @@ local service_account_username = import 'param://service_account_username';
 local service_account_password = import 'param://service_account_password';
 local session_mongo_uri = import 'param://session_mongo_uri';
 local slug_base_url = import 'param://slug_base_url';
+local status_page_id = import 'param://status_page_id';
 local steward_storage_uri = import 'param://steward_storage_uri';
 local steward_uri = import 'param://steward_uri';
 local suspended_task_max_messages_count = import 'param://suspended_task_max_messages_count';
@@ -288,6 +290,7 @@ local kubernetes_long_running_label_value = import 'param://kubernetes_long_runn
       SESSION_MONGO_URI: std.toString(session_mongo_uri),
       SLUG_BASE_URL: std.toString(slug_base_url),
       STEWARD_STORAGE_URI: std.toString(steward_storage_uri),
+      STATUS_PAGE_ID: std.toString(status_page_id),
       STEWARD_URI: std.toString(steward_uri),
       SUSPENDED_TASK_MAX_MESSAGES_COUNT: std.toString(suspended_task_max_messages_count),
       SUSPEND_WATCH_KUBERNETES_MAX_EVENTS: std.toString(suspend_watch_kubernetes_max_events),
