@@ -183,6 +183,7 @@ ks generate elastic.io.storage-slugs storage-slugs --values-file=platform.json
 ks generate elastic.io.webhooks webhooks --values-file=platform.json
 ks generate elastic.io.wiper wiper --values-file=platform.json
 ks generate elastic.io.docker docker --values-file=platform.json
+ks generate elastic.io.iron-bank iron-bank --values-file=platform.json
 ```
 
 ### Apply config
@@ -246,6 +247,7 @@ ks component rm storage-slugs
 ks component rm webhooks
 ks component rm wiper
 ks component rm docker
+ks component rm iron-bank
 ```
 
 ### Generate new version of ksonnet components
@@ -274,6 +276,7 @@ ks generate elastic.io.storage-slugs storage-slugs --values-file=platform.json
 ks generate elastic.io.webhooks webhooks --values-file=platform.json
 ks generate elastic.io.wiper wiper --values-file=platform.json
 ks generate elastic.io.docker docker --values-file=platform.json
+ks generate elastic.io.iron-bank iron-bank --values-file=platform.json
 ```
 
 ### Update config
