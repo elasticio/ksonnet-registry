@@ -5,7 +5,7 @@
 // @param docker_username string docker registry username
 // @param docker_password string docker registry password
 // @param docker_email string docker registry email
-// @param ingress_cert_name string ingress tls cert secret name
+// @optionalParam ingress_cert_name string ingress-elasticio-app-cert ingress tls cert secret name
 // @param ingress_cert_crt string ingress base64 encoded tls cert certificate
 // @param ingress_cert_key string ingress base64 encoded tls cert key
 // @param gitreceiver_key string base64 encoded gitreceiver key

@@ -1,7 +1,7 @@
 local version = import 'elasticio/platform/version.json';
 
 {
-  app(secretName, version)::[
+  app()::[
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',

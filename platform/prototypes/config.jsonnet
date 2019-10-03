@@ -4,47 +4,42 @@
 // @param accounts_password string accounts_password
 // @optionalParam allow_empty_contract_after_the_last_user_removing string false allow_empty_contract_after_the_last_user_removing
 // @param amqp_uri string amqp_uri
-// @param api_uri string api_uri
-// @param api_service string api_service
-// @param appdirect_marketplace_url string appdirect_marketplace_url
-// @param appdirect_subscription_events_uri string appdirect_subscription_events_uri
+// @optionalParam appdirect_marketplace_url string  appdirect_marketplace_url
+// @optionalParam appdirect_subscription_events_uri string  appdirect_subscription_events_uri
 // @optionalParam appdirect_login string  appdirect_login
 // @optionalParam appdirect_password string  appdirect_password
-// @param apidocs_service string apidocs_service
-// @param apprunner_image string apprunner_image
+// @optionalParam apprunner_image string elasticio/apprunner:production apprunner_image
 // @param bran_clickhouse_uri string  bran_clickhouse_uri
 // @optionalParam bran_prefetch_count string 10 bran_prefetch_count
 // @param certificate_store_encryption_password string certificate_store_encryption_password
 // @param company_name string company_name
-// @param component_cpu string component_cpu
-// @param component_cpu_limit string component_cpu_limit
-// @param component_mem_default string component_mem_default
-// @param component_mem_default_limit string component_mem_default_limit
-// @param component_mem_java string component_mem_java
-// @param component_mem_java_limit string component_mem_java_limit
-// @param cookie_max_age string cookie_max_age
-// @param debug_data_size_limit_mb string debug_data_size_limit_mb
-// @param default_per_contract_quota string default_per_contract_quota
+// @optionalParam component_cpu string 0.08 component_cpu
+// @optionalParam component_cpu_limit number 1 component_cpu_limit
+// @optionalParam component_mem_default number 90 component_mem_default
+// @optionalParam component_mem_default_limit number 256 component_mem_default_limit
+// @optionalParam component_mem_java number 512 component_mem_java
+// @optionalParam component_mem_java_limit number 512 component_mem_java_limit
+// @optionalParam cookie_max_age number 604800000 cookie_max_age
+// @optionalParam debug_data_size_limit_mb number 5 debug_data_size_limit_mb
+// @optionalParam default_per_contract_quota number 5 default_per_contract_quota
 // @param elastic_search_uri string elastic_search_uri
-// @param enforce_quota string enforce_quota
+// @optionalParam enforce_quota string false enforce_quota
 // @param environment string environment
 // @param env_password string env_password
 // @param external_api_uri string external_api_uri
 // @param external_app_uri string external_app_uri
 // @param external_gateway_uri string external_gateway_uri
-// @param external_steward_uri string external_steward_uri
-// @param frontend_service string frontend_service
 // @param frontend_service_account_username string frontend_service_account_username
 // @param frontend_service_account_password string frontend_service_account_password
 // @param gelf_address string gelf_address
 // @param gelf_host string gelf_host
-// @param gelf_port string gelf_port
-// @param gelf_protocol string gelf_protocol
+// @optionalParam gelf_port number 12201 gelf_port
+// @optionalParam gelf_protocol string udp gelf_protocol
 // @param git_receiver_host string git_receiver_host
 // @param hooks_data_password string hooks_data_password
-// @param intercom_access_token string intercom_access_token
-// @param intercom_app_id string intercom_app_id
-// @param intercom_secret_key string intercom_secret_key
+// @optionalParam intercom_access_token string  intercom_access_token
+// @optionalParam intercom_app_id string  intercom_app_id
+// @optionalParam intercom_secret_key string  intercom_secret_key
 // @param kubernetes_rabbitmq_uri_sailor string kubernetes_rabbitmq_uri_sailor
 // @param kubernetes_slugs_base_url string kubernetes_slugs_base_url
 // @optionalParam lookout_prefetch_count string 10 lookout_prefetch_count
@@ -54,28 +49,24 @@
 // @param mongo_uri string mongo_uri
 // @param petstore_api_host string petstore_api_host
 // @param predefined_users string predefined_users
-// @optionalParam quota_service_uri string  quota_service_uri
 // @optionalParam quota_service_mongo_uri string  quota_service_mongo_uri
-// @param quotas_uri string quotas_uri
 // @param rabbitmq_stats_login string rabbitmq_stats_login
 // @param rabbitmq_stats_pass string rabbitmq_stats_pass
 // @param rabbitmq_stats_uri string rabbitmq_stats_uri
 // @param rabbitmq_uri_boatswains string rabbitmq_uri_boatswains
 // @param rabbitmq_uri_sailor string rabbitmq_uri_sailor
 // @param rabbitmq_virtual_host string rabbitmq_virtual_host
-// @param rabbitmq_max_messages_per_queue string rabbitmq_max_messages_per_queue
-// @param rabbitmq_max_messages_mbytes_per_queue string rabbitmq_max_messages_mbytes_per_queue
+// @optionalParam rabbitmq_max_messages_per_queue number 75000 rabbitmq_max_messages_per_queue
+// @optionalParam rabbitmq_max_messages_mbytes_per_queue number 200 rabbitmq_max_messages_mbytes_per_queue
 // @optionalParam rabbitmq_extend_policies string {} rabbitmq_extend_policies
-// @param raven_uri string raven_uri
 // @param service_account_username string service_account_username
 // @param service_account_password string service_account_password
 // @param session_mongo_uri string session_mongo_uri
 // @param slug_base_url string slug_base_url
 // @optionalParam status_page_id string  status_page_id
 // @param steward_storage_uri string steward_storage_uri
-// @param steward_uri string steward_uri
-// @param suspended_task_max_messages_count string suspended_task_max_messages_count
-// @param suspend_watch_kubernetes_max_events string suspend_watch_kubernetes_max_events
+// @optionalParam suspended_task_max_messages_count number 50 suspended_task_max_messages_count
+// @optionalParam suspend_watch_kubernetes_max_events number 5 suspend_watch_kubernetes_max_events
 // @param team_name string team_name
 // @param tenant_code string tenant_code
 // @param tenant_domain string tenant_domain
@@ -85,31 +76,30 @@
 // @param user_amqp_crypto_password string user_amqp_crypto_password
 // @param user_api_crypto_password string user_api_crypto_password
 // @param webhooks_base_uri string webhooks_base_uri
-// @param webhooks_service string webhooks_service
 // @param tenant_admin_email string tenant_admin_email
 // @param tenant_admin_password string tenant_admin_password
-// @param log_level string log_level
+// @optionalParam log_level string warn log_level
 // @param wiper_login string wiper_login
 // @param wiper_password string wiper_password
 // @optionalParam push_gateway_uri string  push_gateway_uri
-// @optionalParam iron_bank_clickhouse_uri string  iron_bank_clickhouse_uri
+// @param iron_bank_clickhouse_uri string iron_bank_clickhouse_uri
 // @optionalParam iron_bank_clickhouse_no_replica string  iron_bank_clickhouse_no_replica
-// @optionalParam iron_bank_uri string  iron_bank_uri
-// @optionalParam docker_registry_secret string  docker_registry_secret
 // @optionalParam kubernetes_ordinary_label_value string  kubernetes_ordinary_label_value
 // @optionalParam kubernetes_long_running_label_value string  kubernetes_long_running_label_value
 // @optionalParam frontend_no_external_resources string  frontend_no_external_resources
+// @param tenant_operator_login string Service account login for handmaiden service
+// @param tenant_operator_password string Service account password for handmaiden service
 
 local k = import 'k.libsonnet';
 
 local accounts_password = import 'param://accounts_password';
 local allow_empty_contract_after_the_last_user_removing = import 'param://allow_empty_contract_after_the_last_user_removing';
 local amqp_uri = import 'param://amqp_uri';
-local api_uri = import 'param://api_uri';
-local api_service = import 'param://api_service';
+local api_uri = import 'param://external_api_uri';
+local api_service = 'api-service/9000';
 local appdirect_marketplace_url = import 'param://appdirect_marketplace_url';
 local appdirect_subscription_events_uri = import 'param://appdirect_subscription_events_uri';
-local apidocs_service = import 'param://apidocs_service';
+local apidocs_service = 'api-docs-service/8000';
 local apprunner_image = import 'param://apprunner_image';
 local bran_clickhouse_uri = import 'param://bran_clickhouse_uri';
 local bran_prefetch_count = import 'param://bran_prefetch_count';
@@ -132,8 +122,8 @@ local external_api_uri = import 'param://external_api_uri';
 local external_app_uri = import 'param://external_app_uri';
 local external_gateway_uri = import 'param://external_gateway_uri';
 local frontend_no_external_resources = import 'param://frontend_no_external_resources';
-local external_steward_uri = import 'param://external_steward_uri';
-local frontend_service = import 'param://frontend_service';
+local external_steward_uri = 'http://steward-service.platform.svc.cluster.local:8200';
+local frontend_service = 'frontend-service/8000';
 local frontend_service_account_username = import 'param://frontend_service_account_username';
 local frontend_service_account_password = import 'param://frontend_service_account_password';
 local gelf_address = import 'param://gelf_address';
@@ -155,9 +145,9 @@ local mongo_uri = import 'param://mongo_uri';
 local petstore_api_host = import 'param://petstore_api_host';
 local predefined_users = import 'param://predefined_users';
 local push_gateway_uri = import 'param://push_gateway_uri';
-local quota_service_uri = import 'param://quota_service_uri';
+local quota_service_uri = 'http://quota-service-service.platform.svc.cluster.local:3002';
 local quota_service_mongo_uri = import 'param://quota_service_mongo_uri';
-local quotas_uri = import 'param://quotas_uri';
+local quotas_uri = 'http://gold-dragon-coin-service.platform.svc.cluster.local:9000';
 local rabbitmq_stats_login = import 'param://rabbitmq_stats_login';
 local rabbitmq_stats_pass = import 'param://rabbitmq_stats_pass';
 local rabbitmq_stats_uri = import 'param://rabbitmq_stats_uri';
@@ -167,14 +157,14 @@ local rabbitmq_virtual_host = import 'param://rabbitmq_virtual_host';
 local rabbitmq_max_messages_per_queue = import 'param://rabbitmq_max_messages_per_queue';
 local rabbitmq_max_messages_mbytes_per_queue = import 'param://rabbitmq_max_messages_mbytes_per_queue';
 local rabbitmq_extend_policies = import 'param://rabbitmq_extend_policies';
-local raven_uri = import 'param://raven_uri';
+local raven_uri = 'http://raven-service.platform.svc.cluster.local:8070';
 local service_account_username = import 'param://service_account_username';
 local service_account_password = import 'param://service_account_password';
 local session_mongo_uri = import 'param://session_mongo_uri';
 local slug_base_url = import 'param://slug_base_url';
 local status_page_id = import 'param://status_page_id';
 local steward_storage_uri = import 'param://steward_storage_uri';
-local steward_uri = import 'param://steward_uri';
+local steward_uri = 'http://steward-service.platform.svc.cluster.local:8200';
 local suspended_task_max_messages_count = import 'param://suspended_task_max_messages_count';
 local suspend_watch_kubernetes_max_events = import 'param://suspend_watch_kubernetes_max_events';
 local team_name = import 'param://team_name';
@@ -186,7 +176,7 @@ local tenant_name = import 'param://tenant_name';
 local user_amqp_crypto_password = import 'param://user_amqp_crypto_password';
 local user_api_crypto_password = import 'param://user_api_crypto_password';
 local webhooks_base_uri = import 'param://webhooks_base_uri';
-local webhooks_service = import 'param://webhooks_service';
+local webhooks_service = 'webhooks-service/5000';
 local tenant_admin_email = import 'param://tenant_admin_email';
 local tenant_admin_password = import 'param://tenant_admin_password';
 local log_level = import 'param://log_level';
@@ -198,8 +188,7 @@ local tenant_operator_login = import 'param://tenant_operator_login';
 local tenant_operator_password = import 'param://tenant_operator_password';
 local iron_bank_clickhouse_uri = import 'param://iron_bank_clickhouse_uri';
 local iron_bank_clickhouse_no_replica = import 'param://iron_bank_clickhouse_no_replica';
-local iron_bank_uri = import 'param://iron_bank_uri';
-local docker_registry_secret = import 'param://docker_registry_secret';
+local iron_bank_uri = 'http://iron-bank-service.platform.svc.cluster.local:3000';
 local kubernetes_ordinary_label_value = import 'param://kubernetes_ordinary_label_value';
 local kubernetes_long_running_label_value = import 'param://kubernetes_long_running_label_value';
 

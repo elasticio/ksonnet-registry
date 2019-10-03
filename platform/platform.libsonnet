@@ -46,22 +46,14 @@ local version = import 'elasticio/platform/version.json';
       ingressNameDefault,
       ingressNameApiDocs,
       loadBalancerIP,
-      appDomain,
-      apiDomain,
-      webhooksDomain,
       sshPort,
-      certName,
-      limitConnections
+      certName
     ):: ingress.conf(
       ingressNameDefault,
       ingressNameApiDocs,
       loadBalancerIP,
-      appDomain,
-      apiDomain,
-      webhooksDomain,
       sshPort,
-      certName,
-      limitConnections
+      certName
     ),
 
     // ----------------------------- //
@@ -112,7 +104,7 @@ local version = import 'elasticio/platform/version.json';
     handmaiden(secretName):: handmaiden.app(secretName, version),
     lookout(replicas):: lookout.app(replicas),
     bran(replicas, mode='read'):: bran.app(replicas, mode),
-    quotaService(secretName):: quotaService.app(secretName, version),
+    quotaService():: quotaService.app(),
     ironBank():: ironBank.app(),
     raven(replicas):: raven.app(replicas),
     scheduler():: scheduler.app(),
