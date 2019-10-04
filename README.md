@@ -184,6 +184,8 @@ ks generate elastic.io.webhooks webhooks --values-file=platform.json
 ks generate elastic.io.wiper wiper --values-file=platform.json
 ks generate elastic.io.docker docker --values-file=platform.json
 ks generate elastic.io.iron-bank iron-bank --values-file=platform.json
+ks generate elastic.io.bran-write bran-write --values-file=platform.json
+ks generate elastic.io.bran-read bran-read --values-file=platform.json
 ```
 
 ### Apply config
@@ -248,6 +250,8 @@ ks component rm webhooks
 ks component rm wiper
 ks component rm docker
 ks component rm iron-bank
+ks component rm bran-write
+ks component rm bran-read
 ```
 
 ### Generate new version of ksonnet components
@@ -277,6 +281,8 @@ ks generate elastic.io.webhooks webhooks --values-file=platform.json
 ks generate elastic.io.wiper wiper --values-file=platform.json
 ks generate elastic.io.docker docker --values-file=platform.json
 ks generate elastic.io.iron-bank iron-bank --values-file=platform.json
+ks generate elastic.io.bran-write bran-write --values-file=platform.json
+ks generate elastic.io.bran-read bran-read --values-file=platform.json
 ```
 
 ### Update config
