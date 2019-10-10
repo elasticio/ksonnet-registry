@@ -127,7 +127,7 @@ local parseUri(uri) = {
           spec: {
             containers: [
               {
-                image: 'registry:2.7.1',
+                image: 'elasticio/registry:2.7.1-non-root',
                 command: ['sh', '-c', 'sleep 3 && registry serve /etc/docker/registry/config.yml'],
                 imagePullPolicy: 'Always',
                 name: 'docker-registry',
@@ -205,6 +205,7 @@ local parseUri(uri) = {
               }
             ],
             dnsPolicy: 'ClusterFirst',
+            imagePullSecrets: [{name: 'elasticiodevops'}],
             nodeSelector: {
               'elasticio-role': 'platform'
             }
