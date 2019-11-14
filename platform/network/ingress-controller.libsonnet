@@ -19,6 +19,7 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
           'max-worker-connections': '4096',
           'client-body-timeout': '8',
           'client-header-timeout': '8',
+          'proxy-body-size': '10m',
           'keep-alive': '5',
           'limit-conn-zone-variable': 'binary_remote_addr',
           // Give some time to finish git push into gitreceiver
