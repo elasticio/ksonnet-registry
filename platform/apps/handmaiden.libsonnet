@@ -44,6 +44,10 @@ local version = import 'elasticio/platform/version.json';
                       value: 'handmaiden',
                     },
                     {
+                      name: 'API_URI',
+                      value: 'http://api-service.platform.svc.cluster.local:9000',
+                    },
+                    {
                       name: 'PORT',
                       value: '12000',
                     },

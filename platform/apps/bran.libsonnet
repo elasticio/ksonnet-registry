@@ -1,8 +1,32 @@
 local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spread-nodes.libsonnet';
 local version = import 'elasticio/platform/version.json';
 
-{
-  app(replicas, mode)::{
+local readService = {
+  apiVersion: 'v1',
+  kind: 'Service',
+  metadata: {
+    labels: {
+      app: 'bran-read-service',
+    },
+    name: 'bran-read-service',
+    namespace: 'platform',
+  },
+  spec: {
+    selector: {
+      app: 'bran-read',
+    },
+    ports: [
+      {
+        name: '5961',
+        port: 5961,
+        protocol: 'TCP'
+      },
+    ]
+  },
+};
+
+local app(replicas, mode) = [
+  {
     apiVersion: 'apps/v1',
     kind: 'Deployment',
     metadata: {
@@ -111,4 +135,9 @@ local version = import 'elasticio/platform/version.json';
       }
     }
   }
+];
+
+{
+  app(replicas, mode)::
+    app(replicas, mode) + (if mode == 'write' then [] else [readService])
 }
