@@ -89,6 +89,9 @@
 // @optionalParam frontend_no_external_resources string  frontend_no_external_resources
 // @param tenant_operator_login string Service account login for handmaiden service
 // @param tenant_operator_password string Service account password for handmaiden service
+// @optionalParam server_port_range string    port range for bloody-gate
+// @optionalParam server_private_network string   vpn network for bloody-gate
+// @optionalParam certificate_subject string   subject for bloody-gate server CA
 
 local k = import 'k.libsonnet';
 
@@ -192,6 +195,9 @@ local iron_bank_clickhouse_no_replica = import 'param://iron_bank_clickhouse_no_
 local iron_bank_uri = 'http://iron-bank-service.platform.svc.cluster.local:3000';
 local kubernetes_ordinary_label_value = import 'param://kubernetes_ordinary_label_value';
 local kubernetes_long_running_label_value = import 'param://kubernetes_long_running_label_value';
+local server_port_range = import 'param://server_port_range';
+local server_private_network = import 'param://server_private_network';
+local certificate_subject = import 'param://certificate_subject';
 
 [
   k.core.v1.namespace.new('platform'),
@@ -285,6 +291,9 @@ local kubernetes_long_running_label_value = import 'param://kubernetes_long_runn
       STEWARD_URI: std.toString(steward_uri),
       SUSPENDED_TASK_MAX_MESSAGES_COUNT: std.toString(suspended_task_max_messages_count),
       SUSPEND_WATCH_KUBERNETES_MAX_EVENTS: std.toString(suspend_watch_kubernetes_max_events),
+      [if server_port_range != '' then 'SERVER_PORT_RANGE']: server_port_range,
+      [if server_private_network != '' then 'SERVER_PRIVATE_NETWORK']: server_private_network,
+      [if certificate_subject != '' then 'CERTIFICATE_SUBJECT']: certificate_subject,
       TEAM_NAME: std.toString(team_name),
       TENANT_CODE: std.toString(tenant_code),
       TENANT_DOMAIN: std.toString(tenant_domain),

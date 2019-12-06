@@ -2,6 +2,7 @@ local k = import 'k.libsonnet';
 local admiral = import 'elasticio/platform/apps/admiral.libsonnet';
 local apiDocs = import 'elasticio/platform/apps/api-docs.libsonnet';
 local api = import 'elasticio/platform/apps/api.libsonnet';
+local bloodyGate = import 'elasticio/platform/apps/bloody-gate.libsonnet';
 local dockerRegistry = import 'elasticio/platform/apps/docker.libsonnet';
 local fluentd = import 'elasticio/platform/apps/fluentd.libsonnet';
 local frontend = import 'elasticio/platform/apps/frontend.libsonnet';
@@ -95,6 +96,7 @@ local version = import 'elasticio/platform/version.json';
     admiral(dockerRegistryUri, dockerRegistrySecret):: admiral.app(dockerRegistryUri, dockerRegistrySecret),
     apiDocs(image):: apiDocs.app(image),
     api(replicas, cpuRequest=0.1, cpuLimit=1, terminationGracePeriodSeconds=30):: api.app(replicas, cpuRequest, cpuLimit, terminationGracePeriodSeconds),
+    bloodyGate(ipAddress, caCert, caKey):: bloodyGate.app(ipAddress, caCert, caKey),
     dockerRegistry(dockerRegistryUri, dockerRegistrySecret, sharedSecret, replicas):: dockerRegistry.app(dockerRegistryUri, dockerRegistrySecret, sharedSecret, replicas, 'tasks'),
     fluentd(execGelfProto, execGelfHost, execGelfPort):: fluentd.app(execGelfProto, execGelfHost, execGelfPort),
     frontend(replicas, terminationGracePeriodSeconds=30):: frontend.app(replicas, terminationGracePeriodSeconds),
