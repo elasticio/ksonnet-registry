@@ -89,6 +89,10 @@ Configuration consists of 2 files
     "tenant_admin_email": "%tenant_admin_email%",
     "tenant_admin_password": "%tenant_admin_password%",
     "log_level": "%log_level%"
+    "agent_vpn_entrypoint": "%agent_vpn_entrypoint%",
+    "server_port_range": "%server_port_range%",
+    "server_private_network": "%server_private_network%",
+    "certificate_subject": "%certificate_subject%"
 }
 ```
 
@@ -126,7 +130,10 @@ Description for params can be found here: https://github.com/elasticio/k8s-deplo
     "storage_slugs_replicas": 2,
     "raven_replicas": 2,
     "steward_replicas": 2,
-    "lookout_replicas": 2
+    "lookout_replicas": 2,
+    "agent_entrypoint_ip": "%ip-address-for-local-agents-vpn%",
+    "agent_ca_cert": "%ca_cert_for_agents_base64%",
+    "agent_ca_key": "%ca_key_for_agents_base64%",
 }
 ```
 
@@ -139,6 +146,8 @@ Description for params can be found here: https://github.com/elasticio/k8s-deplo
 * `storage_slugs_lb_ip` - internal ip of platform-storage-slugs which is used for Agents
 * `storage_slugs_size` - size of slugs storage (refer to Kubernetes PersistentVolume `size` field for format)
 * `api_replicas`, `gold_dragon_coin_replicas`, `webhooks_replicas`, `storage_slugs_replicas`, `raven_replicas`, `steward_replicas`, `lookout_replicas` - number of instances for apps
+* `%ip-address-for-local-agents-vpn%` public ip address for local-agents vpn server loadbalancer
+* `%ca_cert_for_agents_base64%` and `%ca_key_for_agents_base64%` certificate and private key for it for certificate authority used to handle all crypto magic related to lightweight-agent
 
 
 ### Init ksonnet project
@@ -166,6 +175,7 @@ ks pkg install elasticio/platform@<current_elasticio_version>
 ks generate elastic.io.admiral admiral --values-file=platform.json
 ks generate elastic.io.api-docs api-docs --values-file=platform.json
 ks generate elastic.io.api api --values-file=platform.json
+ks generate elastic.io.bloody-gate bloody-gate --values-file=platform.json
 ks generate elastic.io.config config --values-file=config.json
 ks generate elastic.io.fluentd fluentd --values-file=platform.json
 ks generate elastic.io.frontend frontend --values-file=platform.json
