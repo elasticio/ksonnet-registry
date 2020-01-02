@@ -92,6 +92,7 @@
 // @optionalParam server_port_range string    port range for bloody-gate
 // @optionalParam server_private_network string   vpn network for bloody-gate
 // @optionalParam certificate_subject string   subject for bloody-gate server CA
+// @optionalParam agent_vpn_entrypoint string    ip/domain for local agent
 
 local k = import 'k.libsonnet';
 
@@ -198,6 +199,7 @@ local kubernetes_long_running_label_value = import 'param://kubernetes_long_runn
 local server_port_range = import 'param://server_port_range';
 local server_private_network = import 'param://server_private_network';
 local certificate_subject = import 'param://certificate_subject';
+local agent_vpn_entrypoint = import 'param://agent_vpn_entrypoint';
 
 [
   k.core.v1.namespace.new('platform'),
@@ -206,6 +208,7 @@ local certificate_subject = import 'param://certificate_subject';
     apiVersion: 'v1',
     stringData: {
       ACCOUNTS_PASSWORD: std.toString(accounts_password),
+      [if agent_vpn_entrypoint != '' then 'AGENT_VPN_ENTRYPOINT']: agent_vpn_entrypoint,
       ALLOW_EMPTY_CONTRACT_AFTER_THE_LAST_USER_REMOVING: std.toString(if allow_empty_contract_after_the_last_user_removing == "true" then "true" else ""),
       AMQP_URI: std.toString(amqp_uri),
       API_URI: std.toString(api_uri),

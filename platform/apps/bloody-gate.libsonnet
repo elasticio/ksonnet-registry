@@ -43,7 +43,7 @@ local k = import 'k.libsonnet';
                 },
                 {
                   name: 'PORT',
-                  value: '3000'
+                  value: '998'
                 },
                 {
                   name: 'LOG_LEVEL',
@@ -55,11 +55,11 @@ local k = import 'k.libsonnet';
                 }
               ],
               ports: [{
-                containerPort: 3000
+                containerPort: 998
               }],
               readinessProbe: {
                 httpGet: {
-                  port: 3000,
+                  port: 998,
                   path: '/readiness'
                 },
                 initialDelaySeconds: 60,
@@ -70,7 +70,7 @@ local k = import 'k.libsonnet';
               },
               livenessProbe: {
                 httpGet: {
-                  port: 3000,
+                  port: 998,
                   path: '/healthcheck'
                 },
                 initialDelaySeconds: 60,
@@ -176,6 +176,15 @@ local k = import 'k.libsonnet';
                     }
                   },
                   {
+                    name: 'REMOTE_ADDRESS',
+                    valueFrom: {
+                      secretKeyRef: {
+                        name: 'elasticio',
+                        key: 'AGENT_VPN_ENTRYPOINT',
+                      }
+                    }
+                  },
+                  {
                     name: 'APP_NAME',
                     value: 'knight-of-the-bloody-gate'
                   },
@@ -251,7 +260,7 @@ local k = import 'k.libsonnet';
           type: 'RollingUpdate',
           rollingUpdate: {
             maxUnavailable: 1,
-            maxSurge: 1
+            maxSurge: 0
           }
         }
       }

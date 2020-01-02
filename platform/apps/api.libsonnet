@@ -23,6 +23,10 @@ local version = import 'elasticio/platform/version.json';
           template: {
             metadata: {
               name: 'api',
+              annotations: {
+                "prometheus.io/scrape": "true",
+                "prometheus.io/port": "9000"
+              },
               labels: {
                 app: 'api',
               },
