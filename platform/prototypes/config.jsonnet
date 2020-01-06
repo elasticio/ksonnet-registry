@@ -37,7 +37,7 @@
 // @optionalParam gelf_protocol string udp gelf_protocol
 // @param git_receiver_host string git_receiver_host
 // @param hooks_data_password string hooks_data_password
-// @optionalParam ignore_container_errors string ignore_container_errors
+// @optionalParam ignore_container_errors string  ignore_container_errors
 // @optionalParam intercom_access_token string  intercom_access_token
 // @optionalParam intercom_app_id string  intercom_app_id
 // @optionalParam intercom_secret_key string  intercom_secret_key
