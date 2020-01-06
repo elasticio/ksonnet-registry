@@ -37,6 +37,7 @@
 // @optionalParam gelf_protocol string udp gelf_protocol
 // @param git_receiver_host string git_receiver_host
 // @param hooks_data_password string hooks_data_password
+// @optionalParam ignore_container_errors string ignore_container_errors
 // @optionalParam intercom_access_token string  intercom_access_token
 // @optionalParam intercom_app_id string  intercom_app_id
 // @optionalParam intercom_secret_key string  intercom_secret_key
@@ -256,7 +257,7 @@ local agent_vpn_entrypoint = import 'param://agent_vpn_entrypoint';
       GELF_PROTOCOL: std.toString(gelf_protocol),
       GIT_RECEIVER_HOST: std.toString(git_receiver_host),
       HOOKS_DATA_PASSWORD: std.toString(hooks_data_password),
-      IGNORE_CONTAINER_ERRORS: std.toString(ignore_container_errors),
+      [if ignore_container_errors != '' then 'IGNORE_CONTAINER_ERRORS']: std.toString(ignore_container_errors),
       INTERCOM_ACCESS_TOKEN: std.toString(intercom_access_token),
       INTERCOM_APP_ID: std.toString(intercom_app_id),
       INTERCOM_SECRET_KEY: std.toString(intercom_secret_key),
