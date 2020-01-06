@@ -137,6 +137,7 @@ local gelf_port = import 'param://gelf_port';
 local gelf_protocol = import 'param://gelf_protocol';
 local git_receiver_host = import 'param://git_receiver_host';
 local hooks_data_password = import 'param://hooks_data_password';
+local ignore_container_errors = import 'param://ignore_container_errors';
 local intercom_access_token = import 'param://intercom_access_token';
 local intercom_app_id = import 'param://intercom_app_id';
 local intercom_secret_key = import 'param://intercom_secret_key';
@@ -255,6 +256,7 @@ local agent_vpn_entrypoint = import 'param://agent_vpn_entrypoint';
       GELF_PROTOCOL: std.toString(gelf_protocol),
       GIT_RECEIVER_HOST: std.toString(git_receiver_host),
       HOOKS_DATA_PASSWORD: std.toString(hooks_data_password),
+      IGNORE_CONTAINER_ERRORS: std.toString(ignore_container_errors),
       INTERCOM_ACCESS_TOKEN: std.toString(intercom_access_token),
       INTERCOM_APP_ID: std.toString(intercom_app_id),
       INTERCOM_SECRET_KEY: std.toString(intercom_secret_key),
