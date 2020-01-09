@@ -54,7 +54,7 @@
                       },
                     },
                   ],
-                  image: 'elasticio/fluentd-kubernetes-gelf:715361b6efb0286df4b102c1564b135601cb64ca',
+                  image: 'elasticio/fluentd-kubernetes-gelf:8e5ffb6e02d087789ebaae09c9738a1f1c481c9a',
                   imagePullPolicy: 'Always',
                   name: 'eio-fluentd',
                   resources: {
