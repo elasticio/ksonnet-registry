@@ -46,6 +46,10 @@ local app(replicas, mode) = [
       template: {
         metadata: {
           name: 'bran-' + mode,
+          annotations: {
+            "prometheus.io/scrape": "true",
+            "prometheus.io/port": "5961"
+          },
           labels: {
             app: 'bran-' + mode
           }
