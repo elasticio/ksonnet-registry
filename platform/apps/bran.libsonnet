@@ -89,6 +89,9 @@ local app(replicas, mode) = [
                   }
                 }
               ],
+              ports: [{
+                containerPort: 5961
+              }],
               livenessProbe: {
                 httpGet: {
                   port: 5961,
