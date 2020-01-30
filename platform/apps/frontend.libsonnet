@@ -71,6 +71,15 @@ local version = import 'elasticio/platform/version.json';
                       },
                     },
                     {
+                      name: 'EXECUTIONS_ENABLED',
+                      valueFrom: {
+                        secretKeyRef: {
+                          name: 'elasticio',
+                          key: 'BRAN_ENABLED',
+                        },
+                      },
+                    },
+                    {
                       name: 'TERMINATION_DELAY',
                       value: std.toString(terminationGracePeriodSeconds / 2)
                     },

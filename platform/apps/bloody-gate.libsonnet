@@ -52,8 +52,32 @@ local k = import 'k.libsonnet';
                 {
                   name: 'AGENT_MANAGEMENT_API',
                   value: 'http://knight-of-the-bloody-gate-service.platform.svc.cluster.local:3000'
+                },
+                {
+                  name: 'PLATFORM_PODS_NAMESPACE',
+                  value: 'platform'
+                },
+                {
+                  name: 'TASKS_PODS_NAMESPACE',
+                  value: 'tasks'
+                },
+                {
+                  name: 'SELF_SELECTOR',
+                  value: '{"app": "bloody-gate"}'
                 }
               ],
+              lifecycle: {
+                postStart: {
+                  exec: {
+                    // We need to have net.ipv4.ip_forward=1 inside container.
+                    // this sysctl option may be forbidden at installation of k8s
+                    // so pod.spec.securityContext.sysctls does not always work
+                    // so choice => privileged container + manually set sysctl
+                    // sad but true :(
+                    command: ['sysctl', 'net.ipv4.ip_forward=1']
+                  }
+                }
+              },
               ports: [{
                 containerPort: 998
               }],
@@ -93,8 +117,9 @@ local k = import 'k.libsonnet';
               terminationMessagePolicy: 'File',
               imagePullPolicy: 'Always',
               securityContext: {
-                privileged: false,
-                allowPrivilegeEscalation: false,
+                // unfortunatelly have to make container privileged to make it able to set net.ipv4.ip_forward=1
+                privileged: true,
+                allowPrivilegeEscalation: true,
                 capabilities: {
                   add: ['NET_ADMIN', 'NET_RAW', 'MKNOD', 'NET_BIND_SERVICE'],
                   drop: ['all']
@@ -104,6 +129,7 @@ local k = import 'k.libsonnet';
             imagePullSecrets: [{
               name: 'elasticiodevops'
             }],
+            serviceAccountName: 'bloody-gate-account',
             restartPolicy: 'Always',
             terminationGracePeriodSeconds: 30,
             nodeSelector: {
@@ -344,5 +370,59 @@ local k = import 'k.libsonnet';
       },
       type='kubernetes.io/tls'
     ).withNamespace('platform'),
+    {
+      apiVersion: 'v1',
+      kind: 'ServiceAccount',
+      metadata: {
+        name: 'bloody-gate-account',
+        namespace: 'platform',
+      }
+    },
+    {
+      apiVersion: 'rbac.authorization.k8s.io/v1',
+      kind: 'Role',
+      metadata: {
+        name: 'bloody-gate-role',
+        namespace: 'platform',
+      },
+      rules: [
+        {
+          apiGroups: [
+            'networking.k8s.io'
+          ],
+          resources: [
+            'networkpolicies'
+          ],
+          verbs: [
+            'create',
+            'delete',
+            'get',
+            'patch',
+            'update'
+          ]
+        }
+      ]
+    },
+    {
+      apiVersion: 'rbac.authorization.k8s.io/v1',
+      kind: 'RoleBinding',
+      metadata: {
+        name: 'bloody-gate-rolebinding',
+        namespace: 'platform',
+        labels: {
+          app: 'bloody-gate'
+        }
+      },
+      roleRef: {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'Role',
+        name: 'bloody-gate-role'
+      },
+      subjects: [{
+        kind: 'ServiceAccount',
+        name: 'bloody-gate-account',
+        namespace: 'platform'
+      }]
+    }
   ]
 }

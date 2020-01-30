@@ -79,7 +79,11 @@ local version = import 'elasticio/platform/version.json';
                     {
                       name: 'DOCKER_REGISTRY_URI',
                       value: dockerRegistryUri
-                    }
+                    },
+                    {
+                      name: 'AGENT_MANAGEMENT_API',
+                      value: 'http://knight-of-the-bloody-gate-service.platform.svc.cluster.local:3000'
+                    },
                   ],
                   ports: [{
                     containerPort: 12000

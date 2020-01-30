@@ -64,6 +64,10 @@ local version = import 'elasticio/platform/version.json';
                       name: 'TERMINATION_DELAY',
                       value: std.toString(terminationGracePeriodSeconds / 2)
                     },
+                    {
+                      name: 'AGENT_MANAGEMENT_API',
+                      value: 'http://knight-of-the-bloody-gate-service.platform.svc.cluster.local:3000'
+                    }
                   ],
                   livenessProbe: {
                     httpGet: {

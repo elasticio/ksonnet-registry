@@ -9,7 +9,8 @@
 // @optionalParam appdirect_login string  appdirect_login
 // @optionalParam appdirect_password string  appdirect_password
 // @optionalParam apprunner_image string elasticio/apprunner:production apprunner_image
-// @param bran_clickhouse_uri string  bran_clickhouse_uri
+// @optionalParam bran_clickhouse_uri string  bran_clickhouse_uri
+// @optionalParam bran_enabled string false is bran service enabled
 // @optionalParam bran_prefetch_count string 10 bran_prefetch_count
 // @param certificate_store_encryption_password string certificate_store_encryption_password
 // @param company_name string company_name
@@ -107,6 +108,7 @@ local appdirect_subscription_events_uri = import 'param://appdirect_subscription
 local apidocs_service = 'api-docs-service/8000';
 local apprunner_image = import 'param://apprunner_image';
 local bran_clickhouse_uri = import 'param://bran_clickhouse_uri';
+local bran_enabled = import 'param://bran_enabled';
 local bran_read_uri = 'http://bran-read-service.platform.svc.cluster.local:5961';
 local bran_prefetch_count = import 'param://bran_prefetch_count';
 local certificate_store_encryption_password = import 'param://certificate_store_encryption_password';
@@ -205,7 +207,7 @@ local agent_vpn_entrypoint = import 'param://agent_vpn_entrypoint';
 
 [
   k.core.v1.namespace.new('platform'),
-  k.core.v1.namespace.new('tasks'),
+  k.core.v1.namespace.new('tasks').withLabels({name: 'tasks'}),
   {
     apiVersion: 'v1',
     stringData: {
@@ -221,8 +223,9 @@ local agent_vpn_entrypoint = import 'param://agent_vpn_entrypoint';
       APPDIRECT_SERVICE_ACCOUNT_USERNAME: std.toString(appdirect_login),
       APPDIRECT_SERVICE_ACCOUNT_PASSWORD: std.toString(appdirect_password),
       APPRUNNER_IMAGE: std.toString(apprunner_image),
-      BRAN_CLICKHOUSE_URI: std.toString(bran_clickhouse_uri),
-      BRAN_READ_URI: std.toString(bran_read_uri),
+      [if bran_clickhouse_uri != '' then 'BRAN_CLICKHOUSE_URI']: std.toString(bran_clickhouse_uri),
+      [if bran_enabled != '' then 'BRAN_ENABLED']: std.toString(bran_enabled),
+      [if bran_read_uri != '' then 'BRAN_READ_URI']: std.toString(bran_read_uri),
       BRAN_PREFETCH_COUNT: std.toString(bran_prefetch_count),
       IRON_BANK_CLICKHOUSE_URI: std.toString(iron_bank_clickhouse_uri),
       IRON_BANK_CLICKHOUSE_NO_REPLICA: std.toString(iron_bank_clickhouse_no_replica),
