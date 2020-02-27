@@ -46,7 +46,7 @@ local parseUri(uri) = {
 };
 
 {
-  app(dockerRegistryUri, dockerRegistrySecretName, sharedSecret, replicas=2, tasksNamespace='tasks'):: [
+  app(dockerRegistryUri, dockerRegistrySecretName, sharedSecret, s3url = '', replicas=2, tasksNamespace='tasks'):: [
     {
       local parsedDockerUri = parseUri(dockerRegistryUri),
       apiVersion: 'v1',
@@ -101,6 +101,7 @@ local parseUri(uri) = {
     ).withNamespace(tasksNamespace),
     {
       local parsedDockerUri = parseUri(dockerRegistryUri),
+      local parsedS3Url = if s3url != '' then parseUri(s3url) else null,
       apiVersion: 'apps/v1',
       kind: 'Deployment',
       metadata: {
@@ -144,14 +145,37 @@ local parseUri(uri) = {
                     name: 'REGISTRY_AUTH_HTPASSWD_PATH',
                     value: '/etc/htpasswd'
                   }
-                ],
-                volumeMounts: [
+                ] + ( if parsedS3Url == null then [] else [
                   {
-                    mountPath: '/var/lib/registry',
-                    name: 'docker-storage',
-                    subPath: 'docker'
+                    name: 'REGISTRY_STORAGE',
+                    value: 's3'
+                  },
+                  {
+                    name: 'REGISTRY_STORAGE_S3_REGIONENDPOINT',
+                    value: parsedS3Url.proto + parsedS3Url.host + (if parsedS3Url.port == null then '' else (':' + parsedS3Url.port) )
+                  },
+                  {
+                    name: 'REGISTRY_STORAGE_S3_REGION',
+                    value: 'does_not_matter'
+                  },
+                  {
+                    name: 'REGISTRY_STORAGE_S3_BUCKET',
+                    value: std.substr(parsedS3Url.path, 1, std.length(parsedS3Url.path) - 1)
+                  },
+                  {
+                    name: 'REGISTRY_STORAGE_S3_ACCESSKEY',
+                    value: if parsedS3Url.username == null then '' else parsedS3Url.username
+                  },
+                  {
+                    name: 'REGISTRY_STORAGE_S3_SECRETKEY',
+                    value: if parsedS3Url.password == null then '' else parsedS3Url.password
+                  },
+                  {
+                    name: 'REGISTRY_STORAGE_REDIRECT_DISABLE',
+                    value: 'true'
                   }
-                ],
+                ]
+                ),
                 lifecycle: {
                   postStart: {
                     exec: {
@@ -194,22 +218,35 @@ local parseUri(uri) = {
                 securityContext: {
                   privileged: false
                 }
-              },
-            ],
-            volumes: [
-              {
-                name: 'docker-storage',
-                persistentVolumeClaim: {
-                  claimName: 'platform-storage-slugs-volume-claim'
+              } + (
+                if parsedS3Url != null then {} else {
+                  volumeMounts: [
+                    {
+                      mountPath: '/var/lib/registry',
+                      name: 'docker-storage',
+                      subPath: 'docker'
+                    }
+                  ]
                 }
-              }
+              )
             ],
             dnsPolicy: 'ClusterFirst',
             imagePullSecrets: [{name: 'elasticiodevops'}],
             nodeSelector: {
               'elasticio-role': 'platform'
             }
-          }
+          } + (
+            if parsedS3Url != null then {} else {
+              volumes: [
+                {
+                  name: 'docker-storage',
+                  persistentVolumeClaim: {
+                    claimName: 'platform-storage-slugs-volume-claim'
+                  }
+                }
+              ]
+            }
+          )
         },
         strategy: {
           rollingUpdate: {

@@ -5,6 +5,7 @@
 // @param docker_registry_secret_name string name of secret that will be used to autorize in docker secret
 // @param docker_registry_uri string  uri (login port, host port) for docker registry
 // @param docker_registry_http_secret string random string used in docker-registry crypto magic. No special requirements, just real random string
+// @optionalParam docker_s3_url string  s3 compatible storage uri
 
 local k = import 'k.libsonnet';
 local platform = import 'elasticio/platform/platform.libsonnet';
@@ -13,6 +14,7 @@ local dockerRegistrySecretName = import 'param://docker_registry_secret_name';
 local dockerRegistryReplicas = import 'param://docker_registry_replicas';
 local sharedSecret = import 'param://docker_registry_http_secret';
 local replicas = import 'param://docker_registry_replicas';
+local s3url = import 'param://docker_s3_url';
 
-platform.parts.dockerRegistry(dockerRegistryUri, dockerRegistrySecretName, sharedSecret, replicas)
+platform.parts.dockerRegistry(dockerRegistryUri, dockerRegistrySecretName, sharedSecret, s3url, replicas)
 
