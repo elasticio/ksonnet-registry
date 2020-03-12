@@ -2,7 +2,7 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
 local version = import 'elasticio/platform/version.json';
 
 {
-  app(replicas, lbIp, storage='1Ti', slugsSubPath='slugs', stewardSubPath='steward'):: [
+  app(replicas, lbIp, storage='1Ti', slugsSubPath='slugs', stewardSubPath='steward', s3Uri=''):: [
       {
         apiVersion: 'apps/v1',
         kind: 'Deployment',
@@ -48,6 +48,10 @@ local version = import 'elasticio/platform/version.json';
                       name: 'LOG_LEVEL',
                       value: 'trace',
                     },
+										{
+											name: 'S3_SLUGS_URI',
+											value: s3Uri
+										}
                   ],
                   livenessProbe: {
                     initialDelaySeconds: 10,

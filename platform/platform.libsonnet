@@ -4,6 +4,7 @@ local apiDocs = import 'elasticio/platform/apps/api-docs.libsonnet';
 local api = import 'elasticio/platform/apps/api.libsonnet';
 local bloodyGate = import 'elasticio/platform/apps/bloody-gate.libsonnet';
 local dockerRegistry = import 'elasticio/platform/apps/docker.libsonnet';
+local s3 = import 'elasticio/platform/apps/s3.libsonnet';
 local fluentd = import 'elasticio/platform/apps/fluentd.libsonnet';
 local frontend = import 'elasticio/platform/apps/frontend.libsonnet';
 local gendry = import 'elasticio/platform/apps/gendry.libsonnet';
@@ -11,6 +12,7 @@ local gitreceiver = import 'elasticio/platform/apps/gitreceiver.libsonnet';
 local goldDragonCoin = import 'elasticio/platform/apps/gold-dragon-coin.libsonnet';
 local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
 local lookout = import 'elasticio/platform/apps/lookout.libsonnet';
+local maester = import 'elasticio/platform/apps/maester.libsonnet';
 local bran = import 'elasticio/platform/apps/bran.libsonnet';
 local quotaService = import 'elasticio/platform/apps/quota-service.libsonnet';
 local ironBank = import 'elasticio/platform/apps/iron-bank.libsonnet';
@@ -104,13 +106,14 @@ local version = import 'elasticio/platform/version.json';
     gitreceiver(dockerRegistryUri):: gitreceiver.app(dockerRegistryUri),
     goldDragonCoin(replicas):: goldDragonCoin.app(replicas),
     handmaiden(secretName):: handmaiden.app(secretName, version),
-    lookout(replicas):: lookout.app(replicas),
+    lookout(replicas, maxErrorRecordsCount):: lookout.app(replicas, maxErrorRecordsCount),
     bran(replicas, mode='read'):: bran.app(replicas, mode),
     quotaService():: quotaService.app(),
     ironBank():: ironBank.app(),
     raven(replicas):: raven.app(replicas),
     scheduler():: scheduler.app(),
-    steward(replicas):: steward.app(replicas),
+    steward(replicas, s3Uri=''):: steward.app(replicas, s3Uri),
+    s3(accessKey, secretKey):: s3.app(accessKey, secretKey),
     webhooks(replicas):: webhooks.app(replicas),
     wiper(params):: wiper.app(params),
 
@@ -119,13 +122,42 @@ local version = import 'elasticio/platform/version.json';
       lbIp,
       storage='1Ti',
       slugsSubPath='slugs',
-      stewardSubPath='steward'
+      stewardSubPath='steward',
+      s3Uri=''
     ):: storageSlugs.app(
       replicas,
       lbIp,
       storage,
       slugsSubPath,
-      stewardSubPath
+      stewardSubPath,
+      s3Uri
+    ),
+
+    maester(
+      maesterReplicas
+    ):: maester.app(
+      version,
+      maesterReplicas
+    ),
+
+    maesterRedis(
+      redisClusterName='maester-cluster',
+      redisAppName='maester-redis-ha',
+      redisReplicas=3,
+      maxMemGB=1,
+      storageSize='1Ti',
+      redisDataDir='/data',
+      redisConfigDir='/readonly-config',
+      redisConfigMapName=redisAppName + '-configmap',
+    ):: maester.redis(
+      redisClusterName,
+      redisAppName,
+      redisReplicas,
+      maxMemGB,
+      storageSize,
+      redisDataDir,
+      redisConfigDir,
+      redisConfigMapName,
     ),
 
   },

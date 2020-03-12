@@ -54,6 +54,14 @@ local quotaTxnResolver = {
                        name: 'elasticio',
                      },
                    },
+                 },{
+                   name: 'WIPER_PUSH_GATEWAY_URI',
+                   valueFrom: {
+                     secretKeyRef: {
+                       key: 'PUSH_GATEWAY_URI',
+                       name: 'elasticio',
+                     },
+                   },
                  },
                ],
                envFrom: [
@@ -136,6 +144,14 @@ local monitorContractQuotaUsage = {
                         name: 'elasticio',
                       },
                     },
+                  },{
+                    name: 'WIPER_PUSH_GATEWAY_URI',
+                    valueFrom: {
+                      secretKeyRef: {
+                        key: 'PUSH_GATEWAY_URI',
+                        name: 'elasticio',
+                      },
+                    },
                   },
                 ],
                 envFrom: [
@@ -215,6 +231,14 @@ local monitorWorkspaceQuotaUsage = {
                     valueFrom: {
                       secretKeyRef: {
                         key: 'API_URI',
+                        name: 'elasticio',
+                      },
+                    },
+                  },{
+                    name: 'WIPER_PUSH_GATEWAY_URI',
+                    valueFrom: {
+                      secretKeyRef: {
+                        key: 'PUSH_GATEWAY_URI',
                         name: 'elasticio',
                       },
                     },
@@ -301,6 +325,14 @@ local jobs = [
                            name: 'elasticio',
                          },
                        },
+                     },{
+                       name: 'WIPER_PUSH_GATEWAY_URI',
+                       valueFrom: {
+                         secretKeyRef: {
+                           key: 'PUSH_GATEWAY_URI',
+                           name: 'elasticio',
+                         },
+                       },
                      },
                    ],
                    envFrom: [
@@ -379,6 +411,14 @@ local jobs = [
                        valueFrom: {
                          secretKeyRef: {
                            key: 'API_URI',
+                           name: 'elasticio',
+                         },
+                       },
+                     },{
+                       name: 'WIPER_PUSH_GATEWAY_URI',
+                       valueFrom: {
+                         secretKeyRef: {
+                           key: 'PUSH_GATEWAY_URI',
                            name: 'elasticio',
                          },
                        },
@@ -463,6 +503,14 @@ local jobs = [
                            name: 'elasticio',
                          },
                        },
+                     },{
+                       name: 'WIPER_PUSH_GATEWAY_URI',
+                       valueFrom: {
+                         secretKeyRef: {
+                           key: 'PUSH_GATEWAY_URI',
+                           name: 'elasticio',
+                         },
+                       },
                      },
                    ],
                    envFrom: [
@@ -544,6 +592,14 @@ local jobs = [
                            name: 'elasticio',
                          },
                        },
+                     },{
+                       name: 'WIPER_PUSH_GATEWAY_URI',
+                       valueFrom: {
+                         secretKeyRef: {
+                           key: 'PUSH_GATEWAY_URI',
+                           name: 'elasticio',
+                         },
+                       },
                      },
                    ],
                    envFrom: [
@@ -622,6 +678,14 @@ local jobs = [
                        valueFrom: {
                          secretKeyRef: {
                            key: 'API_URI',
+                           name: 'elasticio',
+                         },
+                       },
+                     },{
+                       name: 'WIPER_PUSH_GATEWAY_URI',
+                       valueFrom: {
+                         secretKeyRef: {
+                           key: 'PUSH_GATEWAY_URI',
                            name: 'elasticio',
                          },
                        },

@@ -8,6 +8,8 @@
 // @optionalParam appdirect_subscription_events_uri string  appdirect_subscription_events_uri
 // @optionalParam appdirect_login string  appdirect_login
 // @optionalParam appdirect_password string  appdirect_password
+// @param admiral_service_account_username string admiral_service_account_username
+// @param admiral_service_account_password string admiral_service_account_password
 // @optionalParam apprunner_image string elasticio/apprunner:production apprunner_image
 // @optionalParam bran_clickhouse_uri string  bran_clickhouse_uri
 // @optionalParam bran_enabled string false is bran service enabled
@@ -95,10 +97,15 @@
 // @optionalParam server_private_network string   vpn network for bloody-gate
 // @optionalParam certificate_subject string   subject for bloody-gate server CA
 // @optionalParam agent_vpn_entrypoint string    ip/domain for local agent
+// @optionalParam maester_jwt_secret string  maester_jwt_secret
+// @optionalParam maester_enabled string false is maester service enabled
+// @optionalParam maester_redis_uri string  maester_redis_uri
 
 local k = import 'k.libsonnet';
 
 local accounts_password = import 'param://accounts_password';
+local admiral_service_account_username = import 'param://admiral_service_account_username';
+local admiral_service_account_password = import 'param://admiral_service_account_password';
 local allow_empty_contract_after_the_last_user_removing = import 'param://allow_empty_contract_after_the_last_user_removing';
 local amqp_uri = import 'param://amqp_uri';
 local api_uri = import 'param://external_api_uri';
@@ -148,6 +155,10 @@ local kubernetes_rabbitmq_uri_sailor = import 'param://kubernetes_rabbitmq_uri_s
 local kubernetes_slugs_base_url = import 'param://kubernetes_slugs_base_url';
 local lookout_prefetch_count = import 'param://lookout_prefetch_count';
 local mandrill_api_key = import 'param://mandrill_api_key';
+local maester_enabled = import 'param://maester_enabled';
+local maester_jwt_secret = import 'param://maester_jwt_secret';
+local maester_uri = 'http://maester-service.platform.svc.cluster.local:3002';
+local maester_redis_uri = 'redis://maester-redis-service.platform.svc.cluster.local:6379';
 local message_crypto_iv = import 'param://message_crypto_iv';
 local message_crypto_password = import 'param://message_crypto_password';
 local mongo_uri = import 'param://mongo_uri';
@@ -205,6 +216,9 @@ local server_private_network = import 'param://server_private_network';
 local certificate_subject = import 'param://certificate_subject';
 local agent_vpn_entrypoint = import 'param://agent_vpn_entrypoint';
 
+local checkMaesterKey = if maester_enabled == 'true' && maester_jwt_secret == '' then
+  error 'maester_jwt_secret is required';
+
 [
   k.core.v1.namespace.new('platform'),
   k.core.v1.namespace.new('tasks').withLabels({name: 'tasks'}),
@@ -212,6 +226,8 @@ local agent_vpn_entrypoint = import 'param://agent_vpn_entrypoint';
     apiVersion: 'v1',
     stringData: {
       ACCOUNTS_PASSWORD: std.toString(accounts_password),
+      ADMIRAL_SERVICE_ACCOUNT_USERNAME: admiral_service_account_username,
+      ADMIRAL_SERVICE_ACCOUNT_PASSWORD: admiral_service_account_password,
       [if agent_vpn_entrypoint != '' then 'AGENT_VPN_ENTRYPOINT']: agent_vpn_entrypoint,
       ALLOW_EMPTY_CONTRACT_AFTER_THE_LAST_USER_REMOVING: std.toString(if allow_empty_contract_after_the_last_user_removing == "true" then "true" else ""),
       AMQP_URI: std.toString(amqp_uri),
@@ -319,8 +335,14 @@ local agent_vpn_entrypoint = import 'param://agent_vpn_entrypoint';
       WIPER_SERVICE_ACCOUNT_PASSWORD: std.toString(wiper_password),
       TENANT_ADMIN_EMAIL: std.toString(tenant_admin_email),
       TENANT_ADMIN_PASSWORD: std.toString(tenant_admin_password),
-      LOG_LEVEL: std.toString(log_level),
-    },
+      LOG_LEVEL: std.toString(log_level)
+    } + (
+      if std.toString(maester_enabled) == 'true' then {
+        MAESTER_URI: std.toString(maester_uri),
+        MAESTER_JWT_SECRET: std.toString(maester_jwt_secret),
+        MAESTER_REDIS_URI: std.toString(maester_redis_uri)
+      } else {}
+    ),
     kind: 'Secret',
     metadata: {
       name: 'elasticio',

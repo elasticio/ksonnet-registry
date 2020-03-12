@@ -2,7 +2,8 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
 local version = import 'elasticio/platform/version.json';
 
 {
-  app(replicas):: {
+  app(replicas, maxErrorRecordsCount = "1000"):: [
+    {
       apiVersion: 'apps/v1',
       kind: 'Deployment',
       metadata: {
@@ -55,7 +56,7 @@ local version = import 'elasticio/platform/version.json';
                         key: 'LOOKOUT_PREFETCH_COUNT',
                       },
                     },
-                  },
+                  }
                 ],
                 livenessProbe: {
                   httpGet: {
@@ -106,5 +107,82 @@ local version = import 'elasticio/platform/version.json';
           },
         },
       },
+    },
+    {
+      apiVersion: 'batch/v1beta1',
+      kind: 'CronJob',
+      metadata: {
+        name: 'remove-excess-error-records',
+        namespace: 'platform',
+        labels: {
+          app: 'lookout',
+          subapp: 'remove-excess-error-records',
+        },
+      },
+      spec: {
+        schedule: '*/3 * * * *',
+        concurrencyPolicy: 'Forbid',
+        failedJobsHistoryLimit: 1,
+        successfulJobsHistoryLimit: 3,
+        startingDeadlineSeconds: 600,
+        jobTemplate: {
+          metadata: {
+            labels: {
+              app: 'lookout',
+              subapp: 'remove-excess-error-records',
+            },
+          },
+          spec: {
+            template: {
+              metadata: {
+                labels: {
+                  app: 'lookout',
+                  subapp: 'remove-excess-error-records',
+                },
+              },
+              spec: {
+                containers: [
+                  {
+                    name: 'remove-excess-error-records',
+                    image: 'elasticio/lookout:' + version,
+                    args: [
+                      'npm',
+                      'run',
+                      'jobs'
+                    ],
+                    env: [
+                      {
+                        name: 'APP_NAME',
+                        value: 'lookout:remove-excess-error-records',
+                      },
+                      {
+                        name: 'MAX_ERROR_RECORDS_COUNT',
+                        value: maxErrorRecordsCount
+                      }
+                    ],
+                    envFrom: [
+                      {
+                        secretRef: {
+                          name: 'elasticio',
+                        },
+                      },
+                    ],
+                  },
+                ],
+                imagePullSecrets: [
+                  {
+                    name: 'elasticiodevops',
+                  },
+                ],
+                restartPolicy: 'OnFailure',
+                nodeSelector: {
+                  'elasticio-role': 'platform',
+                },
+              },
+            },
+          },
+        }
+      },
     }
+  ]
 }
