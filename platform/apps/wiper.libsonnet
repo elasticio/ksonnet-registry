@@ -37,7 +37,7 @@ local quotaTxnResolver = {
                name: 'quota-txn-resolver',
                image: 'elasticio/wiper:' + version,
                args: [
-                 'node',
+                 './node_modules/.bin/why-is-node-running',
                  '/app/index.js',
                  'quota-txn-resolver',
                ],
@@ -45,6 +45,10 @@ local quotaTxnResolver = {
                  {
                    name: 'APP_NAME',
                    value: 'wiper:quota-txn-resolver',
+                 },
+                 {
+                   name: 'LOG_LEVEL',
+                   value: 'trace'
                  },
                  {
                    name: 'ELASTICIO_API_URI',
@@ -308,7 +312,7 @@ local jobs = [
                    name: 'clear-old-debug-tasks',
                    image: 'elasticio/wiper:' + version,
                    args: [
-                     'node',
+                     './node_modules/.bin/why-is-node-running',
                      '/app/index.js',
                      'clear-old-debug-tasks',
                    ],
@@ -316,6 +320,10 @@ local jobs = [
                      {
                        name: 'APP_NAME',
                        value: 'wiper:clear-old-debug-tasks',
+                     },
+                     {
+                       name: 'LOG_LEVEL',
+                       value: 'trace'
                      },
                      {
                        name: 'ELASTICIO_API_URI',
@@ -575,7 +583,7 @@ local jobs = [
                    name: 'suspend-contracts',
                    image: 'elasticio/wiper:' + version,
                    args: [
-                     'node',
+                     './node_modules/.bin/why-is-node-running',
                      '/app/index.js',
                      'suspend-contracts',
                    ],
@@ -583,6 +591,10 @@ local jobs = [
                      {
                        name: 'APP_NAME',
                        value: 'wiper:suspend-contracts',
+                     },
+                     {
+                       name: 'LOG_LEVEL',
+                       value: 'trace'
                      },
                      {
                        name: 'ELASTICIO_API_URI',

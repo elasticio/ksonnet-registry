@@ -6,6 +6,7 @@ local bloodyGate = import 'elasticio/platform/apps/bloody-gate.libsonnet';
 local dockerRegistry = import 'elasticio/platform/apps/docker.libsonnet';
 local s3 = import 'elasticio/platform/apps/s3.libsonnet';
 local fluentd = import 'elasticio/platform/apps/fluentd.libsonnet';
+local faceless = import 'elasticio/platform/apps/faceless.libsonnet';
 local frontend = import 'elasticio/platform/apps/frontend.libsonnet';
 local gendry = import 'elasticio/platform/apps/gendry.libsonnet';
 local gitreceiver = import 'elasticio/platform/apps/gitreceiver.libsonnet';
@@ -100,6 +101,7 @@ local version = import 'elasticio/platform/version.json';
     api(replicas, cpuRequest=0.1, cpuLimit=1, terminationGracePeriodSeconds=30):: api.app(replicas, cpuRequest, cpuLimit, terminationGracePeriodSeconds),
     bloodyGate(ipAddress, caCert, caKey):: bloodyGate.app(ipAddress, caCert, caKey),
     dockerRegistry(dockerRegistryUri, dockerRegistrySecret, sharedSecret, s3url, replicas):: dockerRegistry.app(dockerRegistryUri, dockerRegistrySecret, sharedSecret, s3url, replicas, 'tasks'),
+    faceless(replicas):: faceless.app(replicas),
     fluentd(execGelfProto, execGelfHost, execGelfPort):: fluentd.app(execGelfProto, execGelfHost, execGelfPort),
     frontend(replicas, terminationGracePeriodSeconds=30):: frontend.app(replicas, terminationGracePeriodSeconds),
     gendry():: gendry.app(),
