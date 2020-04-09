@@ -50,7 +50,7 @@ local k = import 'k.libsonnet';
         data: {
           "redis.conf": |||
               maxmemory %(maxMem)dgb
-              maxmemory-policy volatile-lru
+              maxmemory-policy allkeys-lru
           ||| % { maxMem: redisMaxMemGB }
         },
       },

@@ -32,6 +32,7 @@
 // @param external_api_uri string external_api_uri
 // @param external_app_uri string external_app_uri
 // @param external_gateway_uri string external_gateway_uri
+// @param faceless_basic_auth_credentials string faceless_basic_auth_credentials
 // @param frontend_service_account_username string frontend_service_account_username
 // @param frontend_service_account_password string frontend_service_account_password
 // @param gelf_address string gelf_address
@@ -136,8 +137,9 @@ local env_password = import 'param://env_password';
 local external_api_uri = import 'param://external_api_uri';
 local external_app_uri = import 'param://external_app_uri';
 local external_gateway_uri = import 'param://external_gateway_uri';
-local frontend_no_external_resources = import 'param://frontend_no_external_resources';
 local external_steward_uri = 'http://steward-service.platform.svc.cluster.local:8200';
+local faceless_basic_auth_credentials = import 'param://faceless_basic_auth_credentials';
+local frontend_no_external_resources = import 'param://frontend_no_external_resources';
 local frontend_service = 'frontend-service/8000';
 local frontend_service_account_username = import 'param://frontend_service_account_username';
 local frontend_service_account_password = import 'param://frontend_service_account_password';
@@ -266,6 +268,7 @@ local checkMaesterKey = if maester_enabled == 'true' && maester_jwt_secret == ''
       EXTERNAL_APP_URI: std.toString(external_app_uri),
       EXTERNAL_GATEWAY_URI: std.toString(external_gateway_uri),
       EXTERNAL_STEWARD_URI: std.toString(external_steward_uri),
+      FACELESS_BASIC_AUTH_CREDENTIALS: std.toString(faceless_basic_auth_credentials),
       FRONTEND_SERVICE: std.toString(frontend_service),
       FRONTEND_SERVICE_ACCOUNT_USERNAME: std.toString(frontend_service_account_username),
       FRONTEND_SERVICE_ACCOUNT_PASSWORD: std.toString(frontend_service_account_password),

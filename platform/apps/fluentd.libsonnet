@@ -1,3 +1,5 @@
+local version = import 'elasticio/platform/version.json';
+
 {
   app(execGelfProto, execGelfHost, execGelfPort):: [
       {
@@ -54,7 +56,7 @@
                       },
                     },
                   ],
-                  image: 'elasticio/fluentd-kubernetes-gelf:8e5ffb6e02d087789ebaae09c9738a1f1c481c9a',
+                  image: 'elasticio/fluentd-kubernetes-gelf:'+ version,
                   imagePullPolicy: 'Always',
                   name: 'eio-fluentd',
                   resources: {

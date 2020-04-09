@@ -39,8 +39,9 @@ local version = import 'elasticio/platform/version.json';
                   '--storage_duration=20s',
                   '--disable_metrics=tcp,udp,disk,network,process,sched',
                   '--docker_only',
+                  '--disable_root_cgroup_stats',
                 ],
-                image: 'k8s.gcr.io/cadvisor:v0.33.0',
+                image: 'k8s.gcr.io/cadvisor:v0.36.0',
                 name: 'cadvisor',
                 ports: [
                   {

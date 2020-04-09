@@ -1,10 +1,11 @@
 // @apiVersion 0.0.1
 // @name elastic.io.faceless
 // @param name string name
-// @optionalParam faceless_replicas number 0 faceless replicas count
+// @optionalParam faceless_api_replicas number 0 faceless replicas count
 
 local k = import 'k.libsonnet';
 local platform = import 'elasticio/platform/platform.libsonnet';
-local replicas = import 'param://faceless_replicas';
+local apiReplicas = import 'param://faceless_api_replicas';
+local tokenRefresherReplicas = import 'param://faceless_token_refresher_replicas';
 
-if replicas > 0 then platform.parts.faceless(replicas) else []
+if apiReplicas > 0 then platform.parts.faceless(apiReplicas, tokenRefresherReplicas) else []
