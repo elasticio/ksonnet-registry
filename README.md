@@ -38,6 +38,7 @@ Configuration consists of 2 files
     "external_gateway_uri": "%external_gateway_uri%",
     "external_steward_uri": "%external_steward_uri%",
     "frontend_service": "%frontend_service%",
+    "faceless_basic_auth_credentials: "%login:password%",
     "gelf_address": "%gelf_address%",
     "gelf_host": "%gelf_host%",
     "gelf_port": "%gelf_port%",
@@ -126,7 +127,8 @@ Description for params can be found here: https://github.com/elasticio/k8s-deplo
     "storage_slugs_replicas": 2,
     "raven_replicas": 2,
     "steward_replicas": 2,
-    "lookout_replicas": 2
+    "lookout_replicas": 2,
+    "faceless_api_replicas": 2
 }
 ```
 
@@ -285,6 +287,7 @@ ks generate elastic.io.docker docker --values-file=platform.json
 ks generate elastic.io.iron-bank iron-bank --values-file=platform.json
 ks generate elastic.io.bran-write bran-write --values-file=platform.json
 ks generate elastic.io.bran-read bran-read --values-file=platform.json
+ks generate elastic.io.faceless faceless --values-file=platform.json
 ```
 
 ### Update config
@@ -328,3 +331,11 @@ Solution:
 ### ERROR Registry with name already exists
 
 Solution: Remove ksonnet project dir and rerun installation steps
+
+
+
+### Faceless component
+1. `faceless_basic_auth_credentials` login and password for faceless-api service. Used by api and faceless-api services. Should be formatted as `user:password`. Of course replace user and pass to your login/pass. login may be anything like `faceless`, password may be generated with e.g. `pwgen` tool. Should be added into config.json
+2. `faceless_api_replicas`: number of replicas for faceless-api service. Any reasonable number. Recommended value greater or equal to 2. Parameter should be added to platform.json
+
+
