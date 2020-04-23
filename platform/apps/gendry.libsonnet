@@ -60,6 +60,15 @@ local version = import 'elasticio/platform/version.json';
                       },
                     },
                   },
+                  {
+                    name: 'SERVICE_ACCOUNTS',
+                    valueFrom: {
+                      secretKeyRef: {
+                        name: 'elasticio',
+                        key: 'GENDRY_SERVICE_ACCOUNTS',
+                      },
+                    },
+                  },
                 ],
                 imagePullPolicy: 'Always',
               },

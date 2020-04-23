@@ -1,34 +1,9 @@
 local k = import 'k.libsonnet';
 local version = import 'elasticio/platform/version.json';
 
-local app(replicas, port, appName, appType, terminationGracePeriodSeconds) = [
-  {
-    apiVersion: 'v1',
-    kind: 'Service',
-    metadata: {
-      labels: {
-        app: appName
-      },
-      name: appName + '-service',
-      namespace: 'platform'
-    },
-    spec: {
-      ports: [
-        {
-          name: 'http',
-          port: port,
-          protocol: 'TCP',
-          targetPort: port
-        }
-      ],
-      selector: {
-        app: appName
-      },
-      sessionAffinity: 'None',
-      type: 'ClusterIP'
-    }
-  },
-  {
+local terminationDelay = 30;
+local app(replicas, port, appName, appType, credentials='') = [
+    {
    kind: 'Deployment',
    apiVersion: 'apps/v1',
    metadata: {
@@ -119,22 +94,17 @@ local app(replicas, port, appName, appType, terminationGracePeriodSeconds) = [
                },
                {
                  name: 'TERMINATION_DELAY',
-                 value: std.toString(terminationGracePeriodSeconds / 2)
+                 value: std.toString(terminationDelay / 2)
                },
                {
                  name: 'PORT',
                  value: std.toString(port)
                },
-               {
+            ] +
+            (if credentials != '' then [{
                  name: 'AUTH_CREDENTIALS',
-                 valueFrom: {
-                   secretKeyRef: {
-                     name: 'elasticio',
-                     key: 'FACELESS_BASIC_AUTH_CREDENTIALS',
-                   },
-                 },
-               },
-             ],
+                 value: credentials
+             }] else []),
              livenessProbe: {
                httpGet: {
                  path: '/healthcheck',
@@ -176,7 +146,7 @@ local app(replicas, port, appName, appType, terminationGracePeriodSeconds) = [
            },
          ],
          restartPolicy: 'Always',
-         terminationGracePeriodSeconds: terminationGracePeriodSeconds,
+         terminationGracePeriodSeconds: terminationDelay,
          nodeSelector: {
            'elasticio-role': 'platform',
          },
@@ -193,16 +163,38 @@ local app(replicas, port, appName, appType, terminationGracePeriodSeconds) = [
   }
 ];
 
+local apiPort = 1396;
 {
   app(
     apiReplicas = 2,
-    tokenRefresherReplicas = 1,
-    apiPort = 1396,
-    tokenRefresherPort = 11396,
-    apiAppName = 'faceless-api',
-    tokenRefresherAppName = 'faceless-token-refresher',
-    terminationGracePeriodSeconds = 30,
+    credentials = ''
   )::
-    app(apiReplicas, apiPort, apiAppName, 'api', terminationGracePeriodSeconds) +
-    app(tokenRefresherReplicas, tokenRefresherPort, tokenRefresherAppName, 'token-refresher', terminationGracePeriodSeconds)
+    app(apiReplicas, apiPort, 'faceless-api', 'api', credentials) +
+    app(1, 11396, 'faceless-token-refresher', 'token-refresher') +
+    [{
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: {
+        labels: {
+          app: 'faceless-api'
+        },
+        name: 'faceless-api-service',
+        namespace: 'platform'
+      },
+      spec: {
+        ports: [
+          {
+            name: 'http',
+            port: apiPort,
+            protocol: 'TCP',
+            targetPort: apiPort
+          }
+        ],
+        selector: {
+          app: 'faceless-api'
+        },
+        sessionAffinity: 'None',
+        type: 'ClusterIP'
+      }
+    }]
 }

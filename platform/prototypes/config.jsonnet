@@ -32,13 +32,13 @@
 // @param external_api_uri string external_api_uri
 // @param external_app_uri string external_app_uri
 // @param external_gateway_uri string external_gateway_uri
-// @param faceless_basic_auth_credentials string faceless_basic_auth_credentials
 // @param frontend_service_account_username string frontend_service_account_username
 // @param frontend_service_account_password string frontend_service_account_password
 // @param gelf_address string gelf_address
 // @param gelf_host string gelf_host
 // @optionalParam gelf_port number 12201 gelf_port
 // @optionalParam gelf_protocol string udp gelf_protocol
+// @optionalParam gendry_service_accounts string  gendry_service_accounts
 // @param git_receiver_host string git_receiver_host
 // @param hooks_data_password string hooks_data_password
 // @optionalParam ignore_container_errors string  ignore_container_errors
@@ -138,7 +138,6 @@ local external_api_uri = import 'param://external_api_uri';
 local external_app_uri = import 'param://external_app_uri';
 local external_gateway_uri = import 'param://external_gateway_uri';
 local external_steward_uri = 'http://steward-service.platform.svc.cluster.local:8200';
-local faceless_basic_auth_credentials = import 'param://faceless_basic_auth_credentials';
 local frontend_no_external_resources = import 'param://frontend_no_external_resources';
 local frontend_service = 'frontend-service/8000';
 local frontend_service_account_username = import 'param://frontend_service_account_username';
@@ -147,6 +146,7 @@ local gelf_address = import 'param://gelf_address';
 local gelf_host = import 'param://gelf_host';
 local gelf_port = import 'param://gelf_port';
 local gelf_protocol = import 'param://gelf_protocol';
+local gendry_service_accounts = import 'param://gendry_service_accounts';
 local git_receiver_host = import 'param://git_receiver_host';
 local hooks_data_password = import 'param://hooks_data_password';
 local ignore_container_errors = import 'param://ignore_container_errors';
@@ -268,7 +268,6 @@ local checkMaesterKey = if maester_enabled == 'true' && maester_jwt_secret == ''
       EXTERNAL_APP_URI: std.toString(external_app_uri),
       EXTERNAL_GATEWAY_URI: std.toString(external_gateway_uri),
       EXTERNAL_STEWARD_URI: std.toString(external_steward_uri),
-      FACELESS_BASIC_AUTH_CREDENTIALS: std.toString(faceless_basic_auth_credentials),
       FRONTEND_SERVICE: std.toString(frontend_service),
       FRONTEND_SERVICE_ACCOUNT_USERNAME: std.toString(frontend_service_account_username),
       FRONTEND_SERVICE_ACCOUNT_PASSWORD: std.toString(frontend_service_account_password),
@@ -277,6 +276,7 @@ local checkMaesterKey = if maester_enabled == 'true' && maester_jwt_secret == ''
       GELF_HOST: std.toString(gelf_host),
       GELF_PORT: std.toString(gelf_port),
       GELF_PROTOCOL: std.toString(gelf_protocol),
+      GENDRY_SERVICE_ACCOUNTS: std.toString(gendry_service_accounts),
       GIT_RECEIVER_HOST: std.toString(git_receiver_host),
       HOOKS_DATA_PASSWORD: std.toString(hooks_data_password),
       [if ignore_container_errors != '' then 'IGNORE_CONTAINER_ERRORS']: std.toString(ignore_container_errors),

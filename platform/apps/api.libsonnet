@@ -1,8 +1,8 @@
 local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spread-nodes.libsonnet';
 local version = import 'elasticio/platform/version.json';
-
+local terminationDelay = 30;
 {
-  app(replicas, cpuRequest=0.1, cpuLimit=1, terminationGracePeriodSeconds=30):: [
+  app(replicas, cpuRequest=0.1, cpuLimit=1, facelessCreds=''):: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
@@ -62,13 +62,17 @@ local version = import 'elasticio/platform/version.json';
                     },
                     {
                       name: 'TERMINATION_DELAY',
-                      value: std.toString(terminationGracePeriodSeconds / 2)
+                      value: std.toString(terminationDelay / 2)
                     },
                     {
                       name: 'AGENT_MANAGEMENT_API',
                       value: 'http://knight-of-the-bloody-gate-service.platform.svc.cluster.local:3000'
-                    }
-                  ],
+                    },
+                  ] +
+                  (if facelessCreds != '' then [{
+                      name: 'FACELESS_URI',
+                      value: 'http://' + facelessCreds + '@faceless-api-service.platform.svc.cluster.local:1396'
+                  }] else  []),
                   livenessProbe: {
                     httpGet: {
                       port: 9000,
@@ -121,7 +125,7 @@ local version = import 'elasticio/platform/version.json';
                 },
               ],
               restartPolicy: 'Always',
-              terminationGracePeriodSeconds: terminationGracePeriodSeconds,
+              terminationGracePeriodSeconds: terminationDelay,
               nodeSelector: {
                 'elasticio-role': 'platform',
               },
