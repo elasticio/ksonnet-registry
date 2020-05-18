@@ -262,6 +262,7 @@ ks component rm bran-read
 
 ```bash
 ks generate elastic.io.platform platform --values-file=platform.json
+ks generate elastic.io.network-policies network-policies --values-file=platform.json
 ks generate elastic.io.admiral admiral --values-file=platform.json
 ks generate elastic.io.api-docs api-docs --values-file=platform.json
 ks generate elastic.io.api api --values-file=platform.json
