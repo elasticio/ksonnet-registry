@@ -31,6 +31,7 @@ local ingress = import 'elasticio/platform/network/ingress.libsonnet';
 local storageSlugsPVAzure = import 'elasticio/platform/storage/storage-slugs-pv-azure.libsonnet';
 local storageSlugsPVNFS = import 'elasticio/platform/storage/storage-slugs-pv-nfs.libsonnet';
 local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spread-nodes.libsonnet';
+local networkPolicies = import 'elasticio/platform/network/network-policies.libsonnet';
 local version = import 'elasticio/platform/version.json';
 
 {
@@ -161,6 +162,6 @@ local version = import 'elasticio/platform/version.json';
       redisConfigDir,
       redisConfigMapName,
     ),
-
+    networkPolicies()::networkPolicies.networkPolicies()
   },
 }

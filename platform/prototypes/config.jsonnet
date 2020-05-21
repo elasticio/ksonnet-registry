@@ -222,8 +222,9 @@ local checkMaesterKey = if maester_enabled == 'true' && maester_jwt_secret == ''
   error 'maester_jwt_secret is required';
 
 [
-  k.core.v1.namespace.new('platform'),
+  k.core.v1.namespace.new('platform').withLabels({name: 'platform'}),
   k.core.v1.namespace.new('tasks').withLabels({name: 'tasks'}),
+  k.core.v1.namespace.new('monitoring').withLabels({name: 'monitoring'}),
   {
     apiVersion: 'v1',
     stringData: {
