@@ -100,6 +100,10 @@ local app(replicas, port, appName, appType, credentials='') = [
                  name: 'PORT',
                  value: std.toString(port)
                },
+               {
+                 name: 'TOKEN_REFRESHER_API',
+                 value: 'http://faceless-token-refresher-service.platform.svc.cluster.local:11396'
+               },
             ] +
             (if credentials != '' then [{
                  name: 'AUTH_CREDENTIALS',
@@ -164,13 +168,14 @@ local app(replicas, port, appName, appType, credentials='') = [
 ];
 
 local apiPort = 1396;
+local tokenRefresherPort = 11396;
 {
   app(
     apiReplicas = 2,
     credentials = ''
   )::
     app(apiReplicas, apiPort, 'faceless-api', 'api', credentials) +
-    app(1, 11396, 'faceless-token-refresher', 'token-refresher') +
+    app(1, tokenRefresherPort, 'faceless-token-refresher', 'token-refresher', credentials) +
     [{
       apiVersion: 'v1',
       kind: 'Service',
@@ -194,6 +199,30 @@ local apiPort = 1396;
           app: 'faceless-api'
         },
         sessionAffinity: 'None',
+        type: 'ClusterIP'
+      }
+    }, {
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: {
+        labels: {
+          app: 'faceless-token-refresher'
+        },
+        name: 'faceless-token-refresher-service',
+        namespace: 'platform'
+      },
+      spec: {
+        ports: [
+          {
+            name: 'http',
+            port: tokenRefresherPort,
+            protocol: 'TCP',
+            targetPort: tokenRefresherPort
+          }
+        ],
+        selector: {
+          app: 'faceless-token-refresher'
+        },
         type: 'ClusterIP'
       }
     }]
