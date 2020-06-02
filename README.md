@@ -190,6 +190,8 @@ ks generate elastic.io.docker docker --values-file=platform.json
 ks generate elastic.io.iron-bank iron-bank --values-file=platform.json
 ks generate elastic.io.bran-write bran-write --values-file=platform.json
 ks generate elastic.io.bran-read bran-read --values-file=platform.json
+ks generate elastic.io.faceless faceless --values-file=platform.json
+ks generate elastic.io.bloody-gate bloody-gate --values-file=platform.json
 ```
 
 ### Apply config
@@ -256,6 +258,8 @@ ks component rm docker
 ks component rm iron-bank
 ks component rm bran-write
 ks component rm bran-read
+ks component rm faceless
+ks component rm bloody-gate
 ```
 
 ### Generate new version of ksonnet components
@@ -289,6 +293,7 @@ ks generate elastic.io.iron-bank iron-bank --values-file=platform.json
 ks generate elastic.io.bran-write bran-write --values-file=platform.json
 ks generate elastic.io.bran-read bran-read --values-file=platform.json
 ks generate elastic.io.faceless faceless --values-file=platform.json
+ks generate elastic.io.bloody-gate bloody-gate --values-file=platform.json
 ```
 
 ### Update config
