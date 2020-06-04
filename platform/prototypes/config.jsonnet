@@ -40,6 +40,7 @@
 // @optionalParam gelf_protocol string udp gelf_protocol
 // @optionalParam gendry_service_accounts string  gendry_service_accounts
 // @param git_receiver_host string git_receiver_host
+// @optionalParam limited_workspace_flow_ttl_in_minutes string 10 limited_workspace_flow_ttl_in_minutes
 // @param hooks_data_password string hooks_data_password
 // @optionalParam ignore_container_errors string  ignore_container_errors
 // @optionalParam intercom_access_token string  intercom_access_token
@@ -148,6 +149,7 @@ local gelf_port = import 'param://gelf_port';
 local gelf_protocol = import 'param://gelf_protocol';
 local gendry_service_accounts = import 'param://gendry_service_accounts';
 local git_receiver_host = import 'param://git_receiver_host';
+local limited_workspace_flow_ttl_in_minutes = import 'param://limited_workspace_flow_ttl_in_minutes';
 local hooks_data_password = import 'param://hooks_data_password';
 local ignore_container_errors = import 'param://ignore_container_errors';
 local intercom_access_token = import 'param://intercom_access_token';
@@ -279,6 +281,7 @@ local checkMaesterKey = if maester_enabled == 'true' && maester_jwt_secret == ''
       GELF_PROTOCOL: std.toString(gelf_protocol),
       GENDRY_SERVICE_ACCOUNTS: std.toString(gendry_service_accounts),
       GIT_RECEIVER_HOST: std.toString(git_receiver_host),
+      LIMITED_WORKSPACE_FLOW_TTL_IN_MINUTES: std.toString(limited_workspace_flow_ttl_in_minutes),
       HOOKS_DATA_PASSWORD: std.toString(hooks_data_password),
       [if ignore_container_errors != '' then 'IGNORE_CONTAINER_ERRORS']: std.toString(ignore_container_errors),
       INTERCOM_ACCESS_TOKEN: std.toString(intercom_access_token),
