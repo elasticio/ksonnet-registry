@@ -277,6 +277,15 @@ local k = import 'k.libsonnet';
                         },
                     },
                     {
+                      name: 'OBJECTS_TTL',
+                      valueFrom: {
+                        secretKeyRef: {
+                          name: 'elasticio',
+                          key: 'MAESTER_OBJECTS_TTL_IN_SECONDS',
+                        },
+                      },
+                    },
+                    {
                       name: 'PORT',
                       value: std.toString(port)
                     },
@@ -344,6 +353,91 @@ local k = import 'k.libsonnet';
             },
           }
         },
-      }
+      },
+      {
+            apiVersion: 'batch/v1beta1',
+            kind: 'CronJob',
+            metadata: {
+              name: 'remove-expired-objects',
+              namespace: 'platform',
+              labels: {
+                app: appName,
+                subapp: 'remove-expired-objects',
+              },
+            },
+            spec: {
+              schedule: '0 * * * *',
+              concurrencyPolicy: 'Forbid',
+              failedJobsHistoryLimit: 1,
+              successfulJobsHistoryLimit: 3,
+              startingDeadlineSeconds: 600,
+              jobTemplate: {
+                metadata: {
+                  labels: {
+                    app: appName,
+                    subapp: 'remove-expired-objects',
+                  },
+                },
+                spec: {
+                  template: {
+                    metadata: {
+                      labels: {
+                        app: appName,
+                        subapp: 'remove-expired-objects',
+                      },
+                    },
+                    spec: {
+                      containers: [
+                        {
+                          name: 'remove-expired-objects',
+                          image: 'elasticio/maester:' + version,
+                          args: [
+                            'npm',
+                            'run',
+                            'jobs'
+                          ],
+                          env: [
+                            {
+                              name: 'APP_NAME',
+                              value: appName + ':remove-expired-objects',
+                            },
+                            {
+                              name: 'LOG_LEVEL',
+                              value: 'info'
+                            },
+                            {
+                              name: 'OBJECTS_TTL',
+                              valueFrom: {
+                                secretKeyRef: {
+                                  name: 'elasticio',
+                                  key: 'MAESTER_OBJECTS_TTL_IN_SECONDS',
+                                },
+                              },
+                            },
+                          ],
+                          envFrom: [
+                            {
+                              secretRef: {
+                                name: 'elasticio',
+                              },
+                            },
+                          ],
+                        },
+                      ],
+                      imagePullSecrets: [
+                        {
+                          name: 'elasticiodevops',
+                        },
+                      ],
+                      restartPolicy: 'OnFailure',
+                      nodeSelector: {
+                        'elasticio-role': 'platform',
+                      },
+                    },
+                  },
+                },
+              }
+            },
+          }
     ]
 }

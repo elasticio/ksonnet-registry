@@ -102,6 +102,7 @@
 // @optionalParam maester_jwt_secret string  maester_jwt_secret
 // @optionalParam maester_enabled string false is maester service enabled
 // @optionalParam maester_redis_uri string  maester_redis_uri
+// @optionalParam maester_objects_ttl_in_seconds string 86400 maester_objects_ttl_in_seconds
 
 local k = import 'k.libsonnet';
 
@@ -163,6 +164,7 @@ local maester_enabled = import 'param://maester_enabled';
 local maester_jwt_secret = import 'param://maester_jwt_secret';
 local maester_uri = 'http://maester-service.platform.svc.cluster.local:3002';
 local maester_redis_uri = 'redis://maester-redis-service.platform.svc.cluster.local:6379';
+local maester_objects_ttl_in_seconds = import 'param://maester_objects_ttl_in_seconds';
 local message_crypto_iv = import 'param://message_crypto_iv';
 local message_crypto_password = import 'param://message_crypto_password';
 local mongo_uri = import 'param://mongo_uri';
@@ -347,7 +349,8 @@ local checkMaesterKey = if maester_enabled == 'true' && maester_jwt_secret == ''
       if std.toString(maester_enabled) == 'true' then {
         MAESTER_URI: std.toString(maester_uri),
         MAESTER_JWT_SECRET: std.toString(maester_jwt_secret),
-        MAESTER_REDIS_URI: std.toString(maester_redis_uri)
+        MAESTER_REDIS_URI: std.toString(maester_redis_uri),
+        MAESTER_OBJECTS_TTL_IN_SECONDS: std.toString(maester_objects_ttl_in_seconds),
       } else {}
     ),
     kind: 'Secret',

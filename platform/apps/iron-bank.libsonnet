@@ -242,7 +242,10 @@ local version = import 'elasticio/platform/version.json';
                     path: '/healthcheck',
                   },
                   initialDelaySeconds: 10,
-                  periodSeconds: 3,
+                  periodSeconds: 5,
+                  // service may be busy calculating stats from a lot of pods which can cause loop lag and healthcheck
+                  // timeout
+                  timeoutSeconds: 5,
                   failureThreshold: 3,
                 },
                 resources: {
