@@ -103,6 +103,7 @@
 // @optionalParam maester_enabled string false is maester service enabled
 // @optionalParam maester_redis_uri string  maester_redis_uri
 // @optionalParam maester_objects_ttl_in_seconds string 86400 maester_objects_ttl_in_seconds
+// @optionalParam maester_object_storage_size_threshold string 1048576 maester_object_storage_size_threshold
 
 local k = import 'k.libsonnet';
 
@@ -165,6 +166,7 @@ local maester_jwt_secret = import 'param://maester_jwt_secret';
 local maester_uri = 'http://maester-service.platform.svc.cluster.local:3002';
 local maester_redis_uri = 'redis://maester-redis-service.platform.svc.cluster.local:6379';
 local maester_objects_ttl_in_seconds = import 'param://maester_objects_ttl_in_seconds';
+local maester_object_storage_size_threshold = import 'param://maester_object_storage_size_threshold';
 local message_crypto_iv = import 'param://message_crypto_iv';
 local message_crypto_password = import 'param://message_crypto_password';
 local mongo_uri = import 'param://mongo_uri';
@@ -351,6 +353,7 @@ local checkMaesterKey = if maester_enabled == 'true' && maester_jwt_secret == ''
         MAESTER_JWT_SECRET: std.toString(maester_jwt_secret),
         MAESTER_REDIS_URI: std.toString(maester_redis_uri),
         MAESTER_OBJECTS_TTL_IN_SECONDS: std.toString(maester_objects_ttl_in_seconds),
+        MAESTER_OBJECT_STORAGE_SIZE_THRESHOLD: std.toString(maester_object_storage_size_threshold)
       } else {}
     ),
     kind: 'Secret',
