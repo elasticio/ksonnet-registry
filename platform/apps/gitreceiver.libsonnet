@@ -49,7 +49,7 @@ local version = import 'elasticio/platform/version.json';
                     },
                     {
                       name: 'APPBUILDER_IMAGE',
-                      value: 'elasticio/appbuilder:production',
+                      value: 'elasticio/appbuilder:2.0.0',
                     },
                     {
                       name: 'GIT_BRANCH',
