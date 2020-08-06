@@ -49,6 +49,7 @@
 // @param kubernetes_rabbitmq_uri_sailor string kubernetes_rabbitmq_uri_sailor
 // @param kubernetes_slugs_base_url string kubernetes_slugs_base_url
 // @optionalParam lookout_prefetch_count string 10 lookout_prefetch_count
+// @optionalParam steward_attachments_lifetime_days number 30 time to live for steward attachments
 // @param mandrill_api_key string mandrill_api_key
 // @param message_crypto_iv string message_crypto_iv
 // @param message_crypto_password string message_crypto_password
@@ -193,6 +194,7 @@ local slug_base_url = import 'param://slug_base_url';
 local status_page_id = import 'param://status_page_id';
 local steward_storage_uri = import 'param://steward_storage_uri';
 local steward_uri = 'http://steward-service.platform.svc.cluster.local:8200';
+local steward_attachments_lifetime_days = import 'param://steward_attachments_lifetime_days';
 local suspended_task_max_messages_count = import 'param://suspended_task_max_messages_count';
 local suspend_watch_kubernetes_max_events = import 'param://suspend_watch_kubernetes_max_events';
 local team_name = import 'param://team_name';
@@ -323,6 +325,7 @@ local checkMaesterKey = if maester_enabled == 'true' && maester_jwt_secret == ''
       SESSION_MONGO_URI: std.toString(session_mongo_uri),
       SLUG_BASE_URL: std.toString(slug_base_url),
       STEWARD_STORAGE_URI: std.toString(steward_storage_uri),
+      STEWARD_ATTACHMENTS_LIFETIME_DAYS: std.toString(steward_attachments_lifetime_days),
       STATUS_PAGE_ID: std.toString(status_page_id),
       STEWARD_URI: std.toString(steward_uri),
       SUSPENDED_TASK_MAX_MESSAGES_COUNT: std.toString(suspended_task_max_messages_count),

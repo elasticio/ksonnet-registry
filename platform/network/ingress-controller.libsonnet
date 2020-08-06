@@ -159,10 +159,6 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
           },
           template: {
             metadata: {
-              annotations: {
-                'prometheus.io/port': '10254',
-                'prometheus.io/scrape': 'true',
-              },
               labels: {
                 app: 'ingress-nginx',
               },

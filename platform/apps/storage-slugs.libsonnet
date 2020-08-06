@@ -1,5 +1,6 @@
 local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spread-nodes.libsonnet';
 local version = import 'elasticio/platform/version.json';
+local attachmentsContainerPath = '/home/nginx/data/www/steward';
 
 {
   app(replicas, lbIp, storage='1Ti', slugsSubPath='slugs', stewardSubPath='steward', s3Uri=''):: [
@@ -77,7 +78,7 @@ local version = import 'elasticio/platform/version.json';
                       subPath: slugsSubPath,
                     },
                     {
-                      mountPath: '/home/nginx/data/www/steward',
+                      mountPath: attachmentsContainerPath,
                       name: 'platform-storage-slugs-storage',
                       subPath: stewardSubPath,
                     },
@@ -202,5 +203,98 @@ local version = import 'elasticio/platform/version.json';
           },
         },
       },
+      {
+        apiVersion: 'batch/v1beta1',
+        kind: 'CronJob',
+        metadata: {
+          name: 'remove-outdated-attachments',
+          namespace: 'platform',
+          labels: {
+            app: 'platform-storage-slugs',
+            subapp: 'remove-outdated-attachments',
+          },
+        },
+        spec: {
+          schedule: '0 */6 * * *',
+          concurrencyPolicy: 'Forbid',
+          failedJobsHistoryLimit: 1,
+          successfulJobsHistoryLimit: 3,
+          startingDeadlineSeconds: 600,
+          jobTemplate: {
+            metadata: {
+              labels: {
+                app: 'platform-storage-slugs',
+                subapp: 'remove-outdated-attachments',
+              },
+            },
+            spec: {
+              template: {
+                metadata: {
+                  labels: {
+                    app: 'platform-storage-slug',
+                    subapp: 'remove-outdated-attachments',
+                  },
+                },
+                spec: {
+                  containers: [
+                    {
+                      name: 'remove-outdated-attachments',
+                      image: 'elasticio/platform-storage-slugs:' + version,
+                      command: [
+                        '/usr/src/platform-storage-slugs/clean_attachments.sh',
+                        attachmentsContainerPath
+                      ],
+                      env: [
+                        {
+                          name: 'APP_NAME',
+                          value: 'platform-storage-slugs:remove-outdated-attachments'
+                        },
+                        {
+                          name: 'ATTACHMENTS_LIFETIME_DAYS',
+                          valueFrom: {
+                            secretKeyRef: {
+                              key: 'STEWARD_ATTACHMENTS_LIFETIME_DAYS',
+                              name: 'elasticio'
+                            }
+                          }
+                        }
+                      ],
+                      envFrom: [
+                        {
+                          secretRef: {
+                            name: 'elasticio',
+                          },
+                        },
+                      ],
+                      volumeMounts: [
+                        {
+                          mountPath: attachmentsContainerPath,
+                          name: 'platform-storage-slugs-storage',
+                          subPath: stewardSubPath,
+                        }
+                      ]
+                    }
+                  ],
+                  imagePullSecrets: [
+                    {
+                      name: 'elasticiodevops',
+                    },
+                  ],
+                  volumes: [{
+                    name: 'platform-storage-slugs-storage',
+                    persistentVolumeClaim: {
+                      claimName: 'platform-storage-slugs-volume-claim'
+                    }
+                  }],
+                  restartPolicy: 'OnFailure',
+                  nodeSelector: {
+                    'elasticio-role': 'platform',
+                  },
+                },
+              },
+            },
+          }
+        }
+      }
     ]
 }
