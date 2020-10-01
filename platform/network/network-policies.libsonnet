@@ -73,6 +73,29 @@
     },
     {
       apiVersion: 'networking.k8s.io/v1',
+    	kind: 'NetworkPolicy',
+    	metadata: {
+        	name: 'allow-agents-to-platform-storage-slugs',
+        	namespace: 'platform'
+    	},
+    	spec: {
+      	policyTypes: ['Ingress'],
+				podSelector: {
+        	matchLabels: {
+          	app: 'platform-storage-slugs'
+          }
+        },
+      	ingress: [{
+        	from: [{
+          	ipBlock: {
+            	cidr: '0.0.0.0/0'
+            }
+          }]
+        }]
+    	}
+    },
+    {
+      apiVersion: 'networking.k8s.io/v1',
       kind: 'NetworkPolicy',
       metadata: {
         name: 'allow-dockerd-to-docker-registry',
