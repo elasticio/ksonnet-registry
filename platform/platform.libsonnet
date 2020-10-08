@@ -102,7 +102,7 @@ local version = import 'elasticio/platform/version.json';
     api(replicas, cpuRequest=0.1, cpuLimit=1, facelessCreds=''):: api.app(replicas, cpuRequest, cpuLimit, facelessCreds),
     bloodyGate(ipAddress, caCert, caKey):: bloodyGate.app(ipAddress, caCert, caKey),
     dockerRegistry(dockerRegistryUri, dockerRegistrySecret, sharedSecret, s3url, replicas):: dockerRegistry.app(dockerRegistryUri, dockerRegistrySecret, sharedSecret, s3url, replicas, 'tasks'),
-    faceless(apiReplicas, credentials=''):: faceless.app(apiReplicas, credentials),
+    faceless(encryptionKey, apiReplicas, credentials=''):: faceless.app(encryptionKey, apiReplicas, credentials),
     fluentd(execGelfProto, execGelfHost, execGelfPort):: fluentd.app(execGelfProto, execGelfHost, execGelfPort),
     frontend(replicas, terminationGracePeriodSeconds=30):: frontend.app(replicas, terminationGracePeriodSeconds),
     gendry():: gendry.app(),

@@ -137,6 +137,8 @@ local version = import 'elasticio/platform/version.json';
                             values: [
                               'tasks',
                               'monitoring',
+                              'ordinary',
+                              'long-running'
                             ],
                           },
                         ],

@@ -158,6 +158,52 @@
           }]
         }]
       }
+    },
+    {
+      apiVersion: 'networking.k8s.io/v1',
+      kind: 'NetworkPolicy',
+      metadata: {
+        name: 'monitoring-internal-traffic',
+        namespace: 'monitoring'
+      },
+      spec: {
+        policyTypes: ['Ingress'],
+        podSelector: {},
+        ingress: [{
+          from: [{
+            namespaceSelector: {
+              matchLabels: {
+                name: 'monitoring'
+              }
+            }
+          }]
+        }]
+      }
+    },
+    {
+      apiVersion: 'networking.k8s.io/v1',
+      kind: 'NetworkPolicy',
+      metadata: {
+        name: 'monitoring-ingress-traffic',
+        namespace: 'monitoring'
+      },
+      spec: {
+        policyTypes: ['Ingress'],
+        podSelector: {
+          matchExpressions: [{
+            key: 'app',
+            operator: 'In',
+            values: ['alertmanager', 'grafana', 'prometheus-server']
+          }]
+        },
+        ingress: [{
+          from: [{
+            ipBlock: {
+              cidr: '0.0.0.0/0'
+            }
+          }]
+        }]
+      }
     }
   ]
 }

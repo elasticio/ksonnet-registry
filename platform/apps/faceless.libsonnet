@@ -2,7 +2,7 @@ local k = import 'k.libsonnet';
 local version = import 'elasticio/platform/version.json';
 
 local terminationDelay = 30;
-local app(replicas, port, appName, appType, credentials='') = [
+local app(replicas, port, appName, appType, encryptionKey, credentials='') = [
     {
    kind: 'Deployment',
    apiVersion: 'apps/v1',
@@ -104,6 +104,10 @@ local app(replicas, port, appName, appType, credentials='') = [
                  name: 'TOKEN_REFRESHER_API',
                  value: 'http://faceless-token-refresher-service.platform.svc.cluster.local:11396'
                },
+               {
+                 name: 'ENCRYPTION_KEY',
+                 value: encryptionKey
+               },
             ] +
             (if credentials != '' then [{
                  name: 'AUTH_CREDENTIALS',
@@ -171,11 +175,12 @@ local apiPort = 1396;
 local tokenRefresherPort = 11396;
 {
   app(
+    encryptionKey,
     apiReplicas = 2,
     credentials = ''
   )::
-    app(apiReplicas, apiPort, 'faceless-api', 'api', credentials) +
-    app(1, tokenRefresherPort, 'faceless-token-refresher', 'token-refresher', credentials) +
+    app(apiReplicas, apiPort, 'faceless-api', 'api', encryptionKey, credentials) +
+    app(1, tokenRefresherPort, 'faceless-token-refresher', 'token-refresher', encryptionKey, credentials) +
     [{
       apiVersion: 'v1',
       kind: 'Service',
