@@ -9,5 +9,6 @@ local k = import 'k.libsonnet';
 local platform = import 'elasticio/platform/platform.libsonnet';
 local dockerRegistryUri = import 'param://docker_registry_uri';
 local dockerRegistrySecretName = import 'param://docker_registry_secret_name';
+local facelessCredentials = import 'param://faceless_basic_auth_credentials';
 
-platform.parts.admiral(dockerRegistryUri, dockerRegistrySecretName)
+platform.parts.admiral(dockerRegistryUri, dockerRegistrySecretName, facelessCredentials)

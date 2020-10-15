@@ -1,10 +1,9 @@
 local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spread-nodes.libsonnet';
 local version = import 'elasticio/platform/version.json';
 local terminationDelay = 30;
-local memLimitMb = 2048; // TODO move to args and make
 
 {
-  app(replicas, cpuRequest=0.1, cpuLimit=1, facelessCreds=''):: [
+  app(replicas, cpuRequest=0.1, cpuLimit=1, facelessCreds='', memLimitMb = 2048):: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',

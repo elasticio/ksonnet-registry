@@ -97,14 +97,14 @@ local version = import 'elasticio/platform/version.json';
     // ----------------------------- //
     // --- Platform Applications --- //
     // ----------------------------- //
-    admiral(dockerRegistryUri, dockerRegistrySecret):: admiral.app(dockerRegistryUri, dockerRegistrySecret),
+    admiral(dockerRegistryUri, dockerRegistrySecret, facelessCreds):: admiral.app(dockerRegistryUri, dockerRegistrySecret, facelessCreds),
     apiDocs(image):: apiDocs.app(image),
-    api(replicas, cpuRequest=0.1, cpuLimit=1, facelessCreds=''):: api.app(replicas, cpuRequest, cpuLimit, facelessCreds),
+    api(replicas, cpuRequest=0.1, cpuLimit=1, facelessCreds='', memLimitMb = 2048):: api.app(replicas, cpuRequest, cpuLimit, facelessCreds, memLimitMb),
     bloodyGate(ipAddress, caCert, caKey):: bloodyGate.app(ipAddress, caCert, caKey),
     dockerRegistry(dockerRegistryUri, dockerRegistrySecret, sharedSecret, s3url, replicas):: dockerRegistry.app(dockerRegistryUri, dockerRegistrySecret, sharedSecret, s3url, replicas, 'tasks'),
     faceless(encryptionKey, apiReplicas, credentials=''):: faceless.app(encryptionKey, apiReplicas, credentials),
     fluentd(execGelfProto, execGelfHost, execGelfPort):: fluentd.app(execGelfProto, execGelfHost, execGelfPort),
-    frontend(replicas, terminationGracePeriodSeconds=30):: frontend.app(replicas, terminationGracePeriodSeconds),
+    frontend(replicas, memLimitMb=2048, terminationGracePeriodSeconds=30):: frontend.app(replicas, memLimitMb, terminationGracePeriodSeconds),
     gendry():: gendry.app(),
     gitreceiver(dockerRegistryUri):: gitreceiver.app(dockerRegistryUri),
     goldDragonCoin(replicas):: goldDragonCoin.app(replicas),

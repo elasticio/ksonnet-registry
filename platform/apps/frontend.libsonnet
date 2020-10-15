@@ -2,7 +2,7 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
 local version = import 'elasticio/platform/version.json';
 
 {
-  app(replicas, terminationGracePeriodSeconds=30):: [
+  app(replicas, memLimitMb=2048,  terminationGracePeriodSeconds=30):: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
@@ -44,6 +44,10 @@ local version = import 'elasticio/platform/version.json';
                     },
                   ],
                   env: [
+                    {
+                      name: 'NODE_OPTIONS',
+                      value: '--max-old-space-size=' + memLimitMb
+                    },
                     {
                       name: 'APP_NAME',
                       value: 'frontend',
@@ -118,7 +122,7 @@ local version = import 'elasticio/platform/version.json';
                   ],
                   resources: {
                     limits: {
-                      memory: '2048Mi',
+                      memory: memLimitMb + 'Mi',
                       cpu: 2,
                     },
                     requests: {

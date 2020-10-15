@@ -1,7 +1,7 @@
 local version = import 'elasticio/platform/version.json';
 
 {
-  app(dockerRegistryUri, dockerRegistrySecret):: [
+  app(dockerRegistryUri, dockerRegistrySecret, facelessCreds):: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
@@ -54,6 +54,10 @@ local version = import 'elasticio/platform/version.json';
                     {
                       name: 'LOG_LEVEL',
                       value: 'debug',
+                    },
+                    {
+                      name: 'FACELESS_URI',
+                      value: 'http://' + facelessCreds + '@faceless-api-service.platform.svc.cluster.local:1396'
                     },
                     {
                       name: 'RABBITMQ_URI',
