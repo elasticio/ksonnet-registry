@@ -126,14 +126,16 @@ local version = import 'elasticio/platform/version.json';
       storage='1Ti',
       slugsSubPath='slugs',
       stewardSubPath='steward',
-      s3Uri=''
+      s3Uri='',
+      isPV=true
     ):: storageSlugs.app(
       replicas,
       lbIp,
       storage,
       slugsSubPath,
       stewardSubPath,
-      s3Uri
+      s3Uri,
+      isPV
     ),
 
     maester(

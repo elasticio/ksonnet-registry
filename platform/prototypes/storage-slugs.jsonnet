@@ -1,10 +1,10 @@
 // @apiVersion 0.0.1
 // @name elastic.io.storage-slugs
 // @param name string name
-// @optionalParam storage_slugs_replicas number 1 platfrom storage slugs replicas
+// @optionalParam storage_slugs_replicas number 1 platform storage slugs replicas
 // @optionalParam storage_slugs_pv_name string platform-storage-slugs-volume string platform storage slugs pv name
 // @optionalParam storage_slugs_storage_type string nfs platform storage slugs storage type, nfs or azure
-// @param storage_slugs_lb_ip string platform storage slugs loadbalancer internal ip address
+// @param storage_slugs_lb_ip string platform storage slugs load balancer internal ip address
 // @optionalParam storage_slugs_size string 1Ti platform storage slugs size
 // @optionalParam storage_slugs_sub_path_slugs string slugs sub path for slugs
 // @optionalParam storage_slugs_sub_path_steward string steward sub path for steward
@@ -20,5 +20,9 @@ local pssStorage = import 'param://storage_slugs_size';
 local slugsSubPath = import 'param://storage_slugs_sub_path_slugs';
 local stewardSubPath = import 'param://storage_slugs_sub_path_steward';
 local s3Url = import 'param://s3_slugs_url';
+local storageSlugsStorageType = import 'param://storage_slugs_storage_type';
+local isPV = storageSlugsStorageType != '';
 
-platform.parts.storageSlugs(pssReplicas, pssLbIp, pssStorage, slugsSubPath, stewardSubPath, s3Url)
+assert s3Url != '' || isPV : "s3_slugs_url or storage_slugs_storage_type must be set for platform-storage-slugs to work properly";
+
+platform.parts.storageSlugs(pssReplicas, pssLbIp, pssStorage, slugsSubPath, stewardSubPath, s3Url, isPV)

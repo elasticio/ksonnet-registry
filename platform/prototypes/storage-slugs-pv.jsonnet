@@ -22,8 +22,4 @@ local azAccName = import 'param://azure_storage_account_name';
 local azAccKey = import 'param://azure_storage_account_key';
 local azShareName = import 'param://azure_storage_share';
 
-local pssPv = if storageSlugsStorageType == 'nfs' then platform.parts.storageSlugsPVNFS(pvName, nfsServer, nfsShare, pssStorage, pvGid) else if storageSlugsStorageType == 'azure' then platform.parts.storageSlugsPVAzure(pvName, azAccName, azAccKey, azShareName, pssStorage, pvGid) else null;
-
-assert std.isArray(pssPv);
-
-pssPv
+if storageSlugsStorageType == 'nfs' then platform.parts.storageSlugsPVNFS(pvName, nfsServer, nfsShare, pssStorage, pvGid) else if storageSlugsStorageType == 'azure' then platform.parts.storageSlugsPVAzure(pvName, azAccName, azAccKey, azShareName, pssStorage, pvGid) else []

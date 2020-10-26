@@ -3,7 +3,7 @@ local version = import 'elasticio/platform/version.json';
 local attachmentsContainerPath = '/home/nginx/data/www/steward';
 
 {
-  app(replicas, lbIp, storage='1Ti', slugsSubPath='slugs', stewardSubPath='steward', s3Uri=''):: [
+  app(replicas, lbIp, storage='1Ti', slugsSubPath='slugs', stewardSubPath='steward', s3Uri='', isPV=true):: [
       {
         apiVersion: 'apps/v1',
         kind: 'Deployment',
@@ -71,18 +71,20 @@ local attachmentsContainerPath = '/home/nginx/data/www/steward';
                       cpu: 0.5,
                     },
                   },
-                  volumeMounts: [
-                    {
-                      mountPath: '/home/nginx/data/www/slugs',
-                      name: 'platform-storage-slugs-storage',
-                      subPath: slugsSubPath,
-                    },
-                    {
-                      mountPath: attachmentsContainerPath,
-                      name: 'platform-storage-slugs-storage',
-                      subPath: stewardSubPath,
-                    },
-                  ],
+                  volumeMounts: (if isPV then
+                    [
+                      {
+                        mountPath: '/home/nginx/data/www/slugs',
+                        name: 'platform-storage-slugs-storage',
+                        subPath: slugsSubPath,
+                      },
+                      {
+                        mountPath: attachmentsContainerPath,
+                        name: 'platform-storage-slugs-storage',
+                        subPath: stewardSubPath,
+                      },
+                    ] else []
+                  ),
                   lifecycle: {
                     preStop: {
                       exec: {
@@ -103,14 +105,16 @@ local attachmentsContainerPath = '/home/nginx/data/www/steward';
                   name: 'elasticiodevops',
                 },
               ],
-              volumes: [
-                {
-                  name: 'platform-storage-slugs-storage',
-                  persistentVolumeClaim: {
-                    claimName: 'platform-storage-slugs-volume-claim',
+              volumes: (if isPV then
+                [
+                  {
+                    name: 'platform-storage-slugs-storage',
+                    persistentVolumeClaim: {
+                      claimName: 'platform-storage-slugs-volume-claim',
+                    },
                   },
-                },
-              ],
+                ] else []
+              ),
               restartPolicy: 'Always',
               terminationGracePeriodSeconds: 30,
               nodeSelector: {
@@ -184,7 +188,7 @@ local attachmentsContainerPath = '/home/nginx/data/www/steward';
           ],
         },
       },
-      {
+      (if isPV then {
         kind: 'PersistentVolumeClaim',
         apiVersion: 'v1',
         metadata: {
@@ -202,8 +206,8 @@ local attachmentsContainerPath = '/home/nginx/data/www/steward';
             },
           },
         },
-      },
-      {
+      }),
+      (if isPV then {
         apiVersion: 'batch/v1beta1',
         kind: 'CronJob',
         metadata: {
@@ -295,6 +299,6 @@ local attachmentsContainerPath = '/home/nginx/data/www/steward';
             },
           }
         }
-      }
+      })
     ]
 }
