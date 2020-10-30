@@ -51,6 +51,7 @@
 // @optionalParam lookout_prefetch_count string 10 lookout_prefetch_count
 // @optionalParam steward_attachments_lifetime_days number 30 time to live for steward attachments
 // @param mandrill_api_key string mandrill_api_key
+// @optionalParam smtp_uri string   smtp_uri
 // @param message_crypto_iv string message_crypto_iv
 // @param message_crypto_password string message_crypto_password
 // @param mongo_uri string mongo_uri
@@ -105,6 +106,7 @@
 // @optionalParam maester_redis_uri string  maester_redis_uri
 // @optionalParam maester_objects_ttl_in_seconds string 86400 maester_objects_ttl_in_seconds
 // @optionalParam maester_object_storage_size_threshold string 1048576 maester_object_storage_size_threshold
+// @optionalParam force_destroy_debug_task_timeout_sec number 0 force_destroy_debug_task_timeout_sec
 
 local k = import 'k.libsonnet';
 
@@ -162,6 +164,7 @@ local kubernetes_rabbitmq_uri_sailor = import 'param://kubernetes_rabbitmq_uri_s
 local kubernetes_slugs_base_url = import 'param://kubernetes_slugs_base_url';
 local lookout_prefetch_count = import 'param://lookout_prefetch_count';
 local mandrill_api_key = import 'param://mandrill_api_key';
+local smtp_uri = import 'param://smtp_uri';
 local maester_enabled = import 'param://maester_enabled';
 local maester_jwt_secret = import 'param://maester_jwt_secret';
 local maester_uri = 'http://maester-service.platform.svc.cluster.local:3002';
@@ -228,6 +231,8 @@ local agent_vpn_entrypoint = import 'param://agent_vpn_entrypoint';
 
 local checkMaesterKey = if maester_enabled == 'true' && maester_jwt_secret == '' then
   error 'maester_jwt_secret is required';
+
+local force_destroy_debug_task_timeout_sec = import 'param://force_destroy_debug_task_timeout_sec';
 
 [
   k.core.v1.namespace.new('platform').withLabels({name: 'platform'}),
@@ -358,7 +363,16 @@ local checkMaesterKey = if maester_enabled == 'true' && maester_jwt_secret == ''
         MAESTER_OBJECTS_TTL_IN_SECONDS: std.toString(maester_objects_ttl_in_seconds),
         MAESTER_OBJECT_STORAGE_SIZE_THRESHOLD: std.toString(maester_object_storage_size_threshold)
       } else {}
+    ) + (
+      if (force_destroy_debug_task_timeout_sec != 0 ) then {
+        FORCE_DESTROY_DEBUG_TASK_TIMEOUT_SEC: std.toString(force_destroy_debug_task_timeout_sec)
+      } else {}
+    ) + (
+      if std.toString(smtp_uri) != '' then {
+        SMTP_URI: std.toString(smtp_uri),
+      } else {}
     ),
+
     kind: 'Secret',
     metadata: {
       name: 'elasticio',
