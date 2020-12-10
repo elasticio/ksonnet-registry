@@ -96,18 +96,6 @@ local k = import 'k.libsonnet';
                       }
                     ]
                   }
-                },
-                podAntiAffinity: {
-                  requiredDuringSchedulingIgnoredDuringExecution: [
-                    {
-                      labelSelector: {
-                        matchLabels: {
-                          app: appName
-                        }
-                      },
-                      topologyKey: 'kubernetes.io/hostname'
-                    }
-                  ]
                 }
               },
               containers: [
