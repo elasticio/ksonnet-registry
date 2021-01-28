@@ -250,7 +250,7 @@ local version = import 'elasticio/platform/version.json';
                 },
                 resources: {
                   limits: {
-                    memory: '512Mi',
+                    memory: '1Gi',
                     cpu: 1,
                   },
                   requests: {

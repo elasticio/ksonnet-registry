@@ -87,6 +87,15 @@ local app(replicas, mode) = [
                       key: 'BRAN_PREFETCH_COUNT'
                     }
                   }
+                },
+                {
+                  name: 'CLICKHOUSE_NO_REPLICA',
+                  valueFrom: {
+                    secretKeyRef: {
+                      name: 'elasticio',
+                      key: 'BRAN_CLICKHOUSE_NO_REPLICA',
+                    },
+                  },
                 }
               ],
               ports: [{
