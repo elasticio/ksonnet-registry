@@ -92,6 +92,7 @@
 // @optionalParam push_gateway_uri string  push_gateway_uri
 // @param iron_bank_clickhouse_uri string iron_bank_clickhouse_uri
 // @optionalParam iron_bank_clickhouse_no_replica string  iron_bank_clickhouse_no_replica
+// @optionalParam bran_clickhouse_no_replica string  bran_clickhouse_no_replica
 // @optionalParam kubernetes_ordinary_label_value string  kubernetes_ordinary_label_value
 // @optionalParam kubernetes_long_running_label_value string  kubernetes_long_running_label_value
 // @optionalParam frontend_no_external_resources string  frontend_no_external_resources
@@ -221,6 +222,7 @@ local tenant_operator_login = import 'param://tenant_operator_login';
 local tenant_operator_password = import 'param://tenant_operator_password';
 local iron_bank_clickhouse_uri = import 'param://iron_bank_clickhouse_uri';
 local iron_bank_clickhouse_no_replica = import 'param://iron_bank_clickhouse_no_replica';
+local bran_clickhouse_no_replica = import 'param://bran_clickhouse_no_replica';
 local iron_bank_uri = 'http://iron-bank-service.platform.svc.cluster.local:3000';
 local kubernetes_ordinary_label_value = import 'param://kubernetes_ordinary_label_value';
 local kubernetes_long_running_label_value = import 'param://kubernetes_long_running_label_value';
@@ -259,6 +261,7 @@ local force_destroy_debug_task_timeout_sec = import 'param://force_destroy_debug
       [if bran_enabled != '' then 'BRAN_ENABLED']: std.toString(bran_enabled),
       [if bran_read_uri != '' then 'BRAN_READ_URI']: std.toString(bran_read_uri),
       BRAN_PREFETCH_COUNT: std.toString(bran_prefetch_count),
+      BRAN_CLICKHOUSE_NO_REPLICA: std.toString(bran_clickhouse_no_replica),
       IRON_BANK_CLICKHOUSE_URI: std.toString(iron_bank_clickhouse_uri),
       IRON_BANK_CLICKHOUSE_NO_REPLICA: std.toString(iron_bank_clickhouse_no_replica),
       [if iron_bank_uri != '' then 'IRON_BANK_URI']: std.toString(iron_bank_uri),
