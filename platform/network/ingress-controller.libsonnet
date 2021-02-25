@@ -13,7 +13,6 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
           namespace: 'platform',
         },
         data: {
-          'load-balance': 'ip_hash',
           'use-http2': 'true',
           'server-tokens': 'false',
           'max-worker-connections': '4096',
@@ -80,7 +79,7 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
           },
           {
             apiGroups: [
-              'extensions',
+              'networking.k8s.io',
             ],
             resources: [
               'ingresses',
@@ -105,7 +104,7 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
           },
           {
             apiGroups: [
-              'extensions',
+              'networking.k8s.io',
             ],
             resources: [
               'ingresses/status',
@@ -196,7 +195,7 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
                       },
                     },
                   ],
-                  image: 'quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.20.0',
+                  image: 'k8s.gcr.io/ingress-nginx/controller:v0.44.0',
                   imagePullPolicy: 'IfNotPresent',
                   name: 'nginx-ingress-controller',
                   ports: [

@@ -14,6 +14,7 @@
 // @optionalParam bran_clickhouse_uri string  bran_clickhouse_uri
 // @optionalParam bran_enabled string false is bran service enabled
 // @optionalParam bran_prefetch_count string 10 bran_prefetch_count
+// @param cache_redis_password string cache_redis_password
 // @param certificate_store_encryption_password string certificate_store_encryption_password
 // @param company_name string company_name
 // @optionalParam component_cpu string 0.08 component_cpu
@@ -224,6 +225,8 @@ local iron_bank_clickhouse_uri = import 'param://iron_bank_clickhouse_uri';
 local iron_bank_clickhouse_no_replica = import 'param://iron_bank_clickhouse_no_replica';
 local bran_clickhouse_no_replica = import 'param://bran_clickhouse_no_replica';
 local iron_bank_uri = 'http://iron-bank-service.platform.svc.cluster.local:3000';
+local cache_redis_uri = 'redis://cache-service.platform.svc.cluster.local:6379';
+local cache_redis_password = import 'param://cache_redis_password';
 local kubernetes_ordinary_label_value = import 'param://kubernetes_ordinary_label_value';
 local kubernetes_long_running_label_value = import 'param://kubernetes_long_running_label_value';
 local server_port_range = import 'param://server_port_range';
@@ -265,6 +268,8 @@ local force_destroy_debug_task_timeout_sec = import 'param://force_destroy_debug
       IRON_BANK_CLICKHOUSE_URI: std.toString(iron_bank_clickhouse_uri),
       IRON_BANK_CLICKHOUSE_NO_REPLICA: std.toString(iron_bank_clickhouse_no_replica),
       [if iron_bank_uri != '' then 'IRON_BANK_URI']: std.toString(iron_bank_uri),
+      CACHE_REDIS_URI: std.toString(cache_redis_uri),
+      CACHE_REDIS_PASSWORD: std.toString(cache_redis_password),
       CERTIFICATE_STORE_ENCRYPTION_PASSWORD: std.toString(certificate_store_encryption_password),
       COMPANY_NAME: std.toString(company_name),
       COMPONENT_CPU: std.toString(component_cpu),

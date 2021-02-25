@@ -9,6 +9,7 @@ local fluentd = import 'elasticio/platform/apps/fluentd.libsonnet';
 local faceless = import 'elasticio/platform/apps/faceless.libsonnet';
 local frontend = import 'elasticio/platform/apps/frontend.libsonnet';
 local gendry = import 'elasticio/platform/apps/gendry.libsonnet';
+local cache = import 'elasticio/platform/apps/cache.libsonnet';
 local gitreceiver = import 'elasticio/platform/apps/gitreceiver.libsonnet';
 local goldDragonCoin = import 'elasticio/platform/apps/gold-dragon-coin.libsonnet';
 local handmaiden = import 'elasticio/platform/apps/handmaiden.libsonnet';
@@ -101,6 +102,7 @@ local version = import 'elasticio/platform/version.json';
     apiDocs(image):: apiDocs.app(image),
     api(replicas, cpuRequest=0.1, cpuLimit=1, facelessCreds='', memLimitMb = 2048):: api.app(replicas, cpuRequest, cpuLimit, facelessCreds, memLimitMb),
     bloodyGate(ipAddress, caCert, caKey):: bloodyGate.app(ipAddress, caCert, caKey),
+    cache():: cache.app(),
     dockerRegistry(dockerRegistryUri, dockerRegistrySecret, sharedSecret, s3url, replicas):: dockerRegistry.app(dockerRegistryUri, dockerRegistrySecret, sharedSecret, s3url, replicas, 'tasks'),
     faceless(encryptionKey, apiReplicas, credentials=''):: faceless.app(encryptionKey, apiReplicas, credentials),
     fluentd(execGelfProto, execGelfHost, execGelfPort):: fluentd.app(execGelfProto, execGelfHost, execGelfPort),
