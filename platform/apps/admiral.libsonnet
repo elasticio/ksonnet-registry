@@ -53,7 +53,7 @@ local version = import 'elasticio/platform/version.json';
                     },
                     {
                       name: 'LOG_LEVEL',
-                      value: 'debug',
+                      value: 'info',
                     },
                     {
                       name: 'FACELESS_URI',
