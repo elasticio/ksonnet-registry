@@ -47,7 +47,7 @@ local version = import 'elasticio/platform/version.json';
     // ----------------------------- //
     // --- Network Configuration --- //
     // ----------------------------- //
-    ingressController():: ingressController.conf(),
+    ingressController(error5xxPageUrl = ''):: ingressController.conf(error5xxPageUrl),
     ingress(
       ingressNameDefault,
       ingressNameApiDocs,

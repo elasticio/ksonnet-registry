@@ -1,7 +1,106 @@
 local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spread-nodes.libsonnet';
+local version = import 'elasticio/platform/version.json';
 
 {
-  conf():: [
+  conf(error5xxPageUrl = '', defaultBackendPort = 8080)::
+    local defaultBackend = [
+      {
+        apiVersion: 'apps/v1',
+        kind: 'Deployment',
+        metadata: {
+          labels: {
+            app: 'ingress-default-backend',
+          },
+          name: 'ingress-default-backend',
+          namespace: 'platform',
+        },
+        spec: {
+          replicas: 2,
+          selector: {
+            matchLabels: {
+              app: 'ingress-default-backend',
+            },
+          },
+          strategy: {
+            rollingUpdate: {
+              maxSurge: 1,
+              maxUnavailable: 1,
+            },
+            type: 'RollingUpdate',
+          },
+          template: {
+            metadata: {
+              labels: {
+                app: 'ingress-default-backend',
+              },
+            },
+            spec: podAffinitySpreadNodes.call('ingress-default-backend') + {
+              containers: [
+                {
+                  env: [
+                    {
+                      name: 'PORT',
+                      value: std.toString(defaultBackendPort)
+                    },
+                    {
+                      name: 'RESOLVER_IP',
+                      value: '8.8.8.8'
+                    },
+                  ] + (if error5xxPageUrl != '' then [{ name: 'ERROR_PAGE_URL', value: error5xxPageUrl }] else []),
+                  image: 'elasticio/default-backend:' + version,
+                  imagePullPolicy: 'IfNotPresent',
+                  name: 'ingress-default-backend',
+                  ports: [
+                    {
+                      containerPort: defaultBackendPort,
+                      name: 'http',
+                      protocol: 'TCP',
+                    }
+                  ],
+                  resources: {},
+                  terminationMessagePath: '/dev/termination-log',
+                  terminationMessagePolicy: 'File',
+                },
+              ],
+              nodeSelector: {
+                'elasticio-role': 'platform',
+              },
+              imagePullSecrets: [
+                {
+                  name: 'elasticiodevops'
+                }
+              ]
+            },
+          },
+        },
+      },
+      {
+        apiVersion: 'v1',
+        kind: 'Service',
+        metadata: {
+          labels: {
+            app: 'ingress-default-backend',
+          },
+          name: 'ingress-default-backend-service',
+          namespace: 'platform',
+        },
+        spec: {
+          type: 'ClusterIP',
+          selector: {
+            app: 'ingress-default-backend',
+          },
+          ports: [
+            {
+              name: 'http',
+              port: defaultBackendPort,
+              protocol: 'TCP',
+              targetPort: defaultBackendPort,
+            }
+          ],
+        },
+      }
+    ];
+  [
       {
         apiVersion: 'v1',
         kind: 'ConfigMap',
@@ -28,7 +127,7 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
           // Give some time to finish git push into gitreceiver
           // https://github.com/elasticio/platform/issues/912
           'worker-shutdown-timeout': '5m',
-        },
+        } + (if error5xxPageUrl != '' then { 'custom-http-errors': '502,503,504' } else {}),
       },
       {
         apiVersion: 'rbac.authorization.k8s.io/v1',
@@ -174,7 +273,7 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
                     '--tcp-services-configmap=$(POD_NAMESPACE)/tcp-services',
                     '--udp-services-configmap=$(POD_NAMESPACE)/udp-services',
                     '--annotations-prefix=nginx.ingress.kubernetes.io',
-                  ],
+                  ] + (if error5xxPageUrl != '' then ['--default-backend-service=platform/ingress-default-backend-service'] else []),
                   env: [
                     {
                       name: 'POD_NAME',
@@ -332,5 +431,5 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
           namespace: 'platform',
         },
       },
-    ]
+    ] + (if error5xxPageUrl != '' then defaultBackend else [])
 }
