@@ -193,6 +193,9 @@ ks generate elastic.io.bran-write bran-write --values-file=platform.json
 ks generate elastic.io.bran-read bran-read --values-file=platform.json
 ks generate elastic.io.faceless faceless --values-file=platform.json
 ks generate elastic.io.bloody-gate bloody-gate --values-file=platform.json
+ks generate elastic.io.maester maester --values-file=platform.json
+ks generate elastic.io.cache cache --values-file=platform.json
+
 ```
 
 ### Apply config
@@ -262,6 +265,8 @@ ks component rm bran-write
 ks component rm bran-read
 ks component rm faceless
 ks component rm bloody-gate
+ks component rm maester
+ks component rm cache
 ```
 
 ### Generate new version of ksonnet components
@@ -296,6 +301,9 @@ ks generate elastic.io.bran-write bran-write --values-file=platform.json
 ks generate elastic.io.bran-read bran-read --values-file=platform.json
 ks generate elastic.io.faceless faceless --values-file=platform.json
 ks generate elastic.io.bloody-gate bloody-gate --values-file=platform.json
+ks generate elastic.io.maester maester --values-file=platform.json
+ks generate elastic.io.cache cache --values-file=platform.json
+
 ```
 
 ### Update config
@@ -329,6 +337,17 @@ ks apply elasticio --gc-tag elasticio0 --context <kubectl_context>
 ## Known issues
 
 List of known issues and workarounds
+
+### Error 
+```
+ERROR Received status code '404' when trying to retrieve OpenAPI schema for cluster version 'v1.14.1' from URL 'https://raw.githubusercontent.com/kubernetes/kubernetes/v1.14.1/api/openapi-spec/swagger.json'
+To undo this simply delete directory 'elasticio' and re-run `ks init`.
+If the error persists, try using flag '--context' to set a different context or run `ks init --help` for more options 
+```
+
+Solution: 
+1. Download swagger to your working directory from https://github.com/kubernetes/kubernetes/blob/release-1.14/api/openapi-spec/swagger.json or other release
+2. Specify swagger.json during init `ks init elasticio --skip-default-registries --env elasticio --context context --api-spec=file:swagger.json`
 
 ### Error `GET https://api.github.com/repos/elasticio/ksonnet-registry/commits/master: 403 API rate limit exceeded for %YOUR_IP_ADDRESS%`
 
