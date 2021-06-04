@@ -1,15 +1,20 @@
 local version = import 'elasticio/platform/version.json';
 
 {
-  app():: {
+  app(name):: {
       apiVersion: 'batch/v1',
       kind: 'Job',
       metadata: {
         name: 'gendry',
         namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
         labels: {
           app: 'gendry',
-        },
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       spec: {
         backoffLimit: 0,

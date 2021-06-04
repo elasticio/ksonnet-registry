@@ -1,16 +1,21 @@
 local version = import 'elasticio/platform/version.json';
 
 {
-  app(dockerRegistryUri):: [
+  app(name, dockerRegistryUri):: [
       {
         apiVersion: 'apps/v1',
         kind: 'Deployment',
         metadata: {
           name: 'gitreceiver',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
             app: 'gitreceiver',
-          },
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           replicas: 1,
@@ -162,11 +167,16 @@ local version = import 'elasticio/platform/version.json';
         apiVersion: 'v1',
         kind: 'Service',
         metadata: {
-          labels: {
-            app: 'gitreceiver-service',
-          },
           name: 'gitreceiver-service',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+            app: 'gitreceiver-service',
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           type: 'ClusterIP',

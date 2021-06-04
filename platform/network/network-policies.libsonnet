@@ -1,11 +1,18 @@
 {
-  networkPolicies():: [
+  networkPolicies(name):: [
     {
       apiVersion: 'networking.k8s.io/v1',
       kind: 'NetworkPolicy',
       metadata: {
         name: 'platform-internal-traffic',
-        namespace: 'platform'
+        namespace: 'platform',
+        annotations: {
+         'meta.helm.sh/release-name': name,
+         'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+         'app.kubernetes.io/managed-by': 'Helm',
+        }
       },
       spec: {
         policyTypes: ['Ingress'],
@@ -26,7 +33,14 @@
       kind: 'NetworkPolicy',
       metadata: {
         name: 'tasks-to-platform',
-        namespace: 'platform'
+        namespace: 'platform',
+        annotations: {
+         'meta.helm.sh/release-name': name,
+         'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+         'app.kubernetes.io/managed-by': 'Helm',
+        }
       },
       spec: {
         policyTypes: ['Ingress'],
@@ -53,7 +67,14 @@
       kind: 'NetworkPolicy',
       metadata: {
         name: 'input-traffic',
-        namespace: 'platform'
+        namespace: 'platform',
+        annotations: {
+         'meta.helm.sh/release-name': name,
+         'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+         'app.kubernetes.io/managed-by': 'Helm',
+        }
       },
       spec: {
         policyTypes: ['Ingress'],
@@ -76,7 +97,14 @@
     	kind: 'NetworkPolicy',
     	metadata: {
         	name: 'allow-agents-to-platform-storage-slugs',
-        	namespace: 'platform'
+        	namespace: 'platform',
+          annotations: {
+           'meta.helm.sh/release-name': name,
+           'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+           'app.kubernetes.io/managed-by': 'Helm',
+          }
     	},
     	spec: {
       	policyTypes: ['Ingress'],
@@ -99,7 +127,14 @@
       kind: 'NetworkPolicy',
       metadata: {
         name: 'allow-dockerd-to-docker-registry',
-        namespace: 'platform'
+        namespace: 'platform',
+        annotations: {
+         'meta.helm.sh/release-name': name,
+         'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+         'app.kubernetes.io/managed-by': 'Helm',
+        }
       },
       spec: {
         policyTypes: ['Ingress'],
@@ -122,7 +157,14 @@
       kind: 'NetworkPolicy',
       metadata: {
         name: 'monitoring-to-platform-traffic',
-          namespace: 'platform'
+          namespace: 'platform',
+          annotations: {
+         'meta.helm.sh/release-name': name,
+         'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+         'app.kubernetes.io/managed-by': 'Helm',
+        }
       },
       spec: {
         policyTypes: ['Ingress'],
@@ -143,7 +185,14 @@
       kind: 'NetworkPolicy',
       metadata: {
         name: 'platform-to-monitoring-traffic',
-        namespace: 'monitoring'
+        namespace: 'monitoring',
+        annotations: {
+         'meta.helm.sh/release-name': name,
+         'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+         'app.kubernetes.io/managed-by': 'Helm',
+        }
       },
       spec: {
         policyTypes: ['Ingress'],
@@ -164,7 +213,14 @@
       kind: 'NetworkPolicy',
       metadata: {
         name: 'monitoring-internal-traffic',
-        namespace: 'monitoring'
+        namespace: 'monitoring',
+        annotations: {
+         'meta.helm.sh/release-name': name,
+         'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+         'app.kubernetes.io/managed-by': 'Helm',
+        }
       },
       spec: {
         policyTypes: ['Ingress'],
@@ -185,7 +241,14 @@
       kind: 'NetworkPolicy',
       metadata: {
         name: 'monitoring-ingress-traffic',
-        namespace: 'monitoring'
+        namespace: 'monitoring',
+        annotations: {
+         'meta.helm.sh/release-name': name,
+         'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+         'app.kubernetes.io/managed-by': 'Helm',
+        }
       },
       spec: {
         policyTypes: ['Ingress'],

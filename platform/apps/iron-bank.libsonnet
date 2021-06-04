@@ -1,7 +1,8 @@
 local version = import 'elasticio/platform/version.json';
 
+
 {
-  app()::[
+  app(name)::[
     {
       apiVersion: 'apps/v1',
       kind: 'DaemonSet',
@@ -10,9 +11,12 @@ local version = import 'elasticio/platform/version.json';
           // Copied from
           // https://github.com/google/cadvisor/blob/83240cc997e91ec38fb853c07ff318491bd354cb/deploy/kubernetes/base/daemonset.yaml
           'seccomp.security.alpha.kubernetes.io/pod': 'docker/default',
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
         },
         labels: {
           app: 'cadvisor',
+          'app.kubernetes.io/managed-by': 'Helm'
         },
         name: 'cadvisor',
         namespace: 'platform',
@@ -133,6 +137,13 @@ local version = import 'elasticio/platform/version.json';
       metadata: {
         name: 'iron-bank-account',
         namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
     },
     {
@@ -140,6 +151,13 @@ local version = import 'elasticio/platform/version.json';
       kind: 'ClusterRole',
       metadata: {
         name: 'iron-bank-role',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       rules: [
         {
@@ -154,6 +172,13 @@ local version = import 'elasticio/platform/version.json';
       kind: 'ClusterRoleBinding',
       metadata: {
         name: 'iron-bank-rolebinding',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       roleRef: {
         apiGroup: 'rbac.authorization.k8s.io',
@@ -174,9 +199,14 @@ local version = import 'elasticio/platform/version.json';
       metadata: {
         name: 'iron-bank',
         namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
         labels: {
           app: 'iron-bank',
-        },
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       spec: {
         replicas: 1,
@@ -289,11 +319,16 @@ local version = import 'elasticio/platform/version.json';
       apiVersion: 'v1',
       kind: 'Service',
       metadata: {
-        labels: {
-          app: 'iron-bank-service',
-        },
         name: 'iron-bank-service',
         namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+          app: 'iron-bank-service',
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       spec: {
         selector: {

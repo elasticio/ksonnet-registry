@@ -1,15 +1,20 @@
 local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spread-nodes.libsonnet';
 local version = import 'elasticio/platform/version.json';
 
-local readService = {
+local readService(name) = {
   apiVersion: 'v1',
   kind: 'Service',
   metadata: {
-    labels: {
-      app: 'bran-read-service',
-    },
     name: 'bran-read-service',
     namespace: 'platform',
+    annotations: {
+      'meta.helm.sh/release-name': name,
+      'meta.helm.sh/release-namespace': 'default'
+    },
+    labels: {
+      app: 'bran-read-service',
+      'app.kubernetes.io/managed-by': 'Helm'
+    }
   },
   spec: {
     selector: {
@@ -25,7 +30,7 @@ local readService = {
   },
 };
 
-local app(replicas, mode) = [
+local app(name, replicas, mode) = [
   {
     apiVersion: 'apps/v1',
     kind: 'Deployment',
@@ -33,7 +38,12 @@ local app(replicas, mode) = [
       name: 'bran-' + mode,
       namespace: 'platform',
       labels: {
-        app: 'bran-' + mode
+        app: 'bran-' + mode,
+        'app.kubernetes.io/managed-by': 'Helm'
+      },
+      annotations: {
+        'meta.helm.sh/release-name': name,
+        'meta.helm.sh/release-namespace': 'default'
       }
     },
     spec: {
@@ -154,6 +164,6 @@ local app(replicas, mode) = [
 ];
 
 {
-  app(replicas, mode)::
-    app(replicas, mode) + (if mode == 'write' then [] else [readService])
+  app(name, replicas, mode)::
+    app(name, replicas, mode) + (if mode == 'write' then [] else [readService(name)])
 }

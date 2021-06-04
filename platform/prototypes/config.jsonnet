@@ -109,6 +109,10 @@
 // @optionalParam maester_objects_ttl_in_seconds string 86400 maester_objects_ttl_in_seconds
 // @optionalParam maester_object_storage_size_threshold string 1048576 maester_object_storage_size_threshold
 // @optionalParam force_destroy_debug_task_timeout_sec number 0 force_destroy_debug_task_timeout_sec
+// @optionalParam platform_name string great-moraq platform name for helm
+// @optionalParam max_force_destroy_debug_task_timeout_sec number 0 max_force_destroy_debug_task_timeout_sec
+// @optionalParam force_destroy_one_time_exec_sec number 0 force_destroy_one_time_exec_sec
+// @optionalParam max_force_destroy_one_time_exec_sec number 0 max_force_destroy_one_time_exec_sec
 
 local k = import 'k.libsonnet';
 
@@ -238,11 +242,31 @@ local checkMaesterKey = if maester_enabled == 'true' && maester_jwt_secret == ''
   error 'maester_jwt_secret is required';
 
 local force_destroy_debug_task_timeout_sec = import 'param://force_destroy_debug_task_timeout_sec';
+local platformName = import 'param://platform_name';
+local name = if platformName != "" then platformName else "great-moraq";
+local max_force_destroy_debug_task_timeout_sec = import 'param://max_force_destroy_debug_task_timeout_sec';
+local force_destroy_one_time_exec_sec = import 'param://force_destroy_one_time_exec_sec';
+local max_force_destroy_one_time_exec_sec = import 'param://max_force_destroy_one_time_exec_sec';
 
 [
-  k.core.v1.namespace.new('platform').withLabels({name: 'platform'}),
-  k.core.v1.namespace.new('tasks').withLabels({name: 'tasks'}),
-  k.core.v1.namespace.new('monitoring').withLabels({name: 'monitoring'}),
+  k.core.v1.namespace.new('platform')
+    .withLabels({name: 'platform', 'app.kubernetes.io/managed-by': 'Helm'})
+    .withAnnotations({
+      'meta.helm.sh/release-name': name,
+      'meta.helm.sh/release-namespace': 'default'
+    }),
+  k.core.v1.namespace.new('tasks')
+    .withLabels({name: 'tasks', 'app.kubernetes.io/managed-by': 'Helm'})
+    .withAnnotations({
+      'meta.helm.sh/release-name': name,
+      'meta.helm.sh/release-namespace': 'default'
+    }),
+  k.core.v1.namespace.new('monitoring')
+    .withLabels({name: 'monitoring', 'app.kubernetes.io/managed-by': 'Helm'})
+    .withAnnotations({
+      'meta.helm.sh/release-name': name,
+      'meta.helm.sh/release-namespace': 'default'
+    }),
   {
     apiVersion: 'v1',
     stringData: {
@@ -376,6 +400,18 @@ local force_destroy_debug_task_timeout_sec = import 'param://force_destroy_debug
         FORCE_DESTROY_DEBUG_TASK_TIMEOUT_SEC: std.toString(force_destroy_debug_task_timeout_sec)
       } else {}
     ) + (
+      if (max_force_destroy_debug_task_timeout_sec != 0 ) then {
+        MAX_FORCE_DESTROY_DEBUG_TASK_TIMEOUT_SEC: std.toString(max_force_destroy_debug_task_timeout_sec)
+      } else {}
+    )  + (
+      if (force_destroy_one_time_exec_sec != 0 ) then {
+        FORCE_DESTROY_ONE_TIME_EXEC_SEC: std.toString(force_destroy_one_time_exec_sec)
+      } else {}
+    ) + (
+      if (max_force_destroy_one_time_exec_sec != 0 ) then {
+        MAX_FORCE_DESTROY_ONE_TIME_EXEC_SEC: std.toString(max_force_destroy_one_time_exec_sec)
+      } else {}
+    ) + (
       if std.toString(smtp_uri) != '' then {
         SMTP_URI: std.toString(smtp_uri),
       } else {}
@@ -385,6 +421,13 @@ local force_destroy_debug_task_timeout_sec = import 'param://force_destroy_debug
     metadata: {
       name: 'elasticio',
       namespace: 'platform',
+      annotations: {
+        'meta.helm.sh/release-name': name,
+        'meta.helm.sh/release-namespace': 'default'
+      },
+      labels: {
+       'app.kubernetes.io/managed-by': 'Helm',
+      }
     },
   }
 ]

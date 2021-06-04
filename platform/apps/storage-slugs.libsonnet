@@ -3,16 +3,21 @@ local version = import 'elasticio/platform/version.json';
 local attachmentsContainerPath = '/home/nginx/data/www/steward';
 
 {
-  app(replicas, lbIp, storage='1Ti', slugsSubPath='slugs', stewardSubPath='steward', s3Uri='', isPV=true):: [
+  app(name, replicas, lbIp, storage='1Ti', slugsSubPath='slugs', stewardSubPath='steward', s3Uri='', isPV=true):: [
       {
         apiVersion: 'apps/v1',
         kind: 'Deployment',
         metadata: {
           name: 'platform-storage-slugs',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
             app: 'platform-storage-slugs',
-          },
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           replicas: replicas,
@@ -135,11 +140,16 @@ local attachmentsContainerPath = '/home/nginx/data/www/steward';
         apiVersion: 'v1',
         kind: 'Service',
         metadata: {
-          labels: {
-            app: 'platform-storage-slugs-service',
-          },
           name: 'platform-storage-slugs-service',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+            app: 'platform-storage-slugs-service',
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           type: 'ClusterIP',
@@ -164,9 +174,12 @@ local attachmentsContainerPath = '/home/nginx/data/www/steward';
         metadata: {
           labels: {
             app: 'platform-storage-slugs-loadbalancer',
+            'app.kubernetes.io/managed-by': 'Helm'
           },
           annotations: {
             'cloud.google.com/load-balancer-type': 'Internal',
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
           },
           name: 'platform-storage-slugs-loadbalancer',
           namespace: 'platform',
@@ -194,6 +207,13 @@ local attachmentsContainerPath = '/home/nginx/data/www/steward';
         metadata: {
           name: 'platform-storage-slugs-volume-claim',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           storageClassName: 'platform-storage-slugs',
@@ -213,10 +233,15 @@ local attachmentsContainerPath = '/home/nginx/data/www/steward';
         metadata: {
           name: 'remove-outdated-attachments',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
+            'app.kubernetes.io/managed-by': 'Helm',
             app: 'platform-storage-slugs',
             subapp: 'remove-outdated-attachments',
-          },
+          }
         },
         spec: {
           schedule: '0 */6 * * *',

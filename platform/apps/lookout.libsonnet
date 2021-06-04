@@ -2,16 +2,21 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
 local version = import 'elasticio/platform/version.json';
 
 {
-  app(replicas, maxErrorRecordsCount = "1000"):: [
+  app(name, replicas, maxErrorRecordsCount = "1000"):: [
     {
       apiVersion: 'apps/v1',
       kind: 'Deployment',
       metadata: {
         name: 'lookout',
         namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
         labels: {
           app: 'lookout',
-        },
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       spec: {
         replicas: replicas,
@@ -117,7 +122,12 @@ local version = import 'elasticio/platform/version.json';
         labels: {
           app: 'lookout',
           subapp: 'remove-excess-error-records',
+          'app.kubernetes.io/managed-by': 'Helm'
         },
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        }
       },
       spec: {
         schedule: '*/3 * * * *',

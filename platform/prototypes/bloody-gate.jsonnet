@@ -5,6 +5,7 @@
 // @optionalParam agent_entrypoint_ip string    ip address for vpn
 // @optionalParam agent_ca_key string    private key for agents  CA
 // @optionalParam agent_ca_cert string    certificate for agents CA
+// @optionalParam platform_name string great-moraq platform name for helm
 
 // Notice it's ok to use self-signed certificate + key for CA
 // here is the way to generate it and install into platform.json file
@@ -18,5 +19,7 @@ local platform = import 'elasticio/platform/platform.libsonnet';
 local ipAddress = import 'param://agent_entrypoint_ip';
 local caKey = import 'param://agent_ca_key';
 local caCert = import 'param://agent_ca_cert';
+local platformName = import 'param://platform_name';
+local name = if platformName != "" then platformName else "great-moraq";
 
-if ipAddress != '' then platform.parts.bloodyGate(ipAddress, caCert, caKey) else []
+if ipAddress != '' then platform.parts.bloodyGate(name, ipAddress, caCert, caKey) else []

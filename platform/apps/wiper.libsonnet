@@ -1,15 +1,20 @@
 local version = import 'elasticio/platform/version.json';
 
-local quotaTxnResolver = {
+local quotaTxnResolver(name) = {
  apiVersion: 'batch/v1beta1',
  kind: 'CronJob',
  metadata: {
    name: 'quota-txn-resolver',
    namespace: 'platform',
+   annotations: {
+     'meta.helm.sh/release-name': name,
+     'meta.helm.sh/release-namespace': 'default'
+   },
    labels: {
+     'app.kubernetes.io/managed-by': 'Helm',
      app: 'wiper',
      subapp: 'quota-txn-resolver',
-   },
+   }
  },
  spec: {
    schedule: '* * * * *',
@@ -94,16 +99,21 @@ local quotaTxnResolver = {
  },
 };
 
-local monitorContractQuotaUsage = {
+local monitorContractQuotaUsage(name) = {
   apiVersion: 'batch/v1beta1',
   kind: 'CronJob',
   metadata: {
     name: 'monitor-contract-quota-usage',
     namespace: 'platform',
-    labels: {
-      app: 'wiper',
+    annotations: {
+     'meta.helm.sh/release-name': name,
+     'meta.helm.sh/release-namespace': 'default'
+   },
+   labels: {
+     'app.kubernetes.io/managed-by': 'Helm',
+     app: 'wiper',
       subapp: 'monitor-contract-quota-usage',
-    },
+   }
   },
   spec: {
     schedule: '0 12 * * *',
@@ -184,16 +194,21 @@ local monitorContractQuotaUsage = {
   },
 };
 
-local monitorWorkspaceQuotaUsage = {
+local monitorWorkspaceQuotaUsage(name) = {
   apiVersion: 'batch/v1beta1',
   kind: 'CronJob',
   metadata: {
     name: 'monitor-workspace-quota-usage',
     namespace: 'platform',
-    labels: {
-      app: 'wiper',
+    annotations: {
+     'meta.helm.sh/release-name': name,
+     'meta.helm.sh/release-namespace': 'default'
+   },
+   labels: {
+     'app.kubernetes.io/managed-by': 'Helm',
+     app: 'wiper',
       subapp: 'monitor-workspace-quota-usage',
-    },
+   }
   },
   spec: {
     schedule: '0 12 * * *',
@@ -274,17 +289,22 @@ local monitorWorkspaceQuotaUsage = {
   },
 };
 
-local jobs = [
+local jobs(name) = [
     {
      apiVersion: 'batch/v1beta1',
      kind: 'CronJob',
      metadata: {
        name: 'clear-old-debug-tasks',
        namespace: 'platform',
+       annotations: {
+         'meta.helm.sh/release-name': name,
+         'meta.helm.sh/release-namespace': 'default'
+       },
        labels: {
+         'app.kubernetes.io/managed-by': 'Helm',
          app: 'wiper',
          subapp: 'clear-old-debug-tasks',
-       },
+       }
      },
      spec: {
        schedule: '* * * * *',
@@ -374,10 +394,15 @@ local jobs = [
      metadata: {
        name: 'watch-and-finish-contract-delete',
        namespace: 'platform',
+       annotations: {
+         'meta.helm.sh/release-name': name,
+         'meta.helm.sh/release-namespace': 'default'
+       },
        labels: {
+         'app.kubernetes.io/managed-by': 'Helm',
          app: 'wiper',
          subapp: 'watch-and-finish-contract-delete',
-       },
+       }
      },
      spec: {
        schedule: '*/3 * * * *',
@@ -463,10 +488,15 @@ local jobs = [
      metadata: {
        name: 'watch-queues-overflow',
        namespace: 'platform',
+       annotations: {
+         'meta.helm.sh/release-name': name,
+         'meta.helm.sh/release-namespace': 'default'
+       },
        labels: {
+         'app.kubernetes.io/managed-by': 'Helm',
          app: 'wiper',
          subapp: 'watch-queues-overflow',
-       },
+       }
      },
      spec: {
        schedule: '* * * * *',
@@ -552,10 +582,15 @@ local jobs = [
      metadata: {
        name: 'suspend-contracts',
        namespace: 'platform',
-       labels: {
-         app: 'wiper',
-         subapp: 'suspend-contracts',
+       annotations: {
+         'meta.helm.sh/release-name': name,
+         'meta.helm.sh/release-namespace': 'default'
        },
+       labels: {
+         'app.kubernetes.io/managed-by': 'Helm',
+          app: 'wiper',
+         subapp: 'suspend-contracts',
+       }
      },
      spec: {
        schedule: '* * * * *',
@@ -645,10 +680,15 @@ local jobs = [
      metadata: {
        name: 'stop-limited-flows',
        namespace: 'platform',
-       labels: {
-         app: 'wiper',
-         subapp: 'stop-limited-flows',
+       annotations: {
+         'meta.helm.sh/release-name': name,
+         'meta.helm.sh/release-namespace': 'default'
        },
+       labels: {
+         'app.kubernetes.io/managed-by': 'Helm',
+          app: 'wiper',
+         subapp: 'stop-limited-flows',
+       }
      },
      spec: {
        schedule: '*/10 * * * *',
@@ -732,7 +772,7 @@ local jobs = [
 
 {
   app(params)::
-    jobs +
-    (if !params.quotaServiceDisabled then [quotaTxnResolver] else []) +
-    (if !params.quotaServiceDisabled && !params.ironBankDisabled then [monitorContractQuotaUsage, monitorWorkspaceQuotaUsage] else [])
+    jobs(params.name) +
+    (if !params.quotaServiceDisabled then [quotaTxnResolver(params.name)] else []) +
+    (if !params.quotaServiceDisabled && !params.ironBankDisabled then [monitorContractQuotaUsage(params.name), monitorWorkspaceQuotaUsage(params.name)] else [])
 }

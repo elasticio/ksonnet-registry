@@ -9,6 +9,7 @@
 // @param ingress_cert_crt string ingress base64 encoded tls cert certificate
 // @param ingress_cert_key string ingress base64 encoded tls cert key
 // @param gitreceiver_key string base64 encoded gitreceiver key
+// @optionalParam platform_name string great-moraq platform name
 
 local k = import 'k.libsonnet';
 local platform = import 'elasticio/platform/platform.libsonnet';
@@ -20,9 +21,11 @@ local certName = import 'param://ingress_cert_name';
 local tlsCert = import 'param://ingress_cert_crt';
 local tlsKey = import 'param://ingress_cert_key';
 local gitReceiverKey = import 'param://gitreceiver_key';
+local platformName = import 'param://platform_name';
+local name = if platformName != "" then platformName else "great-moraq";
 
 [
-  platform.parts.pullSecret(dockerUsername, dockerPassword, dockerEmail, dockerRegistry),
-  platform.parts.tlsSecret(certName, tlsCert, tlsKey),
-  platform.parts.gitreceiverKey(gitReceiverKey)
+  platform.parts.pullSecret(name, dockerUsername, dockerPassword, dockerEmail, dockerRegistry),
+  platform.parts.tlsSecret(name, certName, tlsCert, tlsKey),
+  platform.parts.gitreceiverKey(name, gitReceiverKey)
 ]

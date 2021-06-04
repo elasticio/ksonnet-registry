@@ -2,15 +2,20 @@ local version = import 'elasticio/platform/version.json';
 
 local k = import 'k.libsonnet';
 {
-  app(ipAddress, caCert, caKey):: [
+  app(name, ipAddress, caCert, caKey):: [
     {
       kind: 'Deployment',
       apiVersion: 'apps/v1',
       metadata: {
         name: 'bloody-gate',
         namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
         labels: {
-          app: 'bloody-gate'
+          app: 'bloody-gate',
+          'app.kubernetes.io/managed-by': 'Helm'
         }
       },
       spec: {
@@ -152,8 +157,13 @@ local k = import 'k.libsonnet';
       metadata: {
         name: 'knight-of-the-bloody-gate',
         namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
         labels: {
-          app: 'knight-of-the-bloody-gate'
+          app: 'knight-of-the-bloody-gate',
+          'app.kubernetes.io/managed-by': 'Helm'
         }
       },
       spec: {
@@ -295,11 +305,16 @@ local k = import 'k.libsonnet';
       apiVersion: "v1",
       kind: "Service",
       metadata: {
-        labels: {
-          app: "knight-of-the-bloody-gate-service"
-        },
         name: "knight-of-the-bloody-gate-service",
-        namespace: "platform"
+        namespace: "platform",
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+          app: "knight-of-the-bloody-gate-service",
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       spec: {
         type: "ClusterIP",
@@ -321,11 +336,16 @@ local k = import 'k.libsonnet';
       apiVersion: 'v1',
       kind: 'Service',
       metadata: {
-        labels: {
-          app: 'bloody-gate-loadbalancer'
-        },
         name: 'bloody-gate-loadbalancer',
-        namespace: 'platform'
+        namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+          app: 'bloody-gate-loadbalancer',
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       spec: {
         type: 'LoadBalancer',
@@ -348,11 +368,16 @@ local k = import 'k.libsonnet';
       apiVersion: 'v1',
       kind: 'Service',
       metadata: {
-        labels: {
-          app: 'bloody-gate-service'
-        },
         name: 'bloody-gate-service',
-        namespace: 'platform'
+        namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+          app: 'bloody-gate-service',
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       spec: {
         type: 'ClusterIP',
@@ -369,13 +394,23 @@ local k = import 'k.libsonnet';
         'tls.key': caKey
       },
       type='kubernetes.io/tls'
-    ).withNamespace('platform'),
+    ).withNamespace('platform')
+    .withLabels({ 'app.kubernetes.io/managed-by': 'Helm' })
+    .withAnnotations({ 'meta.helm.sh/release-name': name,
+        'meta.helm.sh/release-namespace': 'default' }),
     {
       apiVersion: 'v1',
       kind: 'ServiceAccount',
       metadata: {
         name: 'bloody-gate-account',
         namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       }
     },
     {
@@ -384,6 +419,13 @@ local k = import 'k.libsonnet';
       metadata: {
         name: 'bloody-gate-role',
         namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       rules: [
         {
@@ -409,8 +451,13 @@ local k = import 'k.libsonnet';
       metadata: {
         name: 'bloody-gate-rolebinding',
         namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
         labels: {
-          app: 'bloody-gate'
+          app: 'bloody-gate',
+          'app.kubernetes.io/managed-by': 'Helm'
         }
       },
       roleRef: {

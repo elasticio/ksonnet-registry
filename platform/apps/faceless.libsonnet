@@ -2,16 +2,21 @@ local k = import 'k.libsonnet';
 local version = import 'elasticio/platform/version.json';
 
 local terminationDelay = 30;
-local app(replicas, port, appName, appType, encryptionKey, credentials='') = [
+local app(name, replicas, port, appName, appType, encryptionKey, credentials='') = [
     {
    kind: 'Deployment',
    apiVersion: 'apps/v1',
    metadata: {
-     name: appName,
-     namespace: 'platform',
-     labels: {
-       app: appName,
-     },
+    name: appName,
+    namespace: 'platform',
+    annotations: {
+      'meta.helm.sh/release-name': name,
+      'meta.helm.sh/release-namespace': 'default'
+    },
+    labels: {
+      app: appName,
+      'app.kubernetes.io/managed-by': 'Helm'
+    }
    },
    spec: {
      replicas: replicas,
@@ -25,7 +30,7 @@ local app(replicas, port, appName, appType, encryptionKey, credentials='') = [
          name: appName,
          annotations: {
            "prometheus.io/scrape": "true",
-           "prometheus.io/port": std.toString(port)
+           "prometheus.io/port": std.toString(port),
          },
          labels: {
            app: appName,
@@ -175,21 +180,27 @@ local apiPort = 1396;
 local tokenRefresherPort = 11396;
 {
   app(
+    name,
     encryptionKey,
     apiReplicas = 2,
     credentials = ''
   )::
-    app(apiReplicas, apiPort, 'faceless-api', 'api', encryptionKey, credentials) +
-    app(1, tokenRefresherPort, 'faceless-token-refresher', 'token-refresher', encryptionKey, credentials) +
+    app(name, apiReplicas, apiPort, 'faceless-api', 'api', encryptionKey, credentials) +
+    app(name, 1, tokenRefresherPort, 'faceless-token-refresher', 'token-refresher', encryptionKey, credentials) +
     [{
       apiVersion: 'v1',
       kind: 'Service',
       metadata: {
-        labels: {
-          app: 'faceless-api'
-        },
         name: 'faceless-api-service',
-        namespace: 'platform'
+        namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+          app: 'faceless-api',
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       spec: {
         ports: [
@@ -210,11 +221,16 @@ local tokenRefresherPort = 11396;
       apiVersion: 'v1',
       kind: 'Service',
       metadata: {
-        labels: {
-          app: 'faceless-token-refresher'
-        },
         name: 'faceless-token-refresher-service',
-        namespace: 'platform'
+        namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+          app: 'faceless-token-refresher',
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       spec: {
         ports: [

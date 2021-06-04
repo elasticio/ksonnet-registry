@@ -3,16 +3,21 @@ local version = import 'elasticio/platform/version.json';
 local terminationDelay = 30;
 
 {
-  app(replicas, cpuRequest=0.1, cpuLimit=1, facelessCreds='', memLimitMb = 2048):: [
+  app(name, replicas, cpuRequest=0.1, cpuLimit=1, facelessCreds='', memLimitMb = 2048):: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
         metadata: {
           name: 'api',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
             app: 'api',
-          },
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           replicas: replicas,
@@ -149,11 +154,16 @@ local terminationDelay = 30;
         apiVersion: 'v1',
         kind: 'Service',
         metadata: {
-          labels: {
-            app: 'api-service',
-          },
           name: 'api-service',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+            app: 'api-service',
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           type: 'ClusterIP',

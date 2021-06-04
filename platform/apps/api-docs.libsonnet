@@ -1,14 +1,19 @@
 {
-  app(image):: [
+  app(name, image):: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
         metadata: {
           name: 'api-docs',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
             app: 'api-docs',
-          },
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           replicas: 1,
@@ -88,9 +93,14 @@
         metadata: {
           name: 'api-docs-service',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
             app: 'api-docs-service',
-          },
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           type: 'ClusterIP',

@@ -1,7 +1,9 @@
 local k = import 'k.libsonnet';
 
+
 {
   app(
+    name,
     version,
     maesterReplicas,
     terminationGracePeriodSeconds = 30,
@@ -11,17 +13,22 @@ local k = import 'k.libsonnet';
     redisAppName = appName + '-redis',
     redisConfigMapName = redisAppName + '-configmap',
     redisMaxMemGB = 1,
-    redisDataDir = '/data',
+    redisDataDir = '/data'
   ):: [
       {
           apiVersion: 'v1',
           kind: 'Service',
           metadata: {
-              labels: {
-                  app: redisAppName
-              },
               name: redisAppName + '-service',
-              namespace: 'platform'
+              namespace: 'platform',
+              annotations: {
+                'meta.helm.sh/release-name': name,
+                'meta.helm.sh/release-namespace': 'default'
+              },
+              labels: {
+                app: redisAppName,
+                'app.kubernetes.io/managed-by': 'Helm'
+              }
           },
           spec: {
               ports: [
@@ -43,9 +50,14 @@ local k = import 'k.libsonnet';
         metadata: {
           name: redisConfigMapName,
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
             app: redisAppName,
-          },
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         data: {
           "redis.conf": |||
@@ -60,9 +72,14 @@ local k = import 'k.libsonnet';
         metadata: {
           name: redisAppName,
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
             app: redisAppName,
-          },
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           replicas: 1,
@@ -173,11 +190,16 @@ local k = import 'k.libsonnet';
           apiVersion: 'v1',
           kind: 'Service',
           metadata: {
-              labels: {
-                  app: appName
-              },
               name: appName + '-service',
-              namespace: 'platform'
+              namespace: 'platform',
+              annotations: {
+                'meta.helm.sh/release-name': name,
+                'meta.helm.sh/release-namespace': 'default'
+              },
+              labels: {
+                app: appName,
+                'app.kubernetes.io/managed-by': 'Helm'
+              }
           },
           spec: {
               ports: [
@@ -199,9 +221,14 @@ local k = import 'k.libsonnet';
         metadata: {
           name: appName,
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
             app: appName,
-          },
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           replicas: maesterReplicas,
@@ -343,23 +370,36 @@ local k = import 'k.libsonnet';
         },
       },
       {
-            apiVersion: 'batch/v1beta1',
-            kind: 'CronJob',
+        apiVersion: 'batch/v1beta1',
+        kind: 'CronJob',
+        metadata: {
+          name: 'remove-expired-objects',
+          namespace: 'platform',
+          labels: {
+            app: appName,
+            subapp: 'remove-expired-objects',
+            'app.kubernetes.io/managed-by': 'Helm'
+          },
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          }
+        },
+        spec: {
+          schedule: '0 * * * *',
+          concurrencyPolicy: 'Forbid',
+          failedJobsHistoryLimit: 1,
+          successfulJobsHistoryLimit: 3,
+          startingDeadlineSeconds: 600,
+          jobTemplate: {
             metadata: {
-              name: 'remove-expired-objects',
-              namespace: 'platform',
               labels: {
                 app: appName,
                 subapp: 'remove-expired-objects',
               },
             },
             spec: {
-              schedule: '0 * * * *',
-              concurrencyPolicy: 'Forbid',
-              failedJobsHistoryLimit: 1,
-              successfulJobsHistoryLimit: 3,
-              startingDeadlineSeconds: 600,
-              jobTemplate: {
+              template: {
                 metadata: {
                   labels: {
                     app: appName,
@@ -367,65 +407,57 @@ local k = import 'k.libsonnet';
                   },
                 },
                 spec: {
-                  template: {
-                    metadata: {
-                      labels: {
-                        app: appName,
-                        subapp: 'remove-expired-objects',
-                      },
-                    },
-                    spec: {
-                      containers: [
+                  containers: [
+                    {
+                      name: 'remove-expired-objects',
+                      image: 'elasticio/maester:' + version,
+                      args: [
+                        'npm',
+                        'run',
+                        'jobs'
+                      ],
+                      env: [
                         {
-                          name: 'remove-expired-objects',
-                          image: 'elasticio/maester:' + version,
-                          args: [
-                            'npm',
-                            'run',
-                            'jobs'
-                          ],
-                          env: [
-                            {
-                              name: 'APP_NAME',
-                              value: appName + ':remove-expired-objects',
+                          name: 'APP_NAME',
+                          value: appName + ':remove-expired-objects',
+                        },
+                        {
+                          name: 'LOG_LEVEL',
+                          value: 'info'
+                        },
+                        {
+                          name: 'OBJECTS_TTL',
+                          valueFrom: {
+                            secretKeyRef: {
+                              name: 'elasticio',
+                              key: 'MAESTER_OBJECTS_TTL_IN_SECONDS',
                             },
-                            {
-                              name: 'LOG_LEVEL',
-                              value: 'info'
-                            },
-                            {
-                              name: 'OBJECTS_TTL',
-                              valueFrom: {
-                                secretKeyRef: {
-                                  name: 'elasticio',
-                                  key: 'MAESTER_OBJECTS_TTL_IN_SECONDS',
-                                },
-                              },
-                            },
-                          ],
-                          envFrom: [
-                            {
-                              secretRef: {
-                                name: 'elasticio',
-                              },
-                            },
-                          ],
+                          },
                         },
                       ],
-                      imagePullSecrets: [
+                      envFrom: [
                         {
-                          name: 'elasticiodevops',
+                          secretRef: {
+                            name: 'elasticio',
+                          },
                         },
                       ],
-                      restartPolicy: 'OnFailure',
-                      nodeSelector: {
-                        'elasticio-role': 'platform',
-                      },
                     },
+                  ],
+                  imagePullSecrets: [
+                    {
+                      name: 'elasticiodevops',
+                    },
+                  ],
+                  restartPolicy: 'OnFailure',
+                  nodeSelector: {
+                    'elasticio-role': 'platform',
                   },
                 },
-              }
+              },
             },
           }
+        },
+      }
     ]
 }

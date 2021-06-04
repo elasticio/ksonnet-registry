@@ -1,14 +1,19 @@
 {
-  conf(ingressNameDefault, ingressNameApiDocs, loadBalancerIP, sshPort, certName):: [
+  conf(name, ingressNameDefault, ingressNameApiDocs, loadBalancerIP, sshPort, certName):: [
       {
         apiVersion: 'v1',
         kind: 'Service',
         metadata: {
-          labels: {
-            app: 'ingress-loadbalancer',
-          },
           name: 'ingress-loadbalancer',
           namespace: 'platform',
+          annotations: {
+           'meta.helm.sh/release-name': name,
+           'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+           'app.kubernetes.io/managed-by': 'Helm',
+           app: 'ingress-loadbalancer',
+          }
         },
         spec: {
           type: 'LoadBalancer',

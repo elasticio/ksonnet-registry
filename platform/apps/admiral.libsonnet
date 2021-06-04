@@ -1,15 +1,21 @@
 local version = import 'elasticio/platform/version.json';
 
+
 {
-  app(dockerRegistryUri, dockerRegistrySecret, facelessCreds):: [
+  app(name, dockerRegistryUri, dockerRegistrySecret, facelessCreds):: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
         metadata: {
           name: 'admiral',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
             app: 'admiral',
+            'app.kubernetes.io/managed-by': 'Helm'
           },
         },
         spec: {
@@ -184,6 +190,13 @@ local version = import 'elasticio/platform/version.json';
         metadata: {
           name: 'admiral-account',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
       },
       {
@@ -192,16 +205,25 @@ local version = import 'elasticio/platform/version.json';
         metadata: {
           name: 'admiral-role',
           namespace: 'tasks',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         rules: [
           {
             apiGroups: [
               '',
               'batch',
+              'apps',
             ],
             resources: [
               'jobs',
               'pods',
+              'deployments',
             ],
             verbs: [
               'create',
@@ -234,6 +256,13 @@ local version = import 'elasticio/platform/version.json';
         metadata: {
           name: 'admiral-rolebinding',
           namespace: 'tasks',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         roleRef: {
           apiGroup: 'rbac.authorization.k8s.io',
