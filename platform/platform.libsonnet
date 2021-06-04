@@ -40,21 +40,23 @@ local version = import 'elasticio/platform/version.json';
     // -------------------------------- //
     // --- Platform Secrets && Keys --- //
     // -------------------------------- //
-    pullSecret(username, password, email, registry):: pullSecret.conf(username, password, email, registry),
-    tlsSecret(name, crt, key):: tlsSecret.conf(name, crt, key),
-    gitreceiverKey(key):: gitreceiverKey.conf(key),
+    pullSecret(name, username, password, email, registry):: pullSecret.conf(name, username, password, email, registry),
+    tlsSecret(name, certName, crt, key):: tlsSecret.conf(name, certName, crt, key),
+    gitreceiverKey(name, key):: gitreceiverKey.conf(name, key),
 
     // ----------------------------- //
     // --- Network Configuration --- //
     // ----------------------------- //
-    ingressController(error5xxPageUrl = ''):: ingressController.conf(error5xxPageUrl),
+    ingressController(name, error5xxPageUrl = ''):: ingressController.conf(name, error5xxPageUrl),
     ingress(
+      name, 
       ingressNameDefault,
       ingressNameApiDocs,
       loadBalancerIP,
       sshPort,
       certName
     ):: ingress.conf(
+      name, 
       ingressNameDefault,
       ingressNameApiDocs,
       loadBalancerIP,
@@ -66,12 +68,14 @@ local version = import 'elasticio/platform/version.json';
     // --- Storage Configuration --- //
     // ----------------------------- //
     storageSlugsPVNFS(
+      name, 
       pvName,
       server,
       path,
       storage='1Ti',
       pvGid=1502
     ):: storageSlugsPVNFS.conf(
+      name, 
       pvName,
       server,
       path,
@@ -80,6 +84,7 @@ local version = import 'elasticio/platform/version.json';
     ),
 
     storageSlugsPVAzure(
+      name, 
       pvName,
       accountName,
       accountKey,
@@ -87,6 +92,7 @@ local version = import 'elasticio/platform/version.json';
       storage='1Ti',
       pvGid=1502
     ):: storageSlugsPVAzure.conf(
+      name, 
       pvName,
       accountName,
       accountKey,
@@ -98,31 +104,32 @@ local version = import 'elasticio/platform/version.json';
     // ----------------------------- //
     // --- Platform Applications --- //
     // ----------------------------- //
-    admiral(dockerRegistryUri, dockerRegistrySecret, facelessCreds):: admiral.app(dockerRegistryUri, dockerRegistrySecret, facelessCreds),
-    apiDocs(image):: apiDocs.app(image),
-    api(replicas, cpuRequest=0.1, cpuLimit=1, facelessCreds='', memLimitMb = 2048):: api.app(replicas, cpuRequest, cpuLimit, facelessCreds, memLimitMb),
-    bloodyGate(ipAddress, caCert, caKey):: bloodyGate.app(ipAddress, caCert, caKey),
-    cache():: cache.app(),
-    dockerRegistry(dockerRegistryUri, dockerRegistrySecret, sharedSecret, s3url, replicas):: dockerRegistry.app(dockerRegistryUri, dockerRegistrySecret, sharedSecret, s3url, replicas, 'tasks'),
-    faceless(encryptionKey, apiReplicas, credentials=''):: faceless.app(encryptionKey, apiReplicas, credentials),
-    fluentd(execGelfProto, execGelfHost, execGelfPort):: fluentd.app(execGelfProto, execGelfHost, execGelfPort),
-    frontend(replicas, memLimitMb=2048, terminationGracePeriodSeconds=30):: frontend.app(replicas, memLimitMb, terminationGracePeriodSeconds),
-    gendry():: gendry.app(),
-    gitreceiver(dockerRegistryUri):: gitreceiver.app(dockerRegistryUri),
-    goldDragonCoin(replicas):: goldDragonCoin.app(replicas),
-    handmaiden(secretName):: handmaiden.app(secretName, version),
-    lookout(replicas, maxErrorRecordsCount):: lookout.app(replicas, maxErrorRecordsCount),
-    bran(replicas, mode='read'):: bran.app(replicas, mode),
-    quotaService():: quotaService.app(),
-    ironBank():: ironBank.app(),
-    raven(replicas):: raven.app(replicas),
-    scheduler():: scheduler.app(),
-    steward(replicas, s3Uri=''):: steward.app(replicas, s3Uri),
-    s3(accessKey, secretKey):: s3.app(accessKey, secretKey),
-    webhooks(replicas):: webhooks.app(replicas),
+    admiral(name, dockerRegistryUri, dockerRegistrySecret, facelessCreds):: admiral.app(name, dockerRegistryUri, dockerRegistrySecret, facelessCreds),
+    apiDocs(name, image):: apiDocs.app(name, image),
+    api(name, replicas, cpuRequest=0.1, cpuLimit=1, facelessCreds='', memLimitMb = 2048):: api.app(name, replicas, cpuRequest, cpuLimit, facelessCreds, memLimitMb),
+    bloodyGate(name, ipAddress, caCert, caKey):: bloodyGate.app(name, ipAddress, caCert, caKey),
+    cache(name):: cache.app(name),
+    dockerRegistry(name, dockerRegistryUri, dockerRegistrySecret, sharedSecret, s3url, replicas):: dockerRegistry.app(name, dockerRegistryUri, dockerRegistrySecret, sharedSecret, s3url, replicas, 'tasks'),
+    faceless(name, encryptionKey, apiReplicas, credentials=''):: faceless.app(name, encryptionKey, apiReplicas, credentials),
+    fluentd(name, execGelfProto, execGelfHost, execGelfPort):: fluentd.app(name, execGelfProto, execGelfHost, execGelfPort),
+    frontend(name, replicas, memLimitMb=2048, terminationGracePeriodSeconds=30):: frontend.app(name, replicas, memLimitMb, terminationGracePeriodSeconds),
+    gendry(name):: gendry.app(name),
+    gitreceiver(name, dockerRegistryUri):: gitreceiver.app(name, dockerRegistryUri),
+    goldDragonCoin(name, replicas):: goldDragonCoin.app(name, replicas),
+    handmaiden(name, secretName):: handmaiden.app(name, secretName, version),
+    lookout(name, replicas, maxErrorRecordsCount):: lookout.app(name, replicas, maxErrorRecordsCount),
+    bran(name, replicas, mode='read'):: bran.app(name, replicas, mode),
+    quotaService(name):: quotaService.app(name),
+    ironBank(name):: ironBank.app(name),
+    raven(name, replicas):: raven.app(name, replicas),
+    scheduler(name):: scheduler.app(name),
+    steward(name, replicas, s3Uri=''):: steward.app(name, replicas, s3Uri),
+    s3(name, accessKey, secretKey):: s3.app(name, accessKey, secretKey),
+    webhooks(name, replicas):: webhooks.app(name, replicas),
     wiper(params):: wiper.app(params),
 
     storageSlugs(
+      name, 
       replicas,
       lbIp,
       storage='1Ti',
@@ -131,6 +138,7 @@ local version = import 'elasticio/platform/version.json';
       s3Uri='',
       isPV=true
     ):: storageSlugs.app(
+      name, 
       replicas,
       lbIp,
       storage,
@@ -141,13 +149,16 @@ local version = import 'elasticio/platform/version.json';
     ),
 
     maester(
+      name, 
       maesterReplicas
     ):: maester.app(
+      name, 
       version,
       maesterReplicas
     ),
 
     maesterRedis(
+      name, 
       redisClusterName='maester-cluster',
       redisAppName='maester-redis-ha',
       redisReplicas=3,
@@ -155,8 +166,9 @@ local version = import 'elasticio/platform/version.json';
       storageSize='1Ti',
       redisDataDir='/data',
       redisConfigDir='/readonly-config',
-      redisConfigMapName=redisAppName + '-configmap',
+      redisConfigMapName=redisAppName + '-configmap'
     ):: maester.redis(
+      name, 
       redisClusterName,
       redisAppName,
       redisReplicas,
@@ -164,8 +176,8 @@ local version = import 'elasticio/platform/version.json';
       storageSize,
       redisDataDir,
       redisConfigDir,
-      redisConfigMapName,
+      redisConfigMapName
     ),
-    networkPolicies()::networkPolicies.networkPolicies()
+    networkPolicies(name)::networkPolicies.networkPolicies(name)
   },
 }

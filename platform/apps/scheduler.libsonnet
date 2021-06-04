@@ -1,15 +1,20 @@
 local version = import 'elasticio/platform/version.json';
 
 {
-  app():: {
+  app(name):: {
       kind: 'Deployment',
       apiVersion: 'apps/v1',
       metadata: {
         name: 'scheduler',
         namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
         labels: {
           app: 'scheduler',
-        },
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       spec: {
         replicas: 1,

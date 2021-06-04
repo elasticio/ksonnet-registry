@@ -1,16 +1,21 @@
 local version = import 'elasticio/platform/version.json';
 local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spread-nodes.libsonnet';
 {
-  app(accessKey, secretKey):: [
+  app(name, accessKey, secretKey):: [
     {
       kind: 'Deployment',
       apiVersion: 'apps/v1',
       metadata: {
         name: 's3',
         namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
         labels: {
           app: 's3',
-        },
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       spec: {
         replicas: 2,
@@ -137,11 +142,16 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
       apiVersion: 'v1',
       kind: 'Service',
       metadata: {
-        labels: {
-          app: 's3-service',
-        },
         name: 's3-service',
         namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+          app: 's3-service',
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       spec: {
         type: 'ClusterIP',

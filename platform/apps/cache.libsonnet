@@ -2,6 +2,7 @@ local k = import 'k.libsonnet';
 
 {
   app(
+    name,
     terminationGracePeriodSeconds = 30,
     redisPort = 6379,
     appName = 'cache',
@@ -12,11 +13,16 @@ local k = import 'k.libsonnet';
           apiVersion: 'v1',
           kind: 'Service',
           metadata: {
-              labels: {
-                  app: appName
-              },
               name: appName + '-service',
-              namespace: 'platform'
+              namespace: 'platform',
+              annotations: {
+                'meta.helm.sh/release-name': name,
+                'meta.helm.sh/release-namespace': 'default'
+              },
+              labels: {
+                 app: appName,
+                'app.kubernetes.io/managed-by': 'Helm'
+              }
           },
           spec: {
               ports: [
@@ -37,9 +43,14 @@ local k = import 'k.libsonnet';
         metadata: {
           name: configMapName,
           namespace: 'platform',
-          labels: {
-            app: appName,
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
           },
+          labels: {
+             app: appName,
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         data: {
           "redis.conf": |||
@@ -56,9 +67,14 @@ local k = import 'k.libsonnet';
         metadata: {
           name: appName,
           namespace: 'platform',
-          labels: {
-            app: appName,
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
           },
+          labels: {
+             app: appName,
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           replicas: 1,

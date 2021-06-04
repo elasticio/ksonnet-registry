@@ -46,17 +46,22 @@ local parseUri(uri) = {
 };
 
 {
-  app(dockerRegistryUri, dockerRegistrySecretName, sharedSecret, s3url = '', replicas=2, tasksNamespace='tasks'):: [
+  app(name, dockerRegistryUri, dockerRegistrySecretName, sharedSecret, s3url = '', replicas=2, tasksNamespace='tasks'):: [
     {
       local parsedDockerUri = parseUri(dockerRegistryUri),
       apiVersion: 'v1',
         kind: 'Service',
         metadata: {
-          labels: {
-            app: 'docker-registry-service'
-          },
           name: 'docker-registry-service',
-          namespace: 'platform'
+          namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+            app: 'docker-registry-service',
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           // IMPORTANT!!!! NodePort service should be used here.
@@ -98,18 +103,26 @@ local parseUri(uri) = {
           },
         })),
       }
-    ).withNamespace(tasksNamespace),
+    ).withNamespace(tasksNamespace)
+    .withLabels({ 'app.kubernetes.io/managed-by': 'Helm' })
+    .withAnnotations({ 'meta.helm.sh/release-name': name,
+        'meta.helm.sh/release-namespace': 'default' }),
     {
       local parsedDockerUri = parseUri(dockerRegistryUri),
       local parsedS3Url = if s3url != '' then parseUri(s3url) else null,
       apiVersion: 'apps/v1',
       kind: 'Deployment',
       metadata: {
-        labels: {
-          app: 'docker-registry'
-        },
         name: 'docker-registry',
-        namespace: 'platform'
+        namespace: 'platform',
+        annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+        },
+        labels: {
+          app: 'docker-registry',
+          'app.kubernetes.io/managed-by': 'Helm'
+        }
       },
       spec: {
         replicas: replicas,

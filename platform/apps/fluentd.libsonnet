@@ -1,24 +1,36 @@
 local version = import 'elasticio/platform/version.json';
 
 {
-  app(execGelfProto, execGelfHost, execGelfPort):: [
+  app(name, execGelfProto, execGelfHost, execGelfPort):: [
       {
         apiVersion: 'v1',
         kind: 'ServiceAccount',
         metadata: {
           name: 'eio-fluentd-account',
           namespace: 'platform',
+          annotations: {
+          'meta.helm.sh/release-name': name,
+          'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
       },
       {
         apiVersion: 'apps/v1',
         kind: 'DaemonSet',
         metadata: {
-          labels: {
-            app: 'eio-fluentd',
-          },
           name: 'eio-fluentd',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+            app: 'eio-fluentd',
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           selector: {
@@ -119,6 +131,13 @@ local version = import 'elasticio/platform/version.json';
         kind: 'ClusterRole',
         metadata: {
           name: 'eio-fluentd-role',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         rules: [
           {
@@ -154,6 +173,13 @@ local version = import 'elasticio/platform/version.json';
         kind: 'ClusterRoleBinding',
         metadata: {
           name: 'eio-fluentd-rolebinding',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         roleRef: {
           apiGroup: 'rbac.authorization.k8s.io',

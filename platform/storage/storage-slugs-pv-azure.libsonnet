@@ -1,5 +1,5 @@
 {
-  conf(pvName, accountName, accountKey, shareName, storage='1Ti', pvGid=1502):: [
+  conf(name, pvName, accountName, accountKey, shareName, storage='1Ti', pvGid=1502):: [
       {
         apiVersion: 'v1',
         data: {
@@ -10,6 +10,13 @@
         metadata: {
           name: 'azure-storage-secret',
           namespace: 'platform',
+          annotations: {
+           'meta.helm.sh/release-name': name,
+           'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+           'app.kubernetes.io/managed-by': 'Helm',
+          }
         },
         type: 'Opaque',
       },
@@ -21,7 +28,12 @@
           namespace: 'platform',
           annotations: {
             'pv.beta.kubernetes.io/gid': std.toString(pvGid),
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
           },
+          labels: {
+           'app.kubernetes.io/managed-by': 'Helm',
+          }
         },
         spec: {
           storageClassName: 'platform-storage-slugs',

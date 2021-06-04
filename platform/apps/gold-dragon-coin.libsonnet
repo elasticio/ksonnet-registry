@@ -2,16 +2,21 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
 local version = import 'elasticio/platform/version.json';
 
 {
-  app(replicas):: [
+  app(name, replicas):: [
       {
         apiVersion: 'apps/v1',
         kind: 'Deployment',
         metadata: {
           name: 'gold-dragon-coin',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
             app: 'gold-dragon-coin',
-          },
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           replicas: replicas,
@@ -113,11 +118,16 @@ local version = import 'elasticio/platform/version.json';
         apiVersion: 'v1',
         kind: 'Service',
         metadata: {
-          labels: {
-            app: 'gold-dragon-coin-service',
-          },
           name: 'gold-dragon-coin-service',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+            app: 'gold-dragon-coin-service',
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           type: 'ClusterIP',

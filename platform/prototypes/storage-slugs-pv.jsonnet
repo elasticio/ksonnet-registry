@@ -10,6 +10,7 @@
 // @optionalParam azure_storage_account_name string azure_account platform storage slugs azure storage account name
 // @optionalParam azure_storage_account_key string azure_key storage slugs azure storage account keys
 // @optionalParam azure_storage_share string azure_share storage slugs azure storage share
+// @optionalParam platform_name string great-moraq platform name
 
 local platform = import 'elasticio/platform/platform.libsonnet';
 local pvGid = import 'param://storage_slugs_pv_gid';
@@ -21,5 +22,7 @@ local nfsShare = import 'param://nfs_share';
 local azAccName = import 'param://azure_storage_account_name';
 local azAccKey = import 'param://azure_storage_account_key';
 local azShareName = import 'param://azure_storage_share';
+local platformName = import 'param://platform_name';
+local name = if platformName != "" then platformName else "great-moraq";
 
-if storageSlugsStorageType == 'nfs' then platform.parts.storageSlugsPVNFS(pvName, nfsServer, nfsShare, pssStorage, pvGid) else if storageSlugsStorageType == 'azure' then platform.parts.storageSlugsPVAzure(pvName, azAccName, azAccKey, azShareName, pssStorage, pvGid) else []
+if storageSlugsStorageType == 'nfs' then platform.parts.storageSlugsPVNFS(name, pvName, nfsServer, nfsShare, pssStorage, pvGid) else if storageSlugsStorageType == 'azure' then platform.parts.storageSlugsPVAzure(name, pvName, azAccName, azAccKey, azShareName, pssStorage, pvGid) else []

@@ -1,16 +1,21 @@
 local version = import 'elasticio/platform/version.json';
 
 {
-  app()::[
+  app(name)::[
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
         metadata: {
           name: 'quota-service',
           namespace: 'platform',
-          labels: {
-            app: 'quota-service',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
           },
+          labels: {
+             app: 'quota-service',
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           replicas: 2,
@@ -114,11 +119,16 @@ local version = import 'elasticio/platform/version.json';
         apiVersion: 'v1',
         kind: 'Service',
         metadata: {
-          labels: {
-            app: 'quota-service-service',
-          },
           name: 'quota-service-service',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+            app: 'quota-service-service',
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           type: 'NodePort',

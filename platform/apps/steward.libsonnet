@@ -2,16 +2,21 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
 local version = import 'elasticio/platform/version.json';
 
 {
-  app(replicas, s3Uri=''):: [
+  app(name, replicas, s3Uri=''):: [
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
         metadata: {
           name: 'steward',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
             app: 'steward',
-          },
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           replicas: replicas,
@@ -136,11 +141,16 @@ local version = import 'elasticio/platform/version.json';
         apiVersion: 'v1',
         kind: 'Service',
         metadata: {
-          labels: {
-            app: 'steward-service',
-          },
           name: 'steward-service',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+            app: 'steward-service',
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           type: 'ClusterIP',

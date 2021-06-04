@@ -6,6 +6,7 @@
 // @param docker_registry_uri string  uri (login port, host port) for docker registry
 // @param docker_registry_http_secret string random string used in docker-registry crypto magic. No special requirements, just real random string
 // @optionalParam s3_docker_url string  s3 compatible storage uri
+// @optionalParam platform_name string great-moraq platform name for helm
 
 local k = import 'k.libsonnet';
 local platform = import 'elasticio/platform/platform.libsonnet';
@@ -15,6 +16,8 @@ local dockerRegistryReplicas = import 'param://docker_registry_replicas';
 local sharedSecret = import 'param://docker_registry_http_secret';
 local replicas = import 'param://docker_registry_replicas';
 local s3url = import 'param://s3_docker_url';
+local platformName = import 'param://platform_name';
+local name = if platformName != "" then platformName else "great-moraq";
 
-platform.parts.dockerRegistry(dockerRegistryUri, dockerRegistrySecretName, sharedSecret, s3url, replicas)
+platform.parts.dockerRegistry(name, dockerRegistryUri, dockerRegistrySecretName, sharedSecret, s3url, replicas)
 

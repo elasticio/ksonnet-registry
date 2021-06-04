@@ -1,16 +1,21 @@
 local version = import 'elasticio/platform/version.json';
 
 {
-  app(secretName, version)::[
+  app(name, secretName, version)::[
       {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
         metadata: {
           name: 'handmaiden',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
             app: 'handmaiden',
-          },
+            'app.kubernetes.io/managed-by': 'Helm'
+          }
         },
         spec: {
           replicas: 1,
@@ -133,8 +138,13 @@ local version = import 'elasticio/platform/version.json';
         metadata: {
           name: 'handmaiden-account',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
             app: 'handmaiden',
+            'app.kubernetes.io/managed-by': 'Helm'
           }
         },
       },
@@ -144,8 +154,13 @@ local version = import 'elasticio/platform/version.json';
         metadata: {
           name: 'handmaiden-role',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
             app: 'handmaiden',
+            'app.kubernetes.io/managed-by': 'Helm'
           }
         },
         rules: [
@@ -189,8 +204,13 @@ local version = import 'elasticio/platform/version.json';
         metadata: {
           name: 'handmaiden-rolebinding',
           namespace: 'platform',
+          annotations: {
+            'meta.helm.sh/release-name': name,
+            'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
             app: 'handmaiden',
+            'app.kubernetes.io/managed-by': 'Helm'
           }
         },
         roleRef: {

@@ -2,13 +2,18 @@ local podAffinitySpreadNodes = import 'elasticio/platform/tools/pod-affinity-spr
 local version = import 'elasticio/platform/version.json';
 
 {
-  conf(error5xxPageUrl = '', defaultBackendPort = 8080)::
-    local defaultBackend = [
+  conf(name, error5xxPageUrl = '', defaultBackendPort = 8080)::
+    local defaultBackend (name) = [
       {
         apiVersion: 'apps/v1',
         kind: 'Deployment',
         metadata: {
+          annotations: {
+           'meta.helm.sh/release-name': name,
+           'meta.helm.sh/release-namespace': 'default'
+          },
           labels: {
+            'app.kubernetes.io/managed-by': 'Helm',
             app: 'ingress-default-backend',
           },
           name: 'ingress-default-backend',
@@ -105,11 +110,16 @@ local version = import 'elasticio/platform/version.json';
         apiVersion: 'v1',
         kind: 'ConfigMap',
         metadata: {
-          labels: {
-            app: 'ingress-nginx',
-          },
           name: 'nginx-configuration',
           namespace: 'platform',
+          annotations: {
+           'meta.helm.sh/release-name': name,
+           'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+           'app.kubernetes.io/managed-by': 'Helm',
+            app: 'ingress-nginx',
+          }
         },
         data: {
           'use-http2': 'true',
@@ -134,6 +144,13 @@ local version = import 'elasticio/platform/version.json';
         kind: 'ClusterRole',
         metadata: {
           name: 'nginx-ingress-clusterrole',
+          annotations: {
+           'meta.helm.sh/release-name': name,
+           'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+           'app.kubernetes.io/managed-by': 'Helm',
+          }
         },
         rules: [
           {
@@ -219,6 +236,13 @@ local version = import 'elasticio/platform/version.json';
         kind: 'ClusterRoleBinding',
         metadata: {
           name: 'nginx-ingress-clusterrole-nisa-binding',
+          annotations: {
+           'meta.helm.sh/release-name': name,
+           'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+           'app.kubernetes.io/managed-by': 'Helm',
+          }
         },
         roleRef: {
           apiGroup: 'rbac.authorization.k8s.io',
@@ -237,11 +261,16 @@ local version = import 'elasticio/platform/version.json';
         apiVersion: 'apps/v1',
         kind: 'Deployment',
         metadata: {
-          labels: {
-            app: 'ingress-nginx',
-          },
           name: 'nginx-ingress-controller',
           namespace: 'platform',
+          annotations: {
+           'meta.helm.sh/release-name': name,
+           'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+           'app.kubernetes.io/managed-by': 'Helm',
+           app: 'ingress-nginx',
+          }
         },
         spec: {
           replicas: 2,
@@ -329,6 +358,13 @@ local version = import 'elasticio/platform/version.json';
         metadata: {
           name: 'nginx-ingress-role',
           namespace: 'platform',
+          annotations: {
+           'meta.helm.sh/release-name': name,
+           'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+           'app.kubernetes.io/managed-by': 'Helm',
+          }
         },
         rules: [
           {
@@ -390,6 +426,13 @@ local version = import 'elasticio/platform/version.json';
         metadata: {
           name: 'nginx-ingress-rolebinding',
           namespace: 'platform',
+          annotations: {
+           'meta.helm.sh/release-name': name,
+           'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+           'app.kubernetes.io/managed-by': 'Helm',
+          }
         },
         roleRef: {
           apiGroup: 'rbac.authorization.k8s.io',
@@ -410,6 +453,13 @@ local version = import 'elasticio/platform/version.json';
         metadata: {
           name: 'nginx-ingress-serviceaccount',
           namespace: 'platform',
+          annotations: {
+           'meta.helm.sh/release-name': name,
+           'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+           'app.kubernetes.io/managed-by': 'Helm',
+          }
         },
       },
       {
@@ -418,6 +468,13 @@ local version = import 'elasticio/platform/version.json';
         metadata: {
           name: 'tcp-services',
           namespace: 'platform',
+          annotations: {
+           'meta.helm.sh/release-name': name,
+           'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+           'app.kubernetes.io/managed-by': 'Helm',
+          }
         },
         data: {
           '22': 'platform/gitreceiver-service:4022',
@@ -429,7 +486,14 @@ local version = import 'elasticio/platform/version.json';
         metadata: {
           name: 'udp-services',
           namespace: 'platform',
+          annotations: {
+           'meta.helm.sh/release-name': name,
+           'meta.helm.sh/release-namespace': 'default'
+          },
+          labels: {
+           'app.kubernetes.io/managed-by': 'Helm',
+          }
         },
       },
-    ] + (if error5xxPageUrl != '' then defaultBackend else [])
+    ] + (if error5xxPageUrl != '' then defaultBackend(name) else [])
 }
